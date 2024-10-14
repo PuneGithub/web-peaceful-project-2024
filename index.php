@@ -4,52 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/output.css">
     <title>Peaceful Network</title>
 </head>
 <script src="js/script.js"></script>
 
 <body>
-    <nav class="bg-gray-800 p-4">
-        <div class="container mx-auto flex justify-center items-center space-x-6">
-            <!-- Logo -->
-            <div class="text-white text-xl font-bold">
-                Peaceful Network
-            </div>
-
-            <!-- Menu Links Desktop -->
-            <div class="hidden sm:flex space-x-6">
-                <a href="#" class="font-semibold text-gray-300 hover:text-white">HOME</a>
-                <a href="#" class="font-semibold text-gray-300 hover:text-white">BLOG</a>
-                <a href="#" class="font-semibold text-gray-300 hover:text-white">RESOURCES</a>
-                <a href="#" class="font-semibold text-gray-300 hover:text-white">ABOUT</a>
-            </div>
-
-            <!-- Sign Up Button -->
-            <div class="hidden sm:block">
-                <a href="#" class="btn-blue-500">SIGN UP</a>
-            </div>
-
-            <!-- Hamburger Menu Mobile -->
-            <div class="sm:hidden">
-                <button class="text-white focus:outline-none" onclick="toggleMenu()">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Menu Links Mobile -->
-            <div id="mobile-menu" class="hidden sm:hidden">
-                <a href="#" class="block font-semibold text-gray-300 hover:text-white py-2">HOME</a>
-                <a href="#" class="block font-semibold text-gray-300 hover:text-white py-2">BLOG</a>
-                <a href="#" class="block font-semibold text-gray-300 hover:text-white py-2">RESOURCES</a>
-                <a href="#" class="block font-semibold text-gray-300 hover:text-white py-2">ABOUT</a>
-                <a href="#" class="btn-blue-500">SIGN UP</a>
-            </div>
-
-        </div>
-    </nav>
+    <!-- header navbar -->
+     <?php 
+     include_once("components/header-navbar.php");
+     ?>
 
     <!-- Hero Section -->
     <section class="relative bg-cover bg-center h-96" style="background-image: url('img/bg.webp');">
@@ -67,19 +32,58 @@
         </div>
     </section>
     <div class="bg-gray-100 min-h-screen p-6">
-        <!-- Post Feed -->
-        <div class="max-w-2xl mx-auto space-y-6">
-            <div class="bg-white p-4 rounded-lg shadow-md">
-                <div class="flex items-center space-x-4">
-                    <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
-                    <div>
-                        <h2 class="font-semibold">John Doe</h2>
-                        <span class="text-sm text-gray-500">5 Hours ago</span>
+        <div class="grid grid-cols-3 gap-3">
+
+            <div class="max-w-2xl mx-auto space-y-5">
+                <div class="card-white">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="text-lg font-bold text-gray-500">Category</h2>
+                    </div>
+
+                    <!-- Category Buttons -->
+                    <div class="flex flex-col p-3 space-y-3">
+                        <a href="#" class="btn-blue-500-full">Minecraft 1</a>
+                        <a href="#" class="btn-blue-500-full">Minecraft 2</a>
+                        <a href="#" class="btn-blue-500-full">Minecraft 3</a>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <p class="text-gray-800">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis commodi laudantium soluta obcaecati illum hic! Aperiam porro laudantium nisi quos qui. Similique iure culpa accusamus molestiae rerum fugit et aperiam.</p>
-                    <img src="https://via.placeholder.com/500" alt="Post image" class="mt-2 rounded-lg w-full">
+            </div>
+
+            <!-- Post Feed -->
+            <div class="max-w-2xl mx-auto space-y-6">
+                <div class="card-white">
+                    <div class="flex items-center space-x-4">
+                        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
+                        <div>
+                            <h2 class="font-semibold">John Doe</h2>
+                            <span class="text-sm text-gray-500">5 Hours ago</span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-gray-800">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis commodi laudantium soluta obcaecati illum hic! Aperiam porro laudantium nisi quos qui. Similique iure culpa accusamus molestiae rerum fugit et aperiam.</p>
+                        <img src="https://via.placeholder.com/500" alt="Post image" class="mt-2 rounded-lg w-full">
+                    </div>
+
+                    <!-- Post Actions -->
+                    <div class="mt-4 flex items-center justify-between">
+                        <button class="btn-blue-500"><i class="text-red-400 fa-solid fa-heart"></i></button>
+                        <button class="btn-blue-500">Comment</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-2xl mx-auto space-y-5">
+                <div class="card-white">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="text-lg font-bold text-gray-500">Forums</h2>
+                    </div>
+
+                    <!-- Forums Buttons -->
+                    <div class="flex flex-col p-3 space-y-3">
+                        <a href="#" class="btn-blue-500-full">Ask a question about Minecraft</a>
+                        <a href="#" class="btn-blue-500-full">Minecraft 2</a>
+                        <a href="#" class="btn-blue-500-full">Minecraft 3</a>
+                    </div>
                 </div>
             </div>
         </div>
