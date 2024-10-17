@@ -6,6 +6,9 @@
     .btn-blue-500 {
         @apply bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600
     }
+    .btn-green-500 {
+        @apply bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600
+    }
     .btn-blue-400-outline {
         @apply border-2 border-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-500
     }
@@ -20,5 +23,10 @@
 
     .card-white {
         @apply bg-white p-4 rounded-lg shadow-md
+    }
+
+
+    .input-form {
+        @apply mt-1 block w-full px-4 py-2 border border-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
     }
 }

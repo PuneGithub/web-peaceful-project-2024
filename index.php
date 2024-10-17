@@ -26,8 +26,8 @@
             <h1 class="text-4xl font-bold mb-4">Minecraft Peaceful Network</h1>
             <p class="text-lg mb-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, consectetur.</p>
             <div class="space-x-4">
-                <a href="#" class="btn-blue-400-outline">SIGN UP</a>
-                <a href="#" class="btn-green-400-outline">SIGN IN</a>
+                <a href="account/signup.php" class="btn-blue-400-outline">SIGN UP</a>
+                <a href="account/signin.php" class="btn-green-400-outline">SIGN IN</a>
             </div>
         </div>
     </section>

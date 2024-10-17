@@ -15,7 +15,8 @@
 
             <!-- Sign Up Button -->
             <div class="hidden sm:block">
-                <a href="#" class="btn-blue-500">SIGN UP</a>
+                <a href="#" class="btn-blue-500 mr-2">SIGN UP</a>
+                <a href="#" class="btn-green-500">SIGN IN</a>
             </div>
 
             <!-- Hamburger Menu Mobile -->
@@ -33,7 +34,8 @@
                 <a href="#" class="block font-semibold text-gray-300 hover:text-white py-2">BLOG</a>
                 <a href="#" class="block font-semibold text-gray-300 hover:text-white py-2">RESOURCES</a>
                 <a href="#" class="block font-semibold text-gray-300 hover:text-white py-2">ABOUT</a>
-                <a href="#" class="btn-blue-500">SIGN UP</a>
+                <a href="" class="btn-blue-500">SIGN UP</a>
+                <a href="" class="btn-green-500">SIGN IN</a>
             </div>
 
         </div>
