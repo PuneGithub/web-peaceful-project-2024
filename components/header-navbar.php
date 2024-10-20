@@ -7,7 +7,7 @@
 
             <!-- Menu Links Desktop -->
             <div class="hidden sm:flex space-x-6">
-                <a href="#" class="font-semibold text-gray-300 hover:text-white">HOME</a>
+                <a href="/web_peaceful_project_2024/index.php" class="font-semibold text-gray-300 hover:text-white">HOME</a>
                 <a href="#" class="font-semibold text-gray-300 hover:text-white">BLOG</a>
                 <a href="#" class="font-semibold text-gray-300 hover:text-white">RESOURCES</a>
                 <a href="#" class="font-semibold text-gray-300 hover:text-white">ABOUT</a>
@@ -15,8 +15,8 @@
 
             <!-- Sign Up Button -->
             <div class="hidden sm:block">
-                <a href="#" class="btn-blue-500 mr-2">SIGN UP</a>
-                <a href="#" class="btn-green-500">SIGN IN</a>
+                <a href="/web_peaceful_project_2024/account/signup.php" class="btn-blue-500 mr-2">SIGN UP</a>
+                <a href="/web_peaceful_project_2024/account/signin.php" class="btn-green-500">SIGN IN</a>
             </div>
 
             <!-- Hamburger Menu Mobile -->

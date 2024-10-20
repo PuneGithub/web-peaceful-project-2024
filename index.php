@@ -49,25 +49,27 @@
                 </div>
             </div>
 
-            <!-- Post Feed -->
-            <div class="max-w-2xl mx-auto space-y-6">
-                <div class="card-white">
-                    <div class="flex items-center space-x-4">
-                        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
-                        <div>
-                            <h2 class="font-semibold">John Doe</h2>
-                            <span class="text-sm text-gray-500">5 Hours ago</span>
+            <div class="flex flex-col">
+                <!-- Post Feed -->
+                <div class="max-w-2xl mx-auto space-y-6">
+                    <div class="card-white">
+                        <div class="flex items-center space-x-4">
+                            <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
+                            <div>
+                                <h2 class="font-semibold">John Doe</h2>
+                                <span class="text-sm text-gray-500">5 Hours ago</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="mt-4">
-                        <p class="text-gray-800">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis commodi laudantium soluta obcaecati illum hic! Aperiam porro laudantium nisi quos qui. Similique iure culpa accusamus molestiae rerum fugit et aperiam.</p>
-                        <img src="https://via.placeholder.com/500" alt="Post image" class="mt-2 rounded-lg w-full">
-                    </div>
-
-                    <!-- Post Actions -->
-                    <div class="mt-4 flex items-center justify-between">
-                        <button class="btn-blue-500"><i class="text-red-400 fa-solid fa-heart"></i></button>
-                        <button class="btn-blue-500">Comment</button>
+                        <div class="mt-4">
+                            <p class="text-gray-800">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis commodi laudantium soluta obcaecati illum hic! Aperiam porro laudantium nisi quos qui. Similique iure culpa accusamus molestiae rerum fugit et aperiam.</p>
+                            <img src="https://via.placeholder.com/500" alt="Post image" class="mt-2 rounded-lg w-full">
+                        </div>
+    
+                        <!-- Post Actions -->
+                        <div class="mt-4 flex items-center justify-between">
+                            <button class="btn-blue-500"><i class="text-red-400 fa-solid fa-heart"></i></button>
+                            <button class="btn-blue-500">Comment</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -89,6 +91,13 @@
         </div>
     </div>
 
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center item-center">
+                <p class="text-gray-x-4">© 2024 Peaceful Network. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>

@@ -11,6 +11,9 @@
 <script src="js/script.js"></script>
 
 <body style="background-image: url('../img/bg.webp');">
+
+    <?php include_once("../components/header-navbar.php"); ?>
+
     <!-- header navbar -->
     <div class="flex items-center justify-center h-screen">
         <div class="card-white w-full max-w-md">
