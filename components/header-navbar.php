@@ -8,7 +8,7 @@
             <!-- Menu Links Desktop -->
             <div class="hidden sm:flex space-x-6">
                 <a href="/web_peaceful_project_2024/index.php" class="font-semibold text-gray-300 hover:text-white">HOME</a>
-                <a href="#" class="font-semibold text-gray-300 hover:text-white">BLOG</a>
+                <a href="/web_peaceful_project_2024/blog.php" class="font-semibold text-gray-300 hover:text-white">BLOG</a>
                 <a href="#" class="font-semibold text-gray-300 hover:text-white">RESOURCES</a>
                 <a href="#" class="font-semibold text-gray-300 hover:text-white">ABOUT</a>
             </div>

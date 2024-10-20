@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/output.css">
+    <title>Peaceful Network</title>
+</head>
+<script src="js/script.js"></script>
+
+<body>
+    <!-- header navbar -->
+    <?php
+    include_once("components/header-navbar.php");
+    ?>
+
+    <div class="container mx-auto">
+        <div class="card-white max-w-4xl mx-auto flex items-center space-x-6">
+            <!-- Image -->
+            <img src="https://via.placeholder.com/300" alt="Example image" class="w-1/2 rounded-lg">
+
+            <div class="text-white space-y-3">
+                <h2 class="text-2xl font-bold">Hello World</h2>
+                <p class="text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius, corrupti.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 grid-rows-2 gap-4 mt-3">
+            <div class="card-white">
+                <img src="https://via.placeholder.com/300" alt="Example image" class="rounded-lg">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- footer -->
+    <?php
+    include_once("components/footer.php");
+    ?>
+
+</body>
+
+</html>
