@@ -17,26 +17,14 @@
     <!-- header navbar -->
     <div class="flex items-center justify-center h-screen">
         <div class="card-white w-full max-w-md">
-            <h2 class="text-xl font-semibold text-center">Sign Up</h2>
+            <h2 class="text-xl font-semibold text-center">Forgot Password</h2>
             <form action="" class="space-y-4">
                 <div>
                     <label for="email" class="block text-sm font-medium">Email</label>
                     <input type="email" name="email" class="input-form" placeholder="Enter email" required>
                 </div>
                 <div>
-                    <label for="password" class="block text-sm font-medium">Password</label>
-                    <input type="password" name="password" class="input-form" placeholder="Enter password" required>
-                </div>
-                <div>
-                    <label for="con_password" class="block text-sm font-medium">Confirm password</label>
-                    <input type="password" name="con_password" class="input-form" placeholder="Enter confirm password" required>
-                </div>
-                <div>
-                    <input type="checkbox" name="check" id="">
-                    <label for="check" class="text-sm font-medium">I agree to the Terms and Privacy Policy.</label>
-                </div>
-                <div>
-                    <input type="submit" class="btn-blue-500" value="Sign Up">
+                    <input type="submit" class="btn-green-500" value="Send">
                 </div>
             </form>
         </div>

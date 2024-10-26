@@ -28,6 +28,9 @@
                     <input type="password" name="password" class="input-form" placeholder="Enter password" required>
                 </div>
                 <div>
+                    <a href="forgot_password.php" class="text-blue-400">Forgot password</a>
+                </div>
+                <div>
                     <input type="submit" class="btn-green-500" value="Sign Up">
                 </div>
             </form>

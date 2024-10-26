@@ -19,7 +19,7 @@
 
     <div class="container mx-auto">
         <div class="card-white bg-opacity-75">
-            <h2 class="text-2xl font-bold text-center">BLOG</h2>
+            <h2 class="text-2xl font-bold text-center uppercase">Resources</h2>
             <div class="card-white max-w-4xl mx-auto flex items-center space-x-6">
                 <!-- Image -->
                 <img src="https://via.placeholder.com/300" alt="Example image" class="w-1/2 rounded-lg">
