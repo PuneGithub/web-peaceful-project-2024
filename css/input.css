@@ -25,6 +25,10 @@
         @apply bg-white p-4 rounded-lg shadow-md
     }
 
+    .card-gray-300 {
+        @apply bg-gray-300 p-4 rounded-lg shadow-md
+    }
+
 
     .input-form {
         @apply mt-1 block w-full px-4 py-2 border border-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500

@@ -12,9 +12,9 @@
 
 <body>
     <!-- header navbar -->
-     <?php 
-     include_once("components/header-navbar.php");
-     ?>
+    <?php
+    include_once("components/header-navbar.php");
+    ?>
 
     <!-- Hero Section -->
     <section class="relative bg-cover bg-center h-96" style="background-image: url('img/bg.webp');">
@@ -32,7 +32,7 @@
         </div>
     </section>
     <div class="bg-gray-100 min-h-screen p-6">
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid lg:grid-cols-3 gap-3">
 
             <div class="max-w-2xl mx-auto space-y-5">
                 <div class="card-white">
@@ -64,7 +64,7 @@
                             <p class="text-gray-800">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis commodi laudantium soluta obcaecati illum hic! Aperiam porro laudantium nisi quos qui. Similique iure culpa accusamus molestiae rerum fugit et aperiam.</p>
                             <img src="https://via.placeholder.com/500" alt="Post image" class="mt-2 rounded-lg w-full">
                         </div>
-    
+
                         <!-- Post Actions -->
                         <div class="mt-4 flex items-center justify-between">
                             <button class="btn-blue-500"><i class="text-red-400 fa-solid fa-heart"></i></button>

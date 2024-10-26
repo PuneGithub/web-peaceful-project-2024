@@ -12,9 +12,9 @@
 
 <body>
     <!-- header navbar -->
-     <?php 
-     include_once("components/header-navbar.php");
-     ?>
+    <?php
+    include_once("components/header-navbar.php");
+    ?>
 
     <!-- Hero Section -->
     <section class="relative bg-cover bg-center h-96" style="background-image: url('img/bg.webp');">
@@ -32,64 +32,31 @@
         </div>
     </section>
     <div class="bg-gray-100 min-h-screen p-6">
-        <div class="grid grid-cols-3 gap-3">
-
-            <div class="max-w-2xl mx-auto space-y-5">
-                <div class="card-white">
-                    <div class="flex items-center space-x-4">
-                        <h2 class="text-lg font-bold text-gray-500">Category</h2>
-                    </div>
-
-                    <!-- Category Buttons -->
-                    <div class="flex flex-col p-3 space-y-3">
-                        <a href="#" class="btn-blue-500-full">Minecraft 1</a>
-                        <a href="#" class="btn-blue-500-full">Minecraft 2</a>
-                        <a href="#" class="btn-blue-500-full">Minecraft 3</a>
-                    </div>
-                </div>
+        <div class="card-gray-300">
+            <div class="max-w-7xl max-auto text-center">
+                <!-- Heading -->
+                <h2>About Us</h2>
+                <p class="mt-2 text-gray-500 text-lg">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui doloribus cupiditate quod vitae! Debitis aut voluptatem ducimus? Corrupti consequatur nemo tenetur, totam impedit animi! Nemo iure quibusdam provident dicta illum.
+                </p>
             </div>
 
-            <div class="flex flex-col">
-                <!-- Post Feed -->
-                <div class="max-w-2xl mx-auto space-y-6">
-                    <div class="card-white">
-                        <div class="flex items-center space-x-4">
-                            <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
-                            <div>
-                                <h2 class="font-semibold">John Doe</h2>
-                                <span class="text-sm text-gray-500">5 Hours ago</span>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <p class="text-gray-800">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis commodi laudantium soluta obcaecati illum hic! Aperiam porro laudantium nisi quos qui. Similique iure culpa accusamus molestiae rerum fugit et aperiam.</p>
-                            <img src="https://via.placeholder.com/500" alt="Post image" class="mt-2 rounded-lg w-full">
-                        </div>
-    
-                        <!-- Post Actions -->
-                        <div class="mt-4 flex items-center justify-between">
-                            <button class="btn-blue-500"><i class="text-red-400 fa-solid fa-heart"></i></button>
-                            <button class="btn-blue-500">Comment</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Content Section -->
+            <div class="mt-12 max-w-5xl mx-auto flex flex-col md:flex-row bg-white rounded-lg overflow-hidden">
 
-            <div class="max-w-2xl mx-auto space-y-5">
-                <div class="card-white">
-                    <div class="flex items-center space-x-4">
-                        <h2 class="text-lg font-bold text-gray-500">Forums</h2>
-                    </div>
+                <img src="https://via.placeholder.com/600x400" alt="About Us" class="w-full md:w-1/2 object-cover">
 
-                    <!-- Forums Buttons -->
-                    <div class="flex flex-col p-3 space-y-3">
-                        <a href="#" class="btn-blue-500-full">Ask a question about Minecraft</a>
-                        <a href="#" class="btn-blue-500-full">Minecraft 2</a>
-                        <a href="#" class="btn-blue-500-full">Minecraft 3</a>
-                    </div>
+                <!-- Text Section -->
+                <div class="p-8 md:w1/2">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase">Peaceful Network</h3>
+                    <p class="text-gray-600 mt-4">
+                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consequuntur, saepe?
+                    </p>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- footer -->
     <?php include_once("components/footer.php"); ?>

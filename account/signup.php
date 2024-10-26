@@ -32,7 +32,7 @@
                     <input type="password" name="con_password" class="input-form" placeholder="Enter confirm password" required>
                 </div>
                 <div>
-                    <input type="checkbox" name="check" id="">
+                    <input type="checkbox" name="check" id="" required>
                     <label for="check" class="text-sm font-medium">I agree to the Terms and Privacy Policy.</label>
                 </div>
                 <div>
