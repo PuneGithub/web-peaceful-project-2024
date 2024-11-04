@@ -31,10 +31,41 @@
             </div>
         </div>
     </section>
-    <div class="bg-gray-100 min-h-screen p-6">
-        <div class="grid lg:grid-cols-3 gap-3">
 
-            <div class="max-w-2xl mx-auto space-y-5">
+    <div class="bg-gray-100 min-h-screen p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <!-- Tablet -->
+            <div class="flex flex-row sm:flex-col gap-4 lg:hidden">
+                <div class="max-w-2xl mx-auto space-y-5">
+                    <div class="card-white">
+                        <div class="flex items-center space-x-4">
+                            <h2 class="text-lg font-bold text-gray-500">Category</h2>
+                        </div>
+
+                        <!-- Category Buttons -->
+                        <div class="flex flex-col p-3 space-y-3">
+                            <a href="#" class="btn-blue-500-full">Minecraft 1</a>
+                            <a href="#" class="btn-blue-500-full">Minecraft 2</a>
+                            <a href="#" class="btn-blue-500-full">Minecraft 3</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="max-w-2xl mx-auto space-y-5">
+                    <div class="card-white">
+                        <div class="flex items-center space-x-4">
+                            <h2 class="text-lg font-bold text-gray-500">Forums</h2>
+                        </div>
+
+                        <!-- Forums Buttons -->
+                        <div class="flex flex-col p-3 space-y-3">
+                            <a href="#" class="btn-blue-500-full">Ask a question about Minecraft</a>
+                            <a href="#" class="btn-blue-500-full">Minecraft 2</a>
+                            <a href="#" class="btn-blue-500-full">Minecraft 3</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="max-w-2xl mx-auto space-y-5 hidden lg:block">
                 <div class="card-white">
                     <div class="flex items-center space-x-4">
                         <h2 class="text-lg font-bold text-gray-500">Category</h2>
@@ -48,7 +79,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="flex flex-col">
                 <!-- Post Feed -->
                 <div class="max-w-2xl mx-auto space-y-6">
@@ -74,7 +104,7 @@
                 </div>
             </div>
 
-            <div class="max-w-2xl mx-auto space-y-5">
+            <div class="max-w-2xl mx-auto space-y-5 hidden lg:block">
                 <div class="card-white">
                     <div class="flex items-center space-x-4">
                         <h2 class="text-lg font-bold text-gray-500">Forums</h2>
