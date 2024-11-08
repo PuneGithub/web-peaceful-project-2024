@@ -17,7 +17,7 @@
     <!-- header navbar -->
     <div class="flex items-center justify-center h-screen">
         <div class="card-white w-full max-w-md">
-            <h2 class="text-xl font-semibold text-center">Sign In</h2>
+            <h2 class="text-xl font-semibold text-center">LOGIN</h2>
             <form action="" class="space-y-4">
                 <div>
                     <label for="email" class="block text-sm font-medium">Email</label>
@@ -31,7 +31,7 @@
                     <a href="forgot_password.php" class="text-blue-400">Forgot password</a>
                 </div>
                 <div>
-                    <input type="submit" class="btn-green-500" value="Sign Up">
+                    <input type="submit" class="btn-green-500" value="LOGIN">
                 </div>
             </form>
         </div>

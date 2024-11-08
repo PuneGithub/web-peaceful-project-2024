@@ -1,3 +1,8 @@
+<?php
+//connect database
+require_once ("system/conn.php");
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,7 +32,7 @@
             <p class="text-lg mb-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, consectetur.</p>
             <div class="space-x-4">
                 <a href="/web_peaceful_project_2024/account/signup.php" class="btn-blue-400-outline">SIGN UP</a>
-                <a href="/web_peaceful_project_2024/account/signin.php" class="btn-green-400-outline">SIGN IN</a>
+                <a href="/web_peaceful_project_2024/account/login.php" class="btn-green-400-outline">LOGIN</a>
             </div>
         </div>
     </section>

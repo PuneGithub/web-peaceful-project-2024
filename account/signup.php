@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,7 +21,33 @@
     <div class="flex items-center justify-center h-screen">
         <div class="card-white w-full max-w-md">
             <h2 class="text-xl font-semibold text-center">Sign Up</h2>
-            <form action="" class="space-y-4">
+            <?php
+            //ตรวจสอบ form
+            if ($_SERVER['REQUEST_METHOD'] === "POST") {
+                require_once('../system/registration.php');
+
+                $username = htmlspecialchars(str_replace(' ', '', $_POST['username']));
+                $email = htmlspecialchars(str_replace(' ', '', $_POST['email']));
+                $password = $_POST['password'];
+                $con_password = $_POST['con_password'];
+
+                if ($password == $con_password) {
+                    $result = signup($username, $password, $email);
+                    if ($result === true) {
+                        echo "<div class='alert-green'><i class='fa-regular fa-circle-check'></i> Registration successful!</div>";
+                    } else {
+                        echo "<div class='alert-danger'>" . htmlspecialchars($result) . "</div>";
+                    }
+                } else {
+                    echo "<div class='alert-danger'>Passwords do not match</div>";
+                }
+            }
+            ?>
+            <form action="" method="post" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium">Username</label>
+                    <input type="username" name="username" class="input-form" placeholder="Enter username" required>
+                </div>
                 <div>
                     <label for="email" class="block text-sm font-medium">Email</label>
                     <input type="email" name="email" class="input-form" placeholder="Enter email" required>
@@ -32,7 +61,7 @@
                     <input type="password" name="con_password" class="input-form" placeholder="Enter confirm password" required>
                 </div>
                 <div>
-                    <input type="checkbox" name="check" id="" required>
+                    <input type="checkbox" name="check" required>
                     <label for="check" class="text-sm font-medium">I agree to the Terms and Privacy Policy.</label>
                 </div>
                 <div>

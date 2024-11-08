@@ -16,7 +16,7 @@
         <!-- Sign Up Button -->
         <div class="hidden sm:block">
             <a href="/web_peaceful_project_2024/account/signup.php" class="btn-blue-500 mr-2">SIGN UP</a>
-            <a href="/web_peaceful_project_2024/account/signin.php" class="btn-green-500">SIGN IN</a>
+            <a href="/web_peaceful_project_2024/account/login.php" class="btn-green-500">LOGIN</a>
         </div>
 
         <!-- Hamburger Menu Mobile -->
@@ -36,7 +36,7 @@
             <a href="#" class="block font-semibold text-gray-300 hover:text-white py-2">ABOUT</a>
             <div class="flex flex-col gap-3">
                 <a href="" class="btn-blue-500">SIGN UP</a>
-                <a href="" class="btn-green-500">SIGN IN</a>
+                <a href="" class="btn-green-500">LOGIN</a>
             </div>
         </div>
 
