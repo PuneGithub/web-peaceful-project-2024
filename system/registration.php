@@ -1,10 +1,12 @@
 <?php
 require_once("conn.php");
 
+$database = new Database();
+$conn = $database->getConn();
+
 function signup($username, $password, $email)
 {
-    $database = new Database();
-    $conn = $database->getConn();
+    global $conn;
 
     if (strlen($password) < 6) {
         return "Password must have at least 6 characters.";
@@ -42,5 +44,28 @@ function signup($username, $password, $email)
         return true;
     } catch (Throwable $th) {
         return "เกิดข้อผิดพลาด: " . $th->getMessage();
+    }
+}
+
+function login($identifier , $password)
+{
+    global $conn;
+    try {
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = :identifier OR username = :identifier");
+        $stmt->bindParam(":identifier", $identifier);
+        $stmt->execute();
+
+        if ($stmt->rowCount() == 1) {
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (password_verify($password, $user['password'])) {
+                
+                $_SESSION['username'] = $user['username'];
+                return true;
+            }
+        } else {
+            return "Invalid password";
+        }
+    } catch (Throwable $th) {
+        return "เกิดข้อผิดพลาด:" . $th->getMessage();
     }
 }
