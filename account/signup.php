@@ -34,7 +34,7 @@ session_start();
                 if ($password == $con_password) {
                     $result = signup($username, $password, $email);
                     if ($result === true) {
-                        echo "<div class='alert-green'><i class='fa-regular fa-circle-check'></i> Registration successful!</div>";
+                        echo "<div class='alert-green'><i class='fa-regular fa-circle-check'></i> Registration successful! <b><a href='../account/login.php'>Click to login</a></div></b>";
                     } else {
                         echo "<div class='alert-danger'>" . htmlspecialchars($result) . "</div>";
                     }

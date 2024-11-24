@@ -21,10 +21,24 @@ session_start();
     <div class="flex items-center justify-center h-screen">
         <div class="card-white w-full max-w-md">
             <h2 class="text-xl font-semibold text-center">LOGIN</h2>
-            <form action="" class="space-y-4">
+            <?php
+            require_once("../system/registration.php");
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $identifier = $_POST['identifier']; //email or username
+                $password = $_POST['password'];
+
+                //เรียกใช้ function login
+                $result = login($identifier, $password);
+                if ($result !== true) {
+                    echo "<div class='alert-danger text-center'>" . htmlspecialchars($result) . "</div>";
+                }
+            }
+            ?>
+            <form action="" method="post" class="space-y-4">
                 <div>
-                    <label for="email" class="block text-sm font-medium">Email</label>
-                    <input type="email" name="email" class="input-form" placeholder="Enter email" required>
+                    <label for="identifier" class="block text-sm font-medium">Email or Username</label>
+                    <input type="text" name="identifier" class="input-form" placeholder="Enter email or username" required>
                 </div>
                 <div>
                     <label for="password" class="block text-sm font-medium">Password</label>
