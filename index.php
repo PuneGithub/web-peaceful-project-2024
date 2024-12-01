@@ -1,6 +1,6 @@
 <?php
 //connect database
-require_once ("system/conn.php");
+require_once("system/conn.php");
 session_start();
 ?>
 <!DOCTYPE html>
@@ -31,8 +31,14 @@ session_start();
             <h1 class="text-4xl font-bold mb-4">Minecraft Peaceful Network</h1>
             <p class="text-lg mb-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, consectetur.</p>
             <div class="space-x-4">
-                <a href="/web_peaceful_project_2024/account/signup.php" class="btn-blue-400-outline">SIGN UP</a>
-                <a href="/web_peaceful_project_2024/account/login.php" class="btn-green-400-outline">LOGIN</a>
+                <?php
+                if (isset($_SESSION['userId'])) {
+                ?>
+                    <h4 class="font-bold text-2xl">Welcome! <?php echo $_SESSION['username']; ?></h4>
+                <?php } else { ?>
+                    <a href="/web_peaceful_project_2024/account/signup.php" class="btn-blue-400-outline">SIGN UP</a>
+                    <a href="/web_peaceful_project_2024/account/login.php" class="btn-green-400-outline">LOGIN</a>
+                <?php } ?>
             </div>
         </div>
     </section>

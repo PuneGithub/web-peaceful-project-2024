@@ -1,6 +1,11 @@
 <?php
 session_start();
 require_once '../system/conn.php';
+
+//Check user login
+if (!isset($_SESSION['userId'])) {
+    header("Location: ./login.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,24 +34,24 @@ require_once '../system/conn.php';
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="username" class="block text-sm font-medium">Username</label>
-                        <input type="text" class="input-form" value="user" disabled>
+                        <input type="text" class="input-form" value="<?php echo $_SESSION['username']; ?>" disabled>
                     </div>
                     <div>
                         <label for="email" class="block text-sm font-medium">Email</label>
-                        <input type="text" class="input-form" value="test@gmail.com" disabled>
+                        <input type="text" class="input-form" value="<?php echo $_SESSION['email']; ?>" disabled>
                     </div>
                 </div>
                 <div>
                     <label for="oldPassword">Old Password</label>
-                    <input type="password" name="oldPassword" class="input-form" placeholder="Enter old password">
+                    <input type="password" name="oldPassword" class="input-form" placeholder="Enter old password" required>
                 </div>
                 <div>
                     <label for="newPassword">New Password</label>
-                    <input type="password" name="newPassword" class="input-form" placeholder="Enter new password">
+                    <input type="password" name="newPassword" class="input-form" placeholder="Enter new password" required>
                 </div>
                 <div>
                     <label for="conPassword">Confirm Password</label>
-                    <input type="password" name="conPassword" class="input-form" placeholder="Enter confirm password">
+                    <input type="password" name="conPassword" class="input-form" placeholder="Enter confirm password" required>
                 </div>
                 <div>
                     <input type="submit" class="btn-blue-500" value="SAVE">

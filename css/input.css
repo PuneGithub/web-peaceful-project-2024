@@ -9,6 +9,13 @@
     .btn-green-500 {
         @apply bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600
     }
+    .btn-cyan-500 {
+        @apply bg-cyan-400 text-white px-4 py-2 rounded-md hover:bg-cyan-600
+    }
+    .btn-red-500 {
+        @apply bg-red-400 text-white px-4 py-2 rounded-md hover:bg-red-600
+    }
+
     .btn-blue-400-outline {
         @apply border-2 border-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-500
     }

@@ -18,7 +18,20 @@
     <div class="flex items-center justify-center h-screen">
         <div class="card-white w-full max-w-md">
             <h2 class="text-xl font-semibold text-center">Forgot Password</h2>
-            <form action="../system/sendEmail.php" method="post" class="space-y-4">
+            <?php
+            if ($_SERVER['REQUEST_METHOD'] === "POST") {
+                require_once ('../system/resetCode.php');
+                $email = htmlspecialchars(str_replace(' ', '', $_POST['email']));
+
+                $result = forgotPassword($email);
+                if ($result === true) {
+                    echo "<div class='alert-green'><i class='fa-regular fa-circle-check'></i> The system has sent a password reset link to your email.</div>";
+                } else {
+                    echo "<div class='alert-danger'>" . htmlspecialchars($result) . "</div>";
+                }
+            }
+            ?>
+            <form action="" method="post" class="space-y-4">
                 <div>
                     <label for="email" class="block text-sm font-medium">Email</label>
                     <input type="email" name="email" class="input-form" placeholder="Enter email" required>
