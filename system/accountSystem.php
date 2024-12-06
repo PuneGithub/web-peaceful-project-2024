@@ -1,10 +1,8 @@
 <?php
 require_once("conn.php");
 
-function uploadProfileImage()
+function uploadProfileImage($conn)
 {
-
-    session_start();
     if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_FILES['profileImage'])) {
         $uploadPath = "../img/profile_users/";
         $uploadFile = $uploadPath . basename($_FILES['profileImage']['name']);
@@ -20,16 +18,30 @@ function uploadProfileImage()
             return "File size exceeds the maximum limit of 3 MB.";
         }
 
-        $newFileImage = "profile_" . time() . $fileType;
+        $newFileImage = "profile_" . time() . '.' . $fileType;
         $uploadFile = $uploadPath . $newFileImage;
 
         if (move_uploaded_file($_FILES['profileImage']['tmp_name'], $uploadFile)) {
+            $imagePath = $newFileImage;
+            try {
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $sql = "UPDATE users SET profileImage = :profileImage WHERE userId = :userId";
 
-            $sql = "UPDATE users ";
-        
-            $_SESSION['profileImage'] = $uploadFile;
-            header("Location: account.php?upload=success");
-            exit;
+                $stmt = $conn->prepare($sql);
+                $stmt->execute([
+                    ':profileImage' => $imagePath,
+                    ':userId' => $_SESSION['userId']
+                ]);
+            
+                $_SESSION['profileImage'] = $imagePath;
+
+                $_SESSION['message'] = "Upload successful!";
+                
+                header("Location: account.php");
+                exit;
+            } catch (PDOException $error) {
+                return "Database error: " . $error->getMessage();
+            }
         } else {
             return "Error uploading file.";
         }

@@ -28,10 +28,34 @@ if (!isset($_SESSION['userId'])) {
         <div class="card-white w-full max-w-md">
             <h2 class="text-xl font-semibold text-center">Account</h2>
             <?php require_once '../system/accountSystem.php' ?>
+            <?php
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profileImage'])) {
+                $result = uploadProfileImage($conn);
+                if ($result !== true) {
+                    echo "<div class='alert-danger text-center'>" . htmlspecialchars($result) . "</div>";
+                }
+            }
+
+            try {
+                $sql = "SELECT profileImage FROM users WHERE userId = :userId";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute([':userId' => $_SESSION['userId']]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                $profileImage = $user['profileImage'] ?? 'default-profile.webp'; // หากไม่มีรูป ใช้ค่าเริ่มต้น
+            } catch (PDOException $error) {
+                die("Database error: " . $error->getMessage());
+            }
+
+            $message = $_SESSION['message'] ?? null;
+            unset($_SESSION['message']);
+            ?>
+            <?php if ($message): ?>
+                <div class="alert-green text-center"><?php echo htmlspecialchars($message); ?></div>
+            <?php endif; ?>
             <!-- Profile -->
             <form action="" method="post" enctype="multipart/form-data">
                 <div class="relative mb-4">
-                    <img src="<?php echo $_SESSION['profileImage'] ?? '../img/profile_users/default-profile.webp'; ?>"
+                    <img src="../img/profile_users/<?php echo htmlspecialchars($profileImage); ?>"
                         alt="Profile Image"
                         class="w-32 h-32 rounded-full object-cover border-4 border-blue-500">
 

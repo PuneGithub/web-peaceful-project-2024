@@ -35,6 +35,7 @@ require_once '../system/conn.php';
                     echo "<div class='alert-danger text-center'>" . htmlspecialchars($result) . "</div>";
                 }
             }
+
             ?>
             <form action="" method="post" class="space-y-4">
                 <div>
