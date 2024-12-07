@@ -48,3 +48,8 @@ function uploadProfileImage($conn)
         
     }
 }
+
+function changePassword($conn , $oldPassword , $newPassword)
+{
+
+}

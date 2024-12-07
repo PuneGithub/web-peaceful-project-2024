@@ -53,23 +53,25 @@ if (!isset($_SESSION['userId'])) {
                 <div class="alert-green text-center"><?php echo htmlspecialchars($message); ?></div>
             <?php endif; ?>
             <!-- Profile -->
-            <form action="" method="post" enctype="multipart/form-data">
-                <div class="relative mb-4">
-                    <img src="../img/profile_users/<?php echo htmlspecialchars($profileImage); ?>"
-                        alt="Profile Image"
-                        class="w-32 h-32 rounded-full object-cover border-4 border-blue-500">
-
-                    <label for="profileImage"
-                        class="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer">
-                        <i class="fa fa-camera"></i>
-                    </label>
-                    <input type="file" id="profileImage" name="profileImage" class="hidden" accept="image/*">
-                </div>
-
-                <div>
-                    <input type="submit" class="btn-blue-500" value="Upload Image">
-                </div>
-            </form>
+            <div class="flex items-center justify-center">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <div class="relative mb-4">
+                        <img src="../img/profile_users/<?php echo htmlspecialchars($profileImage); ?>"
+                            alt="Profile Image"
+                            class="w-32 h-32 rounded-full object-cover border-4 border-blue-500">
+    
+                        <label for="profileImage"
+                            class="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer">
+                            <i class="fa fa-camera"></i>
+                        </label>
+                        <input type="file" id="profileImage" name="profileImage" class="hidden" accept="image/*">
+                    </div>
+    
+                    <div>
+                        <input type="submit" class="btn-blue-500" value="Upload Image">
+                    </div>
+                </form>
+            </div>
             <form action="" method="post" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
