@@ -49,7 +49,51 @@ function uploadProfileImage($conn)
     }
 }
 
-function changePassword($conn , $oldPassword , $newPassword)
+function changePassword($conn , $userId, $oldPassword , $newPassword, $conPassword)
 {
+    if ($newPassword !== $conPassword) {
+        return "New password and confirm password do not match.";
+    }
 
+    if (strlen($newPassword) < 6) {
+        return "Password must have at least 6 characters.";
+    }
+
+    if (!preg_match('/[a-zA-Z]/', $newPassword)) {
+        return "Password must contain at least on letter (a-z or A-Z)";
+    }
+    try {
+
+        //Check Password
+        $sql = "SELECT password FROM users WHERE userId = :userId";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        if ($stmt->rowCount() === 0) {
+            return "User not found";
+        }
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!password_verify($oldPassword, $user['password'])) {
+            return "Incorrect old password";
+        }
+
+        $hashPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        //update password
+        $updateSql = "UPDATE users SET password = :password WHERE userId = :userId";
+        $updateStmt = $conn->prepare($updateSql);
+        $updateStmt->bindParam(':password', $hashPassword, PDO::PARAM_STR);
+        $updateStmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+
+        if ($updateStmt->execute()) {
+            return "Password changed successfully";
+        } else {
+            return "Failed to change password.";
+        }
+    } catch (PDOException $error) {
+        return "Error: " . $error->getMessage();
+    }
 }

@@ -6,6 +6,7 @@ require_once '../system/conn.php';
 if (!isset($_SESSION['userId'])) {
     header("Location: ./login.php");
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,19 +60,42 @@ if (!isset($_SESSION['userId'])) {
                         <img src="../img/profile_users/<?php echo htmlspecialchars($profileImage); ?>"
                             alt="Profile Image"
                             class="w-32 h-32 rounded-full object-cover border-4 border-blue-500">
-    
+
                         <label for="profileImage"
                             class="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer">
                             <i class="fa fa-camera"></i>
                         </label>
                         <input type="file" id="profileImage" name="profileImage" class="hidden" accept="image/*">
                     </div>
-    
+
                     <div>
                         <input type="submit" class="btn-blue-500" value="Upload Image">
                     </div>
                 </form>
             </div>
+            <?php
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['oldPassword'], $_POST['newPassword'], $_POST['conPassword'])) {
+                $oldPassword = $_POST['oldPassword'];
+                $newPassword = $_POST['newPassword'];
+                $conPassword = $_POST['conPassword'];
+            
+                $resultPassword = changePassword($conn, $_SESSION['userId'], $oldPassword, $newPassword, $conPassword);
+                if ($resultPassword === "Password changed successfully") {
+                    $_SESSION['msgSuccess'] = $resultPassword;
+                    exit();
+                } else {
+                    $msgError = $resultPassword;
+                }
+            }
+
+            if (isset($msgError)):
+            ?>
+                <div class="alert-danger text-center"><?php echo htmlspecialchars($msgError); ?></div>
+            <?php endif; ?>
+            <?php if (isset(($_SESSION['msgSuccess']))):
+            ?>
+            <div class="alert-green text-center"><?php echo htmlspecialchars($_SESSION['msgSuccess']); ?></div>
+            <?php endif; ?>
             <form action="" method="post" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
