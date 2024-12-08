@@ -9,6 +9,7 @@ if (!isset($_SESSION['userId'])) {
     exit();
 }
 
+//Change Password
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['oldPassword'], $_POST['newPassword'], $_POST['conPassword'])) {
     $oldPassword = $_POST['oldPassword'];
     $newPassword = $_POST['newPassword'];
@@ -22,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['oldPassword'], $_POST
     }
 }
 
+//Profile Image
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profileImage'])) {
     $result = uploadProfileImage($conn);
     if ($result === "Upload successful!") {
