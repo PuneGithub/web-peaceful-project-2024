@@ -1,11 +1,46 @@
 <?php
 session_start();
 require_once '../system/conn.php';
+require_once '../system/accountSystem.php';
 
 //Check user login
 if (!isset($_SESSION['userId'])) {
     header("Location: ./login.php");
+    exit();
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['oldPassword'], $_POST['newPassword'], $_POST['conPassword'])) {
+    $oldPassword = $_POST['oldPassword'];
+    $newPassword = $_POST['newPassword'];
+    $conPassword = $_POST['conPassword'];
+
+    $resultPassword = changePassword($conn, $_SESSION['userId'], $oldPassword, $newPassword, $conPassword);
+    if ($resultPassword === "Password changed successfully") {
+        $msgSuccess = $resultPassword;
+    } else {
+        $msgError = $resultPassword;
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profileImage'])) {
+    $result = uploadProfileImage($conn);
+    if ($result === "Upload successful!") {
+        $msgImagesuccess = $result;
+    } else {
+        $msgImageerror = $result;
+    }
+}
+
+try {
+    $sql = "SELECT profileImage FROM users WHERE userId = :userId";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([':userId' => $_SESSION['userId']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $profileImage = $user['profileImage'] ?? 'default-profile.webp'; // หากไม่มีรูป ใช้ค่าเริ่มต้น
+} catch (PDOException $error) {
+    die("Database error: " . $error->getMessage());
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -23,35 +58,15 @@ if (!isset($_SESSION['userId'])) {
 <body style="background-image: url('../img/bg.webp');">
 
     <?php include_once("../components/header-navbar.php"); ?>
-
     <!-- header navbar -->
     <div class="flex items-center justify-center h-screen">
         <div class="card-white w-full max-w-md">
             <h2 class="text-xl font-semibold text-center">Account</h2>
-            <?php require_once '../system/accountSystem.php' ?>
-            <?php
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profileImage'])) {
-                $result = uploadProfileImage($conn);
-                if ($result !== true) {
-                    echo "<div class='alert-danger text-center'>" . htmlspecialchars($result) . "</div>";
-                }
-            }
-
-            try {
-                $sql = "SELECT profileImage FROM users WHERE userId = :userId";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute([':userId' => $_SESSION['userId']]);
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                $profileImage = $user['profileImage'] ?? 'default-profile.webp'; // หากไม่มีรูป ใช้ค่าเริ่มต้น
-            } catch (PDOException $error) {
-                die("Database error: " . $error->getMessage());
-            }
-
-            $message = $_SESSION['message'] ?? null;
-            unset($_SESSION['message']);
-            ?>
-            <?php if ($message): ?>
-                <div class="alert-green text-center"><?php echo htmlspecialchars($message); ?></div>
+            <?php if (isset($msgImagesuccess)): ?>
+                <div class="alert-green text-center"><?php echo htmlspecialchars($msgImagesuccess); ?></div>
+            <?php endif; ?>
+            <?php if (isset($msgImageerror)): ?>
+                <div class="alert-danger text-center"><?php echo htmlspecialchars($msgImageerror); ?></div>
             <?php endif; ?>
             <!-- Profile -->
             <div class="flex items-center justify-center">
@@ -74,27 +89,14 @@ if (!isset($_SESSION['userId'])) {
                 </form>
             </div>
             <?php
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['oldPassword'], $_POST['newPassword'], $_POST['conPassword'])) {
-                $oldPassword = $_POST['oldPassword'];
-                $newPassword = $_POST['newPassword'];
-                $conPassword = $_POST['conPassword'];
-            
-                $resultPassword = changePassword($conn, $_SESSION['userId'], $oldPassword, $newPassword, $conPassword);
-                if ($resultPassword === "Password changed successfully") {
-                    $_SESSION['msgSuccess'] = $resultPassword;
-                    exit();
-                } else {
-                    $msgError = $resultPassword;
-                }
-            }
 
             if (isset($msgError)):
             ?>
                 <div class="alert-danger text-center"><?php echo htmlspecialchars($msgError); ?></div>
             <?php endif; ?>
-            <?php if (isset(($_SESSION['msgSuccess']))):
+            <?php if (isset($msgSuccess)):
             ?>
-            <div class="alert-green text-center"><?php echo htmlspecialchars($_SESSION['msgSuccess']); ?></div>
+                <div class="alert-green text-center"><?php echo htmlspecialchars($msgSuccess); ?></div>
             <?php endif; ?>
             <form action="" method="post" class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">

@@ -35,9 +35,8 @@ function uploadProfileImage($conn)
             
                 $_SESSION['profileImage'] = $imagePath;
 
-                $_SESSION['message'] = "Upload successful!";
+                return "Upload successful!";
                 
-                header("Location: account.php");
                 exit;
             } catch (PDOException $error) {
                 return "Database error: " . $error->getMessage();
