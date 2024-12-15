@@ -13,7 +13,6 @@ session_start();
     <link rel="stylesheet" href="css/output.css">
     <title>Peaceful Network</title>
 </head>
-<script src="js/script.js"></script>
 
 <body>
     <!-- header navbar -->
@@ -91,6 +90,26 @@ session_start();
                 </div>
             </div>
             <div class="flex flex-col">
+                <!-- Form Post -->
+                <div class="w-full max-w-md mx-auto">
+                    <!-- Toggle Post Button -->
+                    <button id="toggleButton" class="btn-blue-500 w-full">
+                        Create Post
+                    </button>
+
+                    <form action="" id="postForm" method="post" class="hidden bg-white shadow-md rounded m-4" enctype="multipart/form-data">
+                        <h2 class="text-lg font-bold mb-4 text-center">Post Form</h2>
+
+                        <div class="mb-4">
+                            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
+                            <input type="text" name="title" class="input-form">
+                        </div>
+                        <div class="mb-4">
+                            <label for="Content" class="block text-gray-700 text-sm font-bold mb-2">Content</label>
+                            <input type="text" name="Content" class="input-form">
+                        </div>
+                    </form>
+                </div>
                 <!-- Post Feed -->
                 <div class="max-w-2xl mx-auto space-y-6">
                     <div class="card-white">
@@ -134,6 +153,7 @@ session_start();
 
     <!-- footer -->
     <?php include_once("components/footer.php"); ?>
+    <script src="js/script.js"></script>
 </body>
 
 </html>
