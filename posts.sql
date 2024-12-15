@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 15, 2024 at 12:12 PM
+-- Generation Time: Dec 15, 2024 at 12:30 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -30,13 +30,13 @@ SET time_zone = "+00:00";
 CREATE TABLE `posts` (
   `postId` int NOT NULL,
   `userId` int NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `content` text NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `createdAt` datetime NOT NULL,
   `categoryId` int NOT NULL,
   `viewCount` int NOT NULL,
-  `imagePost` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `imagePost` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
