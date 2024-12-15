@@ -14,7 +14,6 @@ class Database {
 
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            echo "เชื่อมต่อฐานข้อมูลแล้ว";
         } catch (\Throwable $e) {
             echo "การเชื่อมต่อล้มเหลว: " . $e->getMessage();
             exit;

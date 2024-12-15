@@ -1,0 +1,12 @@
+<!-- Sidebar Menu -->
+<aside class="w-64 bg-gray-800 text-white h-screen">
+    <div class="p-6">
+        <h1 class="text-2xl font-bold mb-6">Peaceful Network</h1>
+    </div>
+    <ul>
+        <li class="mb-4"><a href="../administrator/dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded">Dashboard</a></li>
+        <li class="mb-4"><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded">Users</a></li>
+        <li class="mb-4"><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded">Settings</a></li>
+        <li class="mb-4"><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded">Logout</a></li>
+    </ul>
+</aside>

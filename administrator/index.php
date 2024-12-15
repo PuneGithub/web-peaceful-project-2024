@@ -28,8 +28,8 @@ session_start();
                 $password = $_POST['password'];
                 $result = loginAdmin($conn, $identifier, $password);
 
-                if ($result) {
-                    echo $result;
+                if ($result !== true) {
+                    echo "<div class='alert-danger text-center'>" . htmlspecialchars($result) . "</div>";
                 }
             }
 

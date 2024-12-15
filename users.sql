@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 08, 2024 at 12:00 PM
+-- Generation Time: Dec 15, 2024 at 12:14 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -33,20 +33,20 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `email` varchar(100) NOT NULL,
   `profileImage` varchar(255) NOT NULL,
-  `verifyEmail` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `resetCode` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `verifyEmail` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `resetCode` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `createDate` date NOT NULL,
-  `verifyStatus` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'offline',
+  `verifyStatus` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'offline',
   `role` varchar(20) NOT NULL DEFAULT 'user'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`userId`, `username`, `password`, `email`, `profileImage`, `verifyEmail`, `resetCode`, `createDate`, `verifyStatus`, `status`, `role`) VALUES
-(22, 'test', '$2y$10$JJ.4uiOXdS40A3sKCVCCQuq1IiejtAu/w6jrlG/w1ggp.FQJmb506', 'dev.peaceful@gmail.com', 'profile_1733493582.png', NULL, NULL, '2024-11-23', 'verified', 'offline', 'user');
+(22, 'test', '$2y$10$gteIkGR5TGNcSAYOFRLNne8ts5.g.RIxhUaq5pSrPuiuttbLHpeti', 'dev.peaceful@gmail.com', 'profile_1733493582.png', NULL, NULL, '2024-11-23', 'verified', 'offline', 'admin');
 
 --
 -- Indexes for dumped tables
