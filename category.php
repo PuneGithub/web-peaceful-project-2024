@@ -3,7 +3,12 @@
 require_once("system/conn.php");
 require_once("system/postSystem.php");
 session_start();
-
+if (!isset($_GET['categoryId']) || !is_numeric($_GET['categoryId'])) {
+    header('Location: /index.php');
+    exit();
+}
+$categoryId = $_GET['categoryId'];
+$getPostsByCategory = getPostsByCategory($conn, $categoryId);
 $getCategory = getCategory($conn);
 ?>
 <!DOCTYPE html>
@@ -164,9 +169,8 @@ $getCategory = getCategory($conn);
                 <!-- Post Feed -->
                 <div class="max-w-2xl mx-auto space-y-6">
                     <?php
-                    $fetchPosts = fetchAllPosts($conn);
-                    if (!empty($fetchPosts)) {
-                        foreach ($fetchPosts as $post) {
+                    if (!empty($getPostsByCategory)) {
+                        foreach ($getPostsByCategory as $post) {
                     ?>
                             <div class="card-white">
                                 <div class="flex items-center space-x-4">

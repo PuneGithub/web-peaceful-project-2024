@@ -7,10 +7,10 @@
 
         <!-- Menu Links Desktop -->
         <div class="hidden sm:flex space-x-6">
-            <a href="/web_peaceful_project_2024/index.php" class="font-semibold text-gray-300 hover:text-white">HOME</a>
-            <a href="/web_peaceful_project_2024/blog.php" class="font-semibold text-gray-300 hover:text-white">BLOG</a>
-            <a href="/web_peaceful_project_2024/resources.php" class="font-semibold text-gray-300 hover:text-white">RESOURCES</a>
-            <a href="/web_peaceful_project_2024/about.php" class="font-semibold text-gray-300 hover:text-white">ABOUT</a>
+            <a href="/index.php" class="font-semibold text-gray-300 hover:text-white">HOME</a>
+            <a href="./blog.php" class="font-semibold text-gray-300 hover:text-white">BLOG</a>
+            <a href="./resources.php" class="font-semibold text-gray-300 hover:text-white">RESOURCES</a>
+            <a href="./about.php" class="font-semibold text-gray-300 hover:text-white">ABOUT</a>
         </div>
 
         <!-- Sign Up Button -->
@@ -20,12 +20,12 @@
             ?>
                 <div class="hidden sm:flex items-center space-x-4">
                     <p class="font-bold text-lg text-white"><?php echo $_SESSION['username']; ?></p>
-                    <a href="/web_peaceful_project_2024/account/account.php" class="btn-cyan-500">Account</a>
-                    <a href="/web_peaceful_project_2024/account/logout.php" class="btn-red-500">Logout</a>
+                    <a href="/account/account.php" class="btn-cyan-500">Account</a>
+                    <a href="/account/logout.php" class="btn-red-500">Logout</a>
                 </div>
             <?php } else { ?>
-                <a href="/web_peaceful_project_2024/account/signup.php" class="btn-blue-500 mr-2">SIGN UP</a>
-                <a href="/web_peaceful_project_2024/account/login.php" class="btn-green-500">LOGIN</a>
+                <a href="./account/signup.php" class="btn-blue-500 mr-2">SIGN UP</a>
+                <a href="./account/login.php" class="btn-green-500">LOGIN</a>
             <?php } ?>
         </div>
 
@@ -48,13 +48,13 @@
             ?>
                 <div class="flex flex-col gap-3">
                     <p class="font-bold text-lg text-white"><?php echo $_SESSION['username']; ?></p>
-                    <a href="/web_peaceful_project_2024/account/account.php" class="btn-cyan-500">Account</a>
-                    <a href="/web_peaceful_project_2024/account/logout.php" class="btn-red-500">Logout</a>
+                    <a href="./account/account.php" class="btn-cyan-500">Account</a>
+                    <a href="./account/logout.php" class="btn-red-500">Logout</a>
                 </div>
             <?php } else {  ?>
                 <div class="flex flex-col gap-3">
-                    <a href="" class="btn-blue-500">SIGN UP</a>
-                    <a href="" class="btn-green-500">LOGIN</a>
+                    <a href="./account/signup.php" class="btn-blue-500">SIGN UP</a>
+                    <a href="./account/login.php" class="btn-green-500">LOGIN</a>
                 </div>
             <?php } ?>
         </div>

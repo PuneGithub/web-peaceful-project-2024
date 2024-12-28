@@ -1,7 +1,7 @@
 <?php
 class Database {
     private $host = "localhost";
-    private $dbname = "koonpune_peaceful_network";
+    private $dbname = "peaceful_network";
     private $username = "root";
     private $password = "";
     private $conn;
