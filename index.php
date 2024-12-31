@@ -38,8 +38,8 @@ $getCategory = getCategory($conn);
                 ?>
                     <h4 class="font-bold text-2xl">Welcome! <?php echo $_SESSION['username']; ?></h4>
                 <?php } else { ?>
-                    <a href="./account/signup.php" class="btn-blue-400-outline">SIGN UP</a>
-                    <a href="./account/login.php" class="btn-green-400-outline">LOGIN</a>
+                    <a href="/account/signup.php" class="btn-blue-400-outline">SIGN UP</a>
+                    <a href="/account/login.php" class="btn-green-400-outline">LOGIN</a>
                 <?php } ?>
             </div>
         </div>
@@ -140,8 +140,8 @@ $getCategory = getCategory($conn);
                             </div>
                             <div class="mb-4">
                                 <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Select Category</label>
-                                <select name="categoryId" id="categoryId" class="input-form">
-                                    <option selected>Select Category</option>
+                                <select name="categoryId" id="categoryId" class="input-form" required>
+                                    <option value="" disabled selected>Select Category</option>
                                     <option value="1">Minecraft Java Edition</option>
                                     <option value="2">Minecraft Bedrock Edition</option>
                                     <option value="3">Promote Minecraft Server</option>
@@ -162,36 +162,38 @@ $getCategory = getCategory($conn);
                     <br>
                 <?php } ?>
                 <!-- Post Feed -->
-                <div class="max-w-2xl mx-auto space-y-6">
-                    <?php
-                    $fetchPosts = fetchAllPosts($conn);
-                    if (!empty($fetchPosts)) {
-                        foreach ($fetchPosts as $post) {
-                    ?>
-                            <div class="card-white">
-                                <div class="flex items-center space-x-4">
-                                    <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
-                                    <div>
-                                        <h2 class="font-semibold"><?php echo $post['username']; ?></h2>
-                                        <span class="text-sm text-gray-500"><?php echo $post['createdAt']; ?></span>
+                <div class="space-y-6">
+                    <div class="max-w-4xl mx-auto p-4 space-y-4">
+                        <?php
+                        $fetchPosts = fetchAllPosts($conn);
+                        if (!empty($fetchPosts)) {
+                            foreach ($fetchPosts as $post) {
+                        ?>
+                                <div class="card-white">
+                                    <div class="flex items-center space-x-4">
+                                        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
+                                        <div>
+                                            <h2 class="font-semibold"><?php echo $post['username']; ?></h2>
+                                            <span class="text-sm text-gray-500"><?php echo $post['createdAt']; ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <p class="text-gray-800"><?php echo $post['title']; ?></p>
+                                        <?php if (!empty($post['imagePost']) && file_exists("img/posts_image/" . $post['imagePost'])): ?>
+                                            <img src="img/posts_image/<?php echo $post['imagePost']; ?>" alt="Post image" class="mt-2 rounded-lg w-full">
+                                        <?php endif; ?>
+                                        <p class="text-gray-800"><?php echo $post['content']; ?></p>
+                                    </div>
+    
+                                    <!-- Post Actions -->
+                                    <div class="mt-4 flex items-center justify-between">
+                                        <button class="btn-blue-500"><i class="text-red-400 fa-solid fa-heart"></i></button>
+                                        <button class="btn-blue-500">Comment</button>
                                     </div>
                                 </div>
-                                <div class="mt-4">
-                                    <p class="text-gray-800"><?php echo $post['title']; ?></p>
-                                    <?php if (!empty($post['imagePost']) && file_exists("img/posts_image/" . $post['imagePost'])): ?>
-                                        <img src="img/posts_image/<?php echo $post['imagePost']; ?>" alt="Post image" class="mt-2 rounded-lg w-full">
-                                    <?php endif; ?>
-                                    <p class="text-gray-800"><?php echo $post['content']; ?></p>
-                                </div>
-
-                                <!-- Post Actions -->
-                                <div class="mt-4 flex items-center justify-between">
-                                    <button class="btn-blue-500"><i class="text-red-400 fa-solid fa-heart"></i></button>
-                                    <button class="btn-blue-500">Comment</button>
-                                </div>
-                            </div>
+                            <?php } ?>
                         <?php } ?>
-                    <?php } ?>
+                    </div>
                 </div>
             </div>
 

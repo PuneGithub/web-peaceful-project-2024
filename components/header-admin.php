@@ -6,7 +6,7 @@
     <ul>
         <li class="mb-4"><a href="../administrator/dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded">Dashboard</a></li>
         <li class="mb-4"><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded">Users</a></li>
-        <li class="mb-4"><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded">Settings</a></li>
-        <li class="mb-4"><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded">Logout</a></li>
+        <li class="mb-4"><a href="../administrator/managePosts.php" class="block py-2 px-4 hover:bg-gray-700 rounded">Manage Posts</a></li>
+        <li class="mb-4"><a href="../logout.php" class="block py-2 px-4 hover:bg-gray-700 rounded">Logout</a></li>
     </ul>
 </aside>

@@ -14,7 +14,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../css/output.css">
     <link rel="stylesheet" href="../css/style.css">
-    <title>Dashboard</title>
+    <title>Manage Posts</title>
 </head>
 
 <body>
@@ -26,55 +26,54 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-12 sm:col-span-4">
                     <div class="card-white">
-                        <?php $totalUsers = countUsers($conn); ?>
-                        <h2 class="font-bold text-lg">จำนวนสมาชิก: <?php echo $totalUsers; ?> บัญชี</h2>
+                        <?php $totalPosts = countPosts($conn); ?>
+                        <h2 class="font-bold text-lg">จำนวนโพสต์: <?php echo $totalPosts; ?> โพสต์</h2>
                     </div>
                 </div>
                 <div class="col-span-12 sm:col-span-8">
                     <div class="card-white">
                         <?php
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userId'])) {
-                            $userId = $_POST['userId'];
-                            if (deleteUser($conn, $userId)) {
-                                echo "<div class='alert-success text-center'>ลบผู้ใช้สำเร็จแล้ว!</div>";
+                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['postId'])) {
+                            $postId = $_POST['postId'];
+                            $result = deletePost($conn, $postId);
+
+                            if ($result['status']) {
+                                echo "<div class='alert-success text-center'>" . htmlspecialchars($result['message']) . "</div>";
+                            } else {
+                                echo "<div class='alert-danger text-center'>" . htmlspecialchars($result['message']) . "</div>";
                             }
                         }
                         ?>
-                        <div class="overflow-x-auto">
+                        <div class="overflow-x-auto overflow-y-auto h-96">
                             <table class="table-auto w-full border border-slate-400 border-collapse text-center">
                                 <thead>
                                     <tr>
+                                        <th class="border border-slate-300">postId</th>
                                         <th class="border border-slate-300">userId</th>
                                         <th class="border border-slate-300">username</th>
-                                        <th class="border border-slate-300">email</th>
-                                        <th class="border border-slate-300">profileImage</th>
-                                        <th class="border border-slate-300">createDate</th>
-                                        <th class="border border-slate-300">role</th>
-                                        <th class="border border-slate-300">Edit</th>
+                                        <th class="border border-slate-300">title</th>
+                                        <th class="border border-slate-300">content</th>
+                                        <th class="border border-slate-300">createAt</th>
+                                        <th class="border border-slate-300">imagePost</th>
                                         <th class="border border-slate-300">Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $users = fetchUsers($conn);
-                                    foreach ($users as $user) {
+                                    $fetchAllPosts = fetchAllPosts($conn);
+                                    foreach ($fetchAllPosts as $post) {
                                     ?>
                                         <tr>
-                                            <td class="border border-slate-300"><?php echo htmlspecialchars($user['userId']); ?></td>
-                                            <td class="border border-slate-300"><?php echo htmlspecialchars($user['username']); ?></td>
-                                            <td class="border border-slate-300"><?php echo htmlspecialchars($user['email']); ?></td>
-                                            <td class="border border-slate-300"><img src="../img/profile_users/<?php echo htmlspecialchars($user['profileImage']); ?>" class="w-32 h-32 object-cover rounded-full" alt="profile"></td>
-                                            <td class="border border-slate-300"><?php echo htmlspecialchars($user['createDate']); ?></td>
-                                            <td class="border border-slate-300"><?php echo htmlspecialchars($user['role']); ?></td>
-                                            <td class="border border-slate-300">
-                                                <form action="editUser.php" method="post">
-                                                    <input type="hidden" name="userId" value="<?php echo $user['userId']; ?>">
-                                                    <input type="submit" class="btn-orange-500 inline-block" value="Edit">
-                                                </form>
-                                            </td>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($post['postId']); ?></td>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($post['userId']); ?></td>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($post['username']); ?></td>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($post['title']); ?></td>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($post['content']); ?></td>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($post['createdAt']); ?></td>
+                                            <td class="border border-slate-300"><img src="../img/posts_image/<?php echo htmlspecialchars($post['imagePost']); ?>" class="w-32 h-32 object-cover rounded" alt="profile"></td>
                                             <td class="border border-slate-300">
                                                 <form action="" method="post" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?');">
-                                                    <input type="hidden" name="userId" value="<?php echo $user['userId']; ?>">
+                                                    <input type="hidden" name="postId" value="<?php echo $post['postId']; ?>">
                                                     <input type="submit" class="btn-red-500 inline-block" value="Delete">
                                                 </form>
                                             </td>
