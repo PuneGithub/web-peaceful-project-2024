@@ -14,7 +14,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../css/output.css">
     <link rel="stylesheet" href="../css/style.css">
-    <title>Dashboard</title>
+    <title>Edit Update</title>
 </head>
 
 <body>
@@ -35,17 +35,26 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                         <?php
                         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userId'])) {
                             $userId = $_POST['userId'];
-                            // if (deleteUser($conn, $userId)) {
-                            //     echo "<div class='alert-success text-center'>ลบผู้ใช้สำเร็จแล้ว!</div>";
-                            // }
+                            $username = $_POST['username'];
+                            $email = $_POST['email'];
+                            $role = $_POST['role'];
+
+                            if (editUser($conn, $userId, $username, $email, $role)) {
+                                echo "<div class='alert-success text-center'>ลบผู้ใช้สำเร็จแล้ว!</div>";
+                            }
                         }
+
+                        ?>
+                        <?php
+                        $fetchEditUser = fetchEditUser($conn, $userId);
+                        
                         ?>
                         <h2 class="text-center text-xl font-bold mb-4">Edit User</h2>
                         <form action="" method="post" class="space-y-4">
-                            <input type="hidden" name="userId" value="<?php echo $user['userId']; ?>">
+                            <input type="hidden" name="userId" value="<?php echo $fetchEditUser['userId']; ?>">
                             <div>
                                 <label for="username" class="block text-sm font-medium">username</label>
-                                <input type="text" name="username" class="input-form" placeholder="Enter username" required>
+                                <input type="text" name="username" class="input-form" value="<?php echo $fetchEditUser['username']; ?>" placeholder="Enter username" required>
                             </div>
                             <div>
                                 <label for="email" class="block text-sm font-medium">Email</label>

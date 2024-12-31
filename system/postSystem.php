@@ -117,3 +117,4 @@ function getPostsByCategory($conn, $categoryId)
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+

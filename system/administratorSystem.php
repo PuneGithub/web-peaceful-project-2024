@@ -39,6 +39,44 @@ function fetchUsers($conn)
     return $users;
 }
 
+function fetchEditUser($conn, $userId)
+{
+
+    // เตรียม SQL Query
+    $sql = "SELECT * FROM users WHERE userId = :userId";
+
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // ดึงข้อมูลผู้ใช้
+        $fetchEditUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $fetchEditUser;
+
+    } catch (PDOException $error) {
+        // จัดการข้อผิดพลาดในกรณี SQL ล้มเหลว
+        throw new Exception("Database error: " . $error->getMessage());
+    }
+}
+
+
+function editUser($conn, $username, $email, $role)
+{
+    $sql = "UPDATE users SET username = :username , email = :email , role = :role WHERE userId = :userId";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->bindParam(':role', $role, PDO::PARAM_STR);
+
+    if ($stmt->execute()) {
+        return "Update Success.";
+    } else {
+        return "Failed to update user.";
+    }
+}
+
 function countUsers($conn)
 {
     $sql = "SELECT COUNT(*) as totalUsers FROM users";
@@ -115,7 +153,6 @@ function deletePost($conn, $postId)
         } else {
             return ['status' => false, 'message' => "ไม่พบโพสต์ที่ต้องการลบ!"];
         }
-
     } catch (PDOException $error) {
         return ['status' => false, 'message' => "Error: " . $error->getMessage()];
     }
