@@ -78,7 +78,19 @@ $getCategory = getCategory($conn);
                                 <td><i class="text-red-400 fa-solid fa-heart"></i> <?php echo htmlspecialchars($post['loveCount']); ?></td>
                                 <td class="flex justify-center items-center"><img src="../img/posts_image/<?php echo htmlspecialchars($post['imagePost']); ?>" class="w-32 h-32 object-cover rounded" alt="post"></td>
                                 <td>
-                                    Edit
+                                    <button id="modalToggle" class="btn-blue-500 ">
+                                        Edit
+                                    </button>
+
+                                    <div id="modalBackdrop" class="fixed inset-0 bg-gray-800 bg-opacity-50 hidden flex items-center justify-center z-50">
+                                        <!-- Modal Content -->
+                                         <div class="bg-white rounded-lg overflow-hidden shadow-xl max-w-lg w-full">
+                                            <!-- header -->
+                                             <div class="px-4 py-2 border-b">
+                                                <h2 class="text-xl">Edit Post</h2>
+                                             </div>
+                                         </div>
+                                    </div>
                                 </td>
                                 <td>
                                     <form action="" method="post">
