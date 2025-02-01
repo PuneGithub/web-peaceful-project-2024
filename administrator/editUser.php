@@ -33,36 +33,36 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 <div class="col-span-12 sm:col-span-8">
                     <div class="card-white">
                         <?php
+                        $userId = $_GET['userId'];
                         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userId'])) {
-                            $userId = $_POST['userId'];
                             $username = $_POST['username'];
                             $email = $_POST['email'];
                             $role = $_POST['role'];
 
                             if (editUser($conn, $userId, $username, $email, $role)) {
-                                echo "<div class='alert-success text-center'>ลบผู้ใช้สำเร็จแล้ว!</div>";
+                                echo "<div class='alert-green text-center'>Update Successful!</div>";
                             }
                         }
 
                         ?>
                         <?php
-                        $fetchEditUser = fetchEditUser($conn, $userId);
+                        $User = fetchEditUser($conn, $userId);
                         
                         ?>
                         <h2 class="text-center text-xl font-bold mb-4">Edit User</h2>
                         <form action="" method="post" class="space-y-4">
-                            <input type="hidden" name="userId" value="<?php echo $fetchEditUser['userId']; ?>">
+                            <input type="hidden" name="userId" value="<?php echo $User['userId']; ?>">
                             <div>
                                 <label for="username" class="block text-sm font-medium">username</label>
-                                <input type="text" name="username" class="input-form" value="<?php echo $fetchEditUser['username']; ?>" placeholder="Enter username" required>
+                                <input type="text" name="username" class="input-form" value="<?php echo $User['username']; ?>" placeholder="Enter username" required>
                             </div>
                             <div>
                                 <label for="email" class="block text-sm font-medium">Email</label>
-                                <input type="email" name="email" class="input-form" placeholder="Enter email" required>
+                                <input type="email" name="email" class="input-form" value="<?php echo $User['email']; ?>" placeholder="Enter email" required>
                             </div>
                             <div>
                                 <label for="role" class="block text-sm font-medium">role</label>
-                                <input type="text" name="role" class="input-form" placeholder="Enter role" required>
+                                <input type="text" name="role" class="input-form" value="<?php echo $User['role']; ?>" placeholder="Enter role" required>
                             </div>
                             <div>
                                 <input type="submit" class="btn-blue-500" value="SAVE">

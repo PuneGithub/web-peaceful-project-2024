@@ -5,6 +5,8 @@ require_once("system/postSystem.php");
 session_start();
 
 $getCategory = getCategory($conn);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +16,7 @@ $getCategory = getCategory($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/output.css">
+    <link rel="icon" href="data:,">
     <title>Peaceful Network</title>
 </head>
 
@@ -36,7 +39,8 @@ $getCategory = getCategory($conn);
                 <?php
                 if (isset($_SESSION['userId'])) {
                 ?>
-                    <h4 class="font-bold text-2xl">Welcome! <?php echo $_SESSION['username']; ?></h4>
+                    <h4 class="font-bold text-2xl">Welcome! <?php echo $_SESSION['username']; ?></h4><br>
+                    <a href="account/managePosts.php" class="btn-blue-500"><i class="fa-solid fa-pen-to-square"></i> Manage Posts</a>
                 <?php } else { ?>
                     <a href="/account/signup.php" class="btn-blue-400-outline">SIGN UP</a>
                     <a href="/account/login.php" class="btn-green-400-outline">LOGIN</a>
@@ -184,10 +188,13 @@ $getCategory = getCategory($conn);
                                         <?php endif; ?>
                                         <p class="text-gray-800"><?php echo $post['content']; ?></p>
                                     </div>
-    
+
                                     <!-- Post Actions -->
                                     <div class="mt-4 flex items-center justify-between">
-                                        <button class="btn-blue-500"><i class="text-red-400 fa-solid fa-heart"></i></button>
+                                        <span id="loveCount" class="text-gray-500">Loves: <?php echo $post['loveCount']; ?></span>
+                                        <a id="loveButton" onclick="loveButton(<?php echo $post['postId']; ?>)">
+                                            <i class="text-red-400 fa-solid fa-heart"></i>
+                                        </a>
                                         <button class="btn-blue-500">Comment</button>
                                     </div>
                                 </div>

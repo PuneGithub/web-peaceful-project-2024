@@ -13,3 +13,4 @@ const postForm = document.getElementById('postForm');
 toggleButton.addEventListener('click', () => {
     postForm.classList.toggle('hidden');
 });
+

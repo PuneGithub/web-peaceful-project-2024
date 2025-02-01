@@ -1,6 +1,9 @@
 <?php
 require_once 'conn.php';
 
+var_dump($_POST);
+
+
 function createPost($conn, $userId, $title, $content, $imagePath, $categoryId)
 {
 
@@ -65,13 +68,32 @@ function createPost($conn, $userId, $title, $content, $imagePath, $categoryId)
 function fetchAllPosts($conn)
 {
     try {
-        $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, users.username 
+        $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, posts.loveCount, users.username 
         FROM posts
         JOIN users ON posts.userId = users.userId
         ORDER BY posts.createdAt DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $error) {
+        echo "Error:" . $error->getMessage();
+        return [];
+    }
+}
+
+function fetchPostUser($conn, $userId)
+{
+    try {
+        $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, posts.loveCount
+        FROM posts
+        INNER JOIN users ON posts.userId = users.userId
+        WHERE users.userId = :userId
+        ORDER BY posts.createdAt DESC";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":userId", $userId, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $error) {
         echo "Error:" . $error->getMessage();
@@ -100,7 +122,7 @@ function getPostsByCategory($conn, $categoryId)
                 posts.content,
                 posts.imagePost,
                 posts.createdAt,
-                posts.viewCount,
+                posts.loveCount,
                 users.username,
                 category.categoryName
             FROM
@@ -118,3 +140,54 @@ function getPostsByCategory($conn, $categoryId)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// function updateLoveCount($conn, $postId)
+// {
+//     // ตรวจสอบว่าการเรียกใช้งานเป็น POST หรือไม่
+//     if ($_SERVER['REQUEST_METHOD'] === "POST") {
+//         try {
+//             $sql = "SELECT loveCount FROM posts WHERE postId = :postId";
+//             $stmt = $conn->prepare($sql);
+//             $stmt->bindParam(":postId", $postId, PDO::PARAM_INT);
+//             $stmt->execute();
+
+//             if ($stmt->rowCount() > 0) {
+//                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
+//                 $loveCount = $row['loveCount'] + 1;
+
+//                 $updateSql = "UPDATE posts SET loveCount = :loveCount WHERE postId = :postId";
+//                 $updateStmt = $conn->prepare($updateSql);
+//                 $updateStmt->bindParam(":loveCount", $loveCount, PDO::PARAM_INT);
+//                 $updateStmt->bindParam(":postId", $postId, PDO::PARAM_INT);
+//                 $updateStmt->execute();
+
+//                 header('Content-Type: application/json; charset=utf-8');
+//                 echo json_encode(['success' => true, 'loveCount' => $loveCount]);
+//                 exit;
+//             } else {
+//                 header('Content-Type: application/json; charset=utf-8');
+//                 echo json_encode(['success' => false, 'message' => 'Post not found']);
+//                 exit;
+//             }
+//         } catch (PDOException $error) {
+//             header('Content-Type: application/json; charset=utf-8');
+//             echo json_encode(['success' => false, 'message' => $error->getMessage()]);
+//             exit;
+//         }
+//     } else {
+//         header('Content-Type: application/json; charset=utf-8');
+//         echo json_encode(['success' => false, 'message' => 'Invalid request']);
+//         exit;
+//     }
+// }
+
+function getLoveCount($conn, $postId)
+{
+    $sql = "SELECT loveCount FROM posts WHERE postId = :postId";
+    $getLoveCountStmt = $conn->prepare($sql);
+    $getLoveCountStmt->bindParam(":postId", $postId, PDO::PARAM_INT);
+    $getLoveCountStmt->execute();
+
+    $result = $getLoveCountStmt->fetch(PDO::FETCH_ASSOC);
+
+    return $result['loveCount'];
+}

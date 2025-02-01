@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 27, 2024 at 02:10 PM
+-- Generation Time: Feb 01, 2025 at 01:24 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -56,7 +56,7 @@ CREATE TABLE `posts` (
   `content` text COLLATE utf8mb4_general_ci NOT NULL,
   `createdAt` datetime NOT NULL,
   `categoryId` int NOT NULL,
-  `viewCount` int NOT NULL DEFAULT '0',
+  `loveCount` int NOT NULL DEFAULT '0',
   `imagePost` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -64,27 +64,9 @@ CREATE TABLE `posts` (
 -- Dumping data for table `posts`
 --
 
-INSERT INTO `posts` (`postId`, `userId`, `title`, `content`, `createdAt`, `categoryId`, `viewCount`, `imagePost`) VALUES
-(2, 22, 'test1', 'test123456789', '2024-12-16 13:45:36', 1, 0, NULL),
-(3, 22, 'Welcome', 'bababababa', '2024-12-17 13:44:12', 1, 0, NULL),
-(4, 22, 'awdwad', 'dawd5555', '2024-12-17 13:44:50', 1, 0, NULL),
-(5, 22, 'test2', 'test23456nnnnggregerg', '2024-12-18 13:59:30', 1, 0, 'post_1734530370My project-1 (6).png'),
-(6, 22, 'testd234', 'dawghtretrhfawdwadasdsa', '2024-12-18 14:03:21', 1, 0, 'post_1734530601screenshot-1688223575498.png'),
-(7, 22, 'awdad', 'fdfwfwefwefwefd', '2024-12-19 13:40:43', 1, 0, 'post_1734615643Hotpot.png'),
-(8, 22, 'testawdaw', 'kfewjpfkjwepofkpwo&lt;br&gt;\nawdawddawdawdawdawdawdawd', '2024-12-19 14:07:40', 1, 0, NULL),
-(9, 22, '&lt;h1&gt;Welcome&lt;/h1&gt;', '&lt;b&gt;Hello World&lt;/b&gt;', '2024-12-19 14:08:35', 1, 0, NULL),
-(10, 22, 'cooldown1', '12121', '2024-12-19 14:31:39', 1, 0, NULL),
-(11, 22, 'awdawda', 'adwawdawd', '2024-12-21 15:16:22', 1, 0, NULL),
-(12, 22, 'wwwwwwwwwww', 'wwwwawda', '2024-12-21 15:17:37', 1, 0, NULL),
-(13, 22, 'fawfawdawd', 'awdawdawd', '2024-12-22 03:16:05', 1, 0, NULL),
-(14, 22, 'asdwadad', 'adwadawdad', '2024-12-22 03:17:16', 1, 0, NULL),
-(15, 22, 'adwada546', 'sefsef45646', '2024-12-22 03:23:41', 1, 0, NULL),
-(16, 22, 'dawdawd', 'wadawd', '2024-12-22 03:25:08', 1, 0, 'post_1734837908style4.png'),
-(17, 22, '251646', '4654564', '2024-12-22 03:58:18', 1, 0, NULL),
-(18, 22, 'ไฟก', 'ฟไกดพำเำพเดก', '2024-12-22 13:02:40', 1, 0, 'post_1734872560ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png'),
-(19, 22, 'ไฟก', 'ฟไกดพำเำพเดก', '2024-12-22 13:05:35', 1, 0, 'post_1734872735ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png'),
-(20, 24, 'test123', 'test1d654wa6d4awdawdawda&lt;br&gt;\r\nawdwadojoirgjoijoierjgiojoigrjeoijgoire\r\ngregojeorigjoerjgoijreoijgioerjgiojoijad', '2024-12-22 13:10:22', 1, 0, 'post_1734873022My project-1 (1).png'),
-(21, 24, 'test123awd', 'awda4wd654adsd', '2024-12-23 14:06:14', 2, 0, NULL);
+INSERT INTO `posts` (`postId`, `userId`, `title`, `content`, `createdAt`, `categoryId`, `loveCount`, `imagePost`) VALUES
+(32, 27, 'test', 'test', '2025-01-28 14:08:31', 1, 0, NULL),
+(33, 27, 'awdawdawd', 'sasdwadawdawdawda&lt;br&gt;\r\nawdawdawdawd', '2025-02-01 09:48:35', 2, 0, 'post_17384033157c8ae7bf-71d5-49e2-9c16-3bcf82aadb5d.jpg');
 
 -- --------------------------------------------------------
 
@@ -111,8 +93,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userId`, `username`, `password`, `email`, `profileImage`, `verifyEmail`, `resetCode`, `createDate`, `verifyStatus`, `status`, `role`) VALUES
-(22, 'test', '$2y$10$gteIkGR5TGNcSAYOFRLNne8ts5.g.RIxhUaq5pSrPuiuttbLHpeti', 'dev.peaceful@gmail.com', 'profile_1733493582.png', NULL, NULL, '2024-11-23', 'verified', 'offline', 'admin'),
-(24, 'test123', '$2y$10$jlkbGxbBQm3qXc6aTvNhqekZYggJ5fNgxNgxX7/HfYrfYX7SLTY3C', 'minecraftpune@gmail.com', NULL, NULL, NULL, '2024-12-22', 'verified', 'offline', 'user');
+(27, 'test123', '$2y$10$P6s3We3rkqeMQZl9yEo.UO..qKEZQAHB1wRMk5uyCq0X.yNsxsLxW', 'dev.peaceful@gmail.com', NULL, NULL, NULL, '2025-01-28', 'verified', 'offline', 'user');
 
 --
 -- Indexes for dumped tables
@@ -152,13 +133,13 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `postId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `postId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `userId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- Constraints for dumped tables

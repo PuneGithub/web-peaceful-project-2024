@@ -67,13 +67,10 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                             <td class="border border-slate-300"><?php echo htmlspecialchars($user['createDate']); ?></td>
                                             <td class="border border-slate-300"><?php echo htmlspecialchars($user['role']); ?></td>
                                             <td class="border border-slate-300">
-                                                <form action="editUser.php" method="post">
-                                                    <input type="hidden" name="userId" value="<?php echo $user['userId']; ?>">
-                                                    <input type="submit" class="btn-orange-500 inline-block" value="Edit">
-                                                </form>
+                                                <a href="editUser.php?userId=<?php echo $user['userId']; ?>" class="btn-orange-500 inline-block">Edit</a>
                                             </td>
                                             <td class="border border-slate-300">
-                                                <form action="" method="post" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?');">
+                                                <form action="editUser.php" method="post">
                                                     <input type="hidden" name="userId" value="<?php echo $user['userId']; ?>">
                                                     <input type="submit" class="btn-red-500 inline-block" value="Delete">
                                                 </form>

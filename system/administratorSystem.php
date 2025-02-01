@@ -42,7 +42,6 @@ function fetchUsers($conn)
 function fetchEditUser($conn, $userId)
 {
 
-    // เตรียม SQL Query
     $sql = "SELECT * FROM users WHERE userId = :userId";
 
     try {
@@ -54,7 +53,6 @@ function fetchEditUser($conn, $userId)
         $fetchEditUser = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $fetchEditUser;
-
     } catch (PDOException $error) {
         // จัดการข้อผิดพลาดในกรณี SQL ล้มเหลว
         throw new Exception("Database error: " . $error->getMessage());
@@ -62,19 +60,18 @@ function fetchEditUser($conn, $userId)
 }
 
 
-function editUser($conn, $username, $email, $role)
+function editUser($conn, $userId, $username, $email, $role)
 {
     $sql = "UPDATE users SET username = :username , email = :email , role = :role WHERE userId = :userId";
     $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
     $stmt->bindParam(':username', $username, PDO::PARAM_STR);
     $stmt->bindParam(':email', $email, PDO::PARAM_STR);
     $stmt->bindParam(':role', $role, PDO::PARAM_STR);
 
-    if ($stmt->execute()) {
-        return "Update Success.";
-    } else {
-        return "Failed to update user.";
-    }
+    $stmt->execute();
+
+    return "Update Success.";
 }
 
 function countUsers($conn)
