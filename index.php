@@ -2,6 +2,7 @@
 //connect database
 require_once("system/conn.php");
 require_once("system/postSystem.php");
+require_once("system/loveSystem.php");
 session_start();
 
 $getCategory = getCategory($conn);
@@ -193,7 +194,7 @@ $getCategory = getCategory($conn);
                                     <div class="mt-4 flex items-center justify-between">
                                         <span id="loveCount" class="text-gray-500">Loves: <?php echo $post['loveCount']; ?></span>
                                         <button class="love-btn" data-postid="<?php echo $post['postId']; ?>">
-                                            <i class="text-red-400 fa-solid fa-heart"></i>
+                                            <span class="heart-icon"><?php echo userHasLoved($conn,$post['postId'], $_SESSION['username']) ? "<i class='text-red-400 fa-solid fa-heart'></i>" : "<i class='text-red-300 fa-solid fa-heart'></i>"; ?></span>
                                         </button>
                                         <button class="btn-blue-500">Comment</button>
                                     </div>
@@ -224,6 +225,8 @@ $getCategory = getCategory($conn);
     <!-- footer -->
     <?php include_once("components/footer.php"); ?>
     <script src="js/script.js"></script>
+    <!-- JavaScript สำหรับปุ่ม Love -->
+    <script src="js/scriptLove.js"></script>
 </body>
 
 </html>

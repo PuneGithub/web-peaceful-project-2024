@@ -16,10 +16,10 @@ document.addEventListener("DOMContentLoaded", function (){
                     let currentCount = parseInt(loveCountSpan.textContent);
                     if (data.action === "liked") {
                         loveCountSpan.textContent = currentCount + 1;
-                        heartIcon.textContent = "❤️";
+                        heartIcon.innerHTML = "<i class='text-red-400 fa-solid fa-heart'></i>";
                     } else {
                         loveCountSpan.textContent = currentCount - 1;
-                        heartIcon.textContent = "🤍"
+                        heartIcon.textContent = "<i class='text-red-300 fa-solid fa-heart'></i>"
                     }
                 }
             })

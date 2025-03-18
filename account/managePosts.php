@@ -2,6 +2,7 @@
 //connect database
 require_once("../system/conn.php");
 require_once("../system/postSystem.php");
+
 session_start();
 
 

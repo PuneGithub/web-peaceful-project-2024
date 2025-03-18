@@ -1,6 +1,12 @@
 <?php
 require_once('conn.php');
 
+function userHasLoved($conn, $postId, $userId) {
+    $loveStmt = $conn->prepare("SELECT * FROM loveLogs WHERE postId = :postId AND userId = :userId");
+    $loveStmt->execute(["postId" => $postId, ":userId" => $userId]);
+    return $loveStmt->rowCount() > 0;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postId = $_POST['postId'];
     $userId = $_SESSION['userId'];
