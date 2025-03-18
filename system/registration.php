@@ -9,21 +9,46 @@ function signup($username, $password, $email)
 {
     global $conn;
 
+    $secret = "6LeGT_IqAAAAANnMxxr_nj4q8oWF-sq80YYG4gSo";
+
+    //if check reCAPTCHA v2
+    $captcha = $_POST['g-recaptcha-response'];
+    $verifiyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . $secret . '&response=' . $captcha);
+
+    $responseData = json_decode($verifiyResponse);
+
+
+    if (!isset($_POST['g-recaptcha-response']) || empty($_POST['g-recaptcha-response'])) {
+        return "คุณไม่ได้กด reCAPTCHA !";
+    }
+
+    // ตรวจสอบว่า reCAPTCHA ยืนยันสำเร็จหรือไม่
+    if (!$responseData || !$responseData->success) {
+        return "ยืนยัน reCAPTCHA ไม่สำเร็จโปรดลองใหม่ !";
+    }
+
     if (strlen($password) < 6) {
-        return "Password must have at least 6 characters.";
+        return "รหัสผ่านต้องมีอย่างน้อย 6 ตัว";
     }
 
     if (!preg_match('/[a-zA-Z]/', $password)) {
-        return "Password must contain at least on letter (a-z or A-Z)";
+        return "รหัสผ่านต้องประกอบด้วยตัวอักษรอย่างน้อยหนึ่งตัว (a-z หรือ A-Z)";
     }
 
-    //Check Email
-    $checkStmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+    //Check Email & user
+    $checkStmt = $conn->prepare("SELECT * FROM users WHERE email = :email OR username = :username");
     $checkStmt->bindParam(':email', $email);
+    $checkStmt->bindParam(':username', $username);
     $checkStmt->execute();
 
-    if ($checkStmt->rowCount() > 0) {
+    $existingUser = $checkStmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($existingUser['email'] === $email) {
         return "This email is already registered.";
+    }
+
+    if ($existingUser['username'] === $username) {
+        return "This username is already registered.";
     }
 
     $hashPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -115,13 +140,12 @@ function login($identifier, $password)
                 header('refresh: 2; url=../index.php');
                 exit;
             } else {
-                return "Login failed: Invalid Password.";
+                return "การเข้าสู่ระบบล้มเหลว: รหัสผ่านไม่ถูกต้อง";
             }
         } else {
-            return "Login failed: Invalid username or password.";
+            return "การเข้าสู่ระบบล้มเหลว: ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
         }
     } catch (Throwable $th) {
         return "เกิดข้อผิดพลาด:" . $th->getMessage();
     }
 }
-

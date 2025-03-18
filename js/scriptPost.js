@@ -1,53 +1,26 @@
-// function updateActionUser(postId){
-//     console.log(postId)
+// ใช้ querySelectorAll สำหรับปุ่มเปิด Modal
+document.querySelectorAll('[id^="modalToggle-"]').forEach(function (toggleBtn) {
+    toggleBtn.addEventListener('click', function () {
+        // ดึง postId จาก id ของปุ่ม (สมมุติว่า id มีรูปแบบ modalToggle-{postId})
+        var postId = this.id.split('-')[1];
+        document.getElementById('modalBackdrop-' + postId).classList.remove('hidden');
+    });
+});
 
-//     fetch('/web_peaceful_project_2024/system/loveButton.php', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({postId: postId})
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Network response was not Ok')
-//         }
-//         return response.json()
-//     })
-//     .then(data => {
-//         const loveCount = document.getElementById('loveCount');
+// ใช้ querySelectorAll สำหรับปุ่มปิด Modal
+document.querySelectorAll('[id^="closeModal-"]').forEach(function (closeBtn) {
+    closeBtn.addEventListener('click', function () {
+        var postId = this.id.split('-')[1];
+        document.getElementById('modalBackdrop-' + postId).classList.add('hidden');
+    });
+});
 
-//         const loveButton = document.getElementById('loveButton');
-
-//         loveCount.textContent = data.loveCount;
-
-//         loveButton.onclick = null
-
-
-//     })
-//     .catch(error => {
-//         console.error('Error', error)
-//     })
-// }
-
-function loveButton(postId)
-{
-    fetch("web_peaceful_project_2024/system/loveButton.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `postId=${postId}`,
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        if (data.success) {
-            document.getElementById(`loveCount-${postId}`).textContent = data.loveCount;
-        } else {
-            alert(data.message);
+// ตัวเลือก: ปิด Modal เมื่อคลิกที่ backdrop
+document.querySelectorAll('[id^="modalBackdrop-"]').forEach(function (backdrop) {
+    backdrop.addEventListener('click', function (event) {
+        // หากคลิกที่ backdrop (ไม่ใช่ Modal content)
+        if (event.target === this) {
+            this.classList.add('hidden');
         }
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    })
-}
+    });
+});

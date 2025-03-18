@@ -192,9 +192,9 @@ $getCategory = getCategory($conn);
                                     <!-- Post Actions -->
                                     <div class="mt-4 flex items-center justify-between">
                                         <span id="loveCount" class="text-gray-500">Loves: <?php echo $post['loveCount']; ?></span>
-                                        <a id="loveButton" onclick="loveButton(<?php echo $post['postId']; ?>)">
+                                        <button class="love-btn" data-postid="<?php echo $post['postId']; ?>">
                                             <i class="text-red-400 fa-solid fa-heart"></i>
-                                        </a>
+                                        </button>
                                         <button class="btn-blue-500">Comment</button>
                                     </div>
                                 </div>

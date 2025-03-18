@@ -60,6 +60,9 @@ session_start();
                     <label for="con_password" class="block text-sm font-medium">Confirm password</label>
                     <input type="password" name="con_password" class="input-form" placeholder="Enter confirm password" required>
                 </div>
+                <div class="g-recaptcha" data-sitekey="6LeGT_IqAAAAAMcwAKfdc3l_chVDGZKAJoznPwb_">
+
+                </div>
                 <div>
                     <input type="checkbox" name="check" required>
                     <label for="check" class="text-sm font-medium">I agree to the Terms and Privacy Policy.</label>
@@ -70,7 +73,7 @@ session_start();
             </form>
         </div>
     </div>
-
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 
 </html>

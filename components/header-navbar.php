@@ -24,8 +24,8 @@
                     <a href="/account/logout.php" class="btn-red-500">Logout</a>
                 </div>
             <?php } else { ?>
-                <a href="/account/signup.php" class="btn-blue-500 mr-2">SIGN UP</a>
-                <a href="/account/login.php" class="btn-green-500">LOGIN</a>
+                <a href="./account/signup.php" class="btn-blue-500 mr-2">SIGN UP</a>
+                <a href="./account/login.php" class="btn-green-500">LOGIN</a>
             <?php } ?>
         </div>
 

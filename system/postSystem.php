@@ -1,7 +1,7 @@
 <?php
 require_once 'conn.php';
 
-var_dump($_POST);
+// var_dump($_POST);
 
 
 function createPost($conn, $userId, $title, $content, $imagePath, $categoryId)
@@ -101,6 +101,99 @@ function fetchPostUser($conn, $userId)
     }
 }
 
+function updatePost($conn, $postId, $title, $content, $categoryId, $imagePath)
+{
+    try {
+        $maxSize = 3 * 1024 * 1024; // 3MB
+        $uploadPath = "../img/posts_image/";
+
+        $fileName = "post_" . time() . basename($_FILES['imagePost']['name']);
+        $targetFilePath = $uploadPath . $fileName;
+        $filetype = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+
+        $allowTypes = array('jpg', 'png', 'jpeg');
+
+        //ดึงข้อมูล รูปภาพเก่า
+        $sqlOldImage = "SELECT imagePost FROM posts WHERE postId = :postId";
+        $stmtOldImage = $conn->prepare($sqlOldImage);
+        $stmtOldImage->bindParam("postId", $postId, PDO::PARAM_INT);
+        $stmtOldImage->execute();
+        $oldImage = $stmtOldImage->fetchColumn();
+
+        $imagePath = $oldImage;
+
+
+        if ($_FILES['imagePost']['size'] <= $maxSize) {
+            if (in_array($filetype, $allowTypes)) {
+                if (move_uploaded_file($_FILES['imagePost']['tmp_name'], $targetFilePath)) {
+                    if (!empty($oldImage) && file_exists($uploadPath . $oldImage)) {
+                        unlink($uploadPath . $oldImage);
+                    }
+                    $imagePath = $fileName;
+                } else {
+                    return "<div class='alert-danger'>เกิดข้อผิดพลาดในการอัปโหลดไฟล์</div>";
+                }
+            } else {
+                return "<div class='alert-danger'>รองรับเฉพาะไฟล์ JPG, JPEG, PNG และ GIF เท่านั้น</div>";
+            }
+        } else {
+            return "<div class='alert-danger'>รูปภาพต้องไม่เกินขนาด 3 MB</div>";
+        }
+
+        // คำสั่ง SQL UPDATE
+        $sql = "UPDATE posts 
+                SET title = :title, 
+                    content = :content, 
+                    categoryId = :categoryId";
+
+        if (!empty($imagePath)) {
+            $sql .= ", imagePost = :imagePath";
+        }
+
+        $sql .= " WHERE postId = :postId";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':content', $content);
+        $stmt->bindParam(':categoryId', $categoryId);
+        $stmt->bindParam(':postId', $postId);
+
+        if (!empty($imagePath)) {
+            $stmt->bindParam(':imagePath', $imagePath);
+        }
+
+        if ($stmt->execute()) {
+            return "<div class='alert-success'>อัปเดตโพสต์สำเร็จ</div>";
+        } else {
+            return "<div class='alert-danger'>เกิดข้อผิดพลาดในการอัปเดตโพสต์</div>";
+        }
+    } catch (PDOException $error) {
+        return "<div class='alert-danger'>ข้อผิดพลาด: " . $error->getMessage() . "</div>";
+    }
+}
+
+function deletePost($conn , $delete, $imagePost) 
+{
+
+    $uploadPath = "../img/posts_image/" . $imagePost;
+
+    if (!empty($imagePost)) {
+        if (file_exists($uploadPath)) {
+            unlink($uploadPath);
+        }
+    }
+
+    $sql = "DELETE FROM posts WHERE postId = :postId";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(":postId", $delete);
+
+    if ($stmt->execute()) {
+        return "<div class='alert-danger'>ลบโพสต์เรียบร้อยแล้ว</div>";
+    }
+}
+
+
 function getCategory($conn)
 {
     try {
@@ -139,46 +232,6 @@ function getPostsByCategory($conn, $categoryId)
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-// function updateLoveCount($conn, $postId)
-// {
-//     // ตรวจสอบว่าการเรียกใช้งานเป็น POST หรือไม่
-//     if ($_SERVER['REQUEST_METHOD'] === "POST") {
-//         try {
-//             $sql = "SELECT loveCount FROM posts WHERE postId = :postId";
-//             $stmt = $conn->prepare($sql);
-//             $stmt->bindParam(":postId", $postId, PDO::PARAM_INT);
-//             $stmt->execute();
-
-//             if ($stmt->rowCount() > 0) {
-//                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-//                 $loveCount = $row['loveCount'] + 1;
-
-//                 $updateSql = "UPDATE posts SET loveCount = :loveCount WHERE postId = :postId";
-//                 $updateStmt = $conn->prepare($updateSql);
-//                 $updateStmt->bindParam(":loveCount", $loveCount, PDO::PARAM_INT);
-//                 $updateStmt->bindParam(":postId", $postId, PDO::PARAM_INT);
-//                 $updateStmt->execute();
-
-//                 header('Content-Type: application/json; charset=utf-8');
-//                 echo json_encode(['success' => true, 'loveCount' => $loveCount]);
-//                 exit;
-//             } else {
-//                 header('Content-Type: application/json; charset=utf-8');
-//                 echo json_encode(['success' => false, 'message' => 'Post not found']);
-//                 exit;
-//             }
-//         } catch (PDOException $error) {
-//             header('Content-Type: application/json; charset=utf-8');
-//             echo json_encode(['success' => false, 'message' => $error->getMessage()]);
-//             exit;
-//         }
-//     } else {
-//         header('Content-Type: application/json; charset=utf-8');
-//         echo json_encode(['success' => false, 'message' => 'Invalid request']);
-//         exit;
-//     }
-// }
 
 function getLoveCount($conn, $postId)
 {
