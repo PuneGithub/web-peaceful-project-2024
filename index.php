@@ -1,9 +1,9 @@
 <?php
 //connect database
+session_start();
 require_once("system/conn.php");
 require_once("system/postSystem.php");
 require_once("system/loveSystem.php");
-session_start();
 
 $getCategory = getCategory($conn);
 

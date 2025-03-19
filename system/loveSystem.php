@@ -1,25 +1,27 @@
 <?php
 require_once('conn.php');
+session_start();
 
 function userHasLoved($conn, $postId, $userId) {
     $loveStmt = $conn->prepare("SELECT * FROM loveLogs WHERE postId = :postId AND userId = :userId");
-    $loveStmt->execute(["postId" => $postId, ":userId" => $userId]);
+    $loveStmt->execute([":postId" => $postId, ":userId" => $userId]);
     return $loveStmt->rowCount() > 0;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $postId = $_POST['postId'];
-    $userId = $_SESSION['userId'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['userId']) && isset($_POST['postId'])) {
+    $postId = intval($_POST['postId']);
+    $userId = intval($_SESSION['userId']);
 
     $checkStmt = $conn->prepare("SELECT * FROM loveLogs WHERE userId = :userId AND postId = :postId");
     $checkStmt->bindParam(":userId", $userId, PDO::PARAM_INT);
     $checkStmt->bindParam(":postId", $postId, PDO::PARAM_INT);
+    $checkStmt->execute();
 
     if ($checkStmt->rowCount() > 0) {
         //ถ้ากดไปแล้ว ลบ Love ออก
         $deleteStmt = $conn->prepare("DELETE FROM loveLogs WHERE userId = :userId AND postId = :postId");
         $deleteStmt->bindParam(":userId", $userId, PDO::PARAM_INT);
-        $deleteStmt->bindParam(":userId", $userId, PDO::PARAM_INT);
+        $deleteStmt->bindParam(":postId", $postId, PDO::PARAM_INT);
         $deleteStmt->execute();
 
         //ลดจำนวน Love ใน posts
@@ -28,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateStmt->execute();
 
         echo json_encode(["success" => true, "action" => "unliked"]);
+        exit;
     } else {
         // ถ้ายังไม่กด Love เพิ่ม Love
         $insertStmt = $conn->prepare("INSERT INTO loveLogs (userId, postId) VALUES (:userId,:postId)");
@@ -41,5 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateStmt->execute();
 
         echo json_encode(["success" => true, "action" => "liked"]);
+        exit;
     }
 }
