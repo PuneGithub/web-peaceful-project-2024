@@ -193,9 +193,17 @@ $getCategory = getCategory($conn);
                                     <!-- Post Actions -->
                                     <div class="mt-4 flex items-center justify-between">
                                         <span id="loveCount" class="text-gray-500">Loves: <?php echo $post['loveCount']; ?></span>
+                                        <?php 
+                                        if (isset($_SESSION['username'])) {
+                                        ?>
                                         <button class="love-btn" data-postid="<?php echo $post['postId']; ?>">
                                             <span class="heart-icon"><?php echo userHasLoved($conn,$post['postId'], $_SESSION['username']) ? "<i class='text-red-400 fa-solid fa-heart'></i>" : "<i class='text-red-300 fa-solid fa-heart'></i>"; ?></span>
                                         </button>
+                                        <?php } else { ?>
+                                            <button disabled>
+                                                <i class='text-red-300 fa-solid fa-heart'></i>
+                                            </button>
+                                        <?php } ?>
                                         <button class="btn-blue-500">Comment</button>
                                     </div>
                                 </div>
