@@ -5,6 +5,7 @@ require_once("system/conn.php");
 require_once("system/postSystem.php");
 require_once("system/loveSystem.php");
 
+
 $getCategory = getCategory($conn);
 
 
@@ -176,7 +177,7 @@ $getCategory = getCategory($conn);
                         ?>
                                 <div class="card-white">
                                     <div class="flex items-center space-x-4">
-                                        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
+                                        <img src="img/profile_users/<?php echo $post['profileImage']; ?>" alt="Profile" class="w-10 h-10 rounded-full">
                                         <div>
                                             <h2 class="font-semibold"><?php echo $post['username']; ?></h2>
                                             <span class="text-sm text-gray-500"><?php echo $post['createdAt']; ?></span>

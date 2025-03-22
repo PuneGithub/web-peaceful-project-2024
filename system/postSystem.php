@@ -68,7 +68,7 @@ function createPost($conn, $userId, $title, $content, $imagePath, $categoryId)
 function fetchAllPosts($conn)
 {
     try {
-        $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, posts.loveCount, users.username 
+        $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, posts.loveCount, users.username, users.profileImage 
         FROM posts
         JOIN users ON posts.userId = users.userId
         ORDER BY posts.createdAt DESC";

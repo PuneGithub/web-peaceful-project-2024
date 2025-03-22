@@ -1,6 +1,10 @@
 <?php
 require_once('conn.php');
-session_start();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 
 function userHasLoved($conn, $postId, $userId) {
     $loveStmt = $conn->prepare("SELECT * FROM loveLogs WHERE postId = :postId AND userId = :userId");

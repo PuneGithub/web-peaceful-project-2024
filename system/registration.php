@@ -43,11 +43,11 @@ function signup($username, $password, $email)
 
     $existingUser = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($existingUser['email'] === $email) {
+    if ($existingUser && $existingUser['email'] === $email) {
         return "This email is already registered.";
     }
 
-    if ($existingUser['username'] === $username) {
+    if ($existingUser && $existingUser['username'] === $username) {
         return "This username is already registered.";
     }
 
