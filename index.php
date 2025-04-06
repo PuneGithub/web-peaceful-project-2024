@@ -177,7 +177,11 @@ $getCategory = getCategory($conn);
                         ?>
                                 <div class="card-white">
                                     <div class="flex items-center space-x-4">
-                                        <img src="img/profile_users/<?php echo $post['profileImage']; ?>" alt="Profile" class="w-10 h-10 rounded-full">
+                                        <?php if (!empty($post['profileImage']) && file_exists("img/profile_image/" . $post['profileImage'])): ?>
+                                            <img src="img/profile_users/<?php echo $post['profileImage']; ?>" alt="Profile" class="w-10 h-10 rounded-full">
+                                        <?php else: ?>
+                                            <img src="img/profile_users/profile_default/default.webp" alt="Profile Default" class="w-10 h-10 rounded-full">
+                                        <?php endif; ?>
                                         <div>
                                             <h2 class="font-semibold"><?php echo $post['username']; ?></h2>
                                             <span class="text-sm text-gray-500"><?php echo $post['createdAt']; ?></span>
@@ -210,21 +214,6 @@ $getCategory = getCategory($conn);
                                 </div>
                             <?php } ?>
                         <?php } ?>
-                    </div>
-                </div>
-            </div>
-
-            <div class="max-w-2xl mx-auto space-y-5 hidden lg:block">
-                <div class="card-white">
-                    <div class="flex items-center space-x-4">
-                        <h2 class="text-lg font-bold text-gray-500">Forums</h2>
-                    </div>
-
-                    <!-- Forums Buttons -->
-                    <div class="flex flex-col p-3 space-y-3">
-                        <a href="#" class="btn-blue-500-full">Ask a question about Minecraft</a>
-                        <a href="#" class="btn-blue-500-full">Minecraft 2</a>
-                        <a href="#" class="btn-blue-500-full">Minecraft 3</a>
                     </div>
                 </div>
             </div>

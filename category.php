@@ -175,7 +175,11 @@ $getCategory = getCategory($conn);
                         ?>
                                 <div class="card-white">
                                     <div class="flex items-center space-x-4">
-                                        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full">
+                                        <?php if (!empty($post['profileImage']) && file_exists("img/profile_image/" . $post['profileImage'])): ?>
+                                            <img src="img/profile_users/<?php echo $post['profileImage']; ?>" alt="Profile" class="w-10 h-10 rounded-full">
+                                        <?php else: ?>
+                                            <img src="img/profile_users/profile_default/default.webp" alt="Profile Default" class="w-10 h-10 rounded-full">
+                                        <?php endif; ?>
                                         <div>
                                             <h2 class="font-semibold"><?php echo $post['username']; ?></h2>
                                             <span class="text-sm text-gray-500"><?php echo $post['createdAt']; ?></span>
@@ -188,10 +192,21 @@ $getCategory = getCategory($conn);
                                         <?php endif; ?>
                                         <p class="text-gray-800"><?php echo $post['content']; ?></p>
                                     </div>
-    
+
                                     <!-- Post Actions -->
                                     <div class="mt-4 flex items-center justify-between">
-                                        <button class="btn-blue-500"><i class="text-red-400 fa-solid fa-heart"></i></button>
+                                        <span id="loveCount" class="text-gray-500">Loves: <?php echo $post['loveCount']; ?></span>
+                                        <?php
+                                        if (isset($_SESSION['username'])) {
+                                        ?>
+                                            <button class="love-btn" data-postid="<?php echo $post['postId']; ?>">
+                                                <span class="heart-icon"><?php echo userHasLoved($conn, $post['postId'], $_SESSION['username']) ? "<i class='text-red-400 fa-solid fa-heart'></i>" : "<i class='text-red-300 fa-solid fa-heart'></i>"; ?></span>
+                                            </button>
+                                        <?php } else { ?>
+                                            <button disabled>
+                                                <i class='text-red-300 fa-solid fa-heart'></i>
+                                            </button>
+                                        <?php } ?>
                                         <button class="btn-blue-500">Comment</button>
                                     </div>
                                 </div>
