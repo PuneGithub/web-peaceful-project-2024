@@ -73,20 +73,6 @@ $getCategory = getCategory($conn);
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="max-w-2xl mx-auto space-y-5">
-                    <div class="card-white">
-                        <div class="flex items-center space-x-4">
-                            <h2 class="text-lg font-bold text-gray-500">Forums</h2>
-                        </div>
-
-                        <!-- Forums Buttons -->
-                        <div class="flex flex-col p-3 space-y-3">
-                            <a href="#" class="btn-blue-500-full">Ask a question about Minecraft</a>
-                            <a href="#" class="btn-blue-500-full">Minecraft 2</a>
-                            <a href="#" class="btn-blue-500-full">Minecraft 3</a>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="max-w-2xl mx-auto space-y-5 hidden lg:block">
@@ -111,8 +97,7 @@ $getCategory = getCategory($conn);
                 <!-- Form Post -->
                 <?php if (isset($_SESSION['userId'])) { ?>
                     <?php
-                    if ($_SERVER['REQUEST_METHOD'] === "POST") {
-
+                    if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnPost'])) {
 
                         $userId = $_SESSION['userId'];
                         $title = htmlspecialchars($_POST['title']);
@@ -129,7 +114,7 @@ $getCategory = getCategory($conn);
                     ?>
                     <div class="w-full max-w-md mx-auto">
                         <!-- Toggle Post Button -->
-                        <button id="toggleButton" class="btn-blue-500 w-full">
+                        <button id="togglePost" class="btn-blue-500 w-full">
                             Create Post
                         </button>
 
@@ -198,19 +183,34 @@ $getCategory = getCategory($conn);
                                     <!-- Post Actions -->
                                     <div class="mt-4 flex items-center justify-between">
                                         <span id="loveCount" class="text-gray-500">Loves: <?php echo $post['loveCount']; ?></span>
-                                        <?php 
-                                        if (isset($_SESSION['username'])) {
+                                        <?php
+                                        if (isset($_SESSION['username'])):
                                         ?>
-                                        <button class="love-btn" data-postid="<?php echo $post['postId']; ?>">
-                                            <span class="heart-icon"><?php echo userHasLoved($conn,$post['postId'], $_SESSION['username']) ? "<i class='text-red-400 fa-solid fa-heart'></i>" : "<i class='text-red-300 fa-solid fa-heart'></i>"; ?></span>
-                                        </button>
-                                        <?php } else { ?>
+                                            <button class="love-btn" data-postid="<?php echo $post['postId']; ?>">
+                                                <span class="heart-icon fa-lg"><?php echo userHasLoved($conn, $post['postId'], $_SESSION['username']) ? "<i class='text-red-400 fa-solid fa-heart'></i>" : "<i class='text-red-300 fa-solid fa-heart'></i>"; ?></span>
+                                            </button>
+                                        <?php else: ?>
                                             <button disabled>
                                                 <i class='text-red-300 fa-solid fa-heart'></i>
                                             </button>
-                                        <?php } ?>
-                                        <button class="btn-blue-500">Comment</button>
+                                        <?php endif; ?>
+                                        <button id="toggleComment" class="btn-blue-500">
+                                            comment
+                                        </button>
                                     </div>
+                                    <form action="" id="commentForm" class="hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data" method="post">
+                                        <div class="mb-4">
+                                            <label for="comment" class="block text-gray-700 text-sm font-bold mb-2">comment</label>
+                                            <input type="text" name="comment" class="input-form" placeholder="Enter Comment" required>
+                                        </div>
+
+                                        <!-- Submit Button -->
+                                        <div class="text-center">
+                                            <button type="submit" name="btnComment">
+                                                <i class="fa-solid fa-comment fa-lg text-sky-300"></i>
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
                             <?php } ?>
                         <?php } ?>
