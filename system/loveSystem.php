@@ -12,7 +12,7 @@ function userHasLoved($conn, $postId, $userId) {
     return $loveStmt->rowCount() > 0;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['userId']) && isset($_POST['postId'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['userId']) && isset($_POST['postId']) && isset($_POST['btnLove'])) {
     $postId = intval($_POST['postId']);
     $userId = intval($_SESSION['userId']);
 

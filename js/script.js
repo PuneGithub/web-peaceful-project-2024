@@ -14,12 +14,6 @@ togglePost.addEventListener('click', () => {
     postForm.classList.toggle('hidden');
 });
 
-// Comment Form button
-const toggleComment = document.getElementById('toggleComment');
-const commentForm = document.getElementById('commentForm');
 
-toggleComment.addEventListener('click', () => {
-    commentForm.classList.toggle('hidden');
-});
 
 

@@ -1,33 +1,10 @@
-// document.addEventListener("DOMContentLoaded", function () {
-//     document.querySelectorAll(".love-btn").forEach(button => {
-//         button.addEventListener("click", function () {
-//             const postId = this.getAttribute("data-postid");
-
-//             fetch("system/loveSystem.php", {
-//                 method: "POST",
-//                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//                 body: `postId=${postId}`
-//             })
-//             .then(response => response.json())
-//             .then(data => {
-//                 if (data.success) {
-//                     this.querySelector(".heart-icon").innerHTML = 
-//                         data.loved 
-//                         ? `<i class='text-red-400 fa-solid fa-heart'></i>` 
-//                         : `<i class='text-red-300 fa-solid fa-heart'></i>`;
-//                 } else {
-//                     alert("Error: " + data.message);
-//                 }
-//             });
-//         });
-//     });
-// });
 document.addEventListener("DOMContentLoaded", function () {
     const loveButtons = document.querySelectorAll(".love-btn");
 
     loveButtons.forEach((button) => {
         button.addEventListener("click", function () {
             const postId = this.getAttribute("data-postid");
+            const btnLove = this.getAttribute("btnLove");
             const loveCountSpan = this.closest(".card-white").querySelector("#loveCount");
             const heartIcon = this.querySelector(".heart-icon");
 
@@ -36,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
-                body: `postId=${postId}`,
+                body: `postId=${postId}&btnLove=${btnLove}`,
             })
                 .then((response) => response.json())
                 .then((data) => {

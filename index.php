@@ -3,11 +3,26 @@
 session_start();
 require_once("system/conn.php");
 require_once("system/postSystem.php");
+require_once("system/commentSystem.php");
 require_once("system/loveSystem.php");
 
 
 $getCategory = getCategory($conn);
 
+//Comment System
+if (isset($_SESSION['userId'])) {
+    if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnComment'])) {
+        $userId = $_SESSION['userId'];
+        $postId = htmlspecialchars($_POST['postId']);
+        $text = htmlspecialchars($_POST['text']);
+
+        $commentResult = createComment($conn, $postId, $userId, $text);
+
+        if ($commentResult) {
+            echo $commentResult;
+        }
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -186,22 +201,26 @@ $getCategory = getCategory($conn);
                                         <?php
                                         if (isset($_SESSION['username'])):
                                         ?>
-                                            <button class="love-btn" data-postid="<?php echo $post['postId']; ?>">
+                                            <button class="love-btn" check-btnLove="btnLove" data-postid="<?php echo $post['postId']; ?>">
                                                 <span class="heart-icon fa-lg"><?php echo userHasLoved($conn, $post['postId'], $_SESSION['username']) ? "<i class='text-red-400 fa-solid fa-heart'></i>" : "<i class='text-red-300 fa-solid fa-heart'></i>"; ?></span>
+                                            </button>
+                                            <button id="toggleComment_<?php echo $post['postId']; ?>" class="btn-blue-500">
+                                                comment
                                             </button>
                                         <?php else: ?>
                                             <button disabled>
                                                 <i class='text-red-300 fa-solid fa-heart'></i>
                                             </button>
+                                            <button disabled class="disabled:opacity-75 cursor-not-allowed btn-blue-500">
+                                                comment
+                                            </button>
                                         <?php endif; ?>
-                                        <button id="toggleComment" class="btn-blue-500">
-                                            comment
-                                        </button>
                                     </div>
-                                    <form action="" id="commentForm" class="hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data" method="post">
+                                    <form action="" id="commentForm_<?php echo $post['postId']; ?>" class="hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data" method="post">
                                         <div class="mb-4">
                                             <label for="comment" class="block text-gray-700 text-sm font-bold mb-2">comment</label>
-                                            <input type="text" name="comment" class="input-form" placeholder="Enter Comment" required>
+                                            <input type="text" name="text" class="input-form" placeholder="Enter Comment" required>
+                                            <input type="hidden" name="postId" value="<?php echo $post['postId']; ?>">
                                         </div>
 
                                         <!-- Submit Button -->
@@ -211,6 +230,18 @@ $getCategory = getCategory($conn);
                                             </button>
                                         </div>
                                     </form>
+                                    <div class="card-white" id="commentsBoxs_<?php echo $post['postId']; ?>">
+                                        <h2 class="text-center font-semibold">Comments</h2>
+                                        <?php
+                                        $getComment = getCommentByPostId($conn, $post['postId']);
+                                        foreach ($getComment as $comment):
+                                        ?>
+                                        <div class="mb-2">
+                                            <p class="text-sm font-semibold"><?php echo $comment['username']; ?> <span class="text-xs text-gray-400"><?php echo $comment['commentDate']; ?></span></p>
+                                            <p class="text-gray-700"><?php echo $comment['text']; ?></p>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
                                 </div>
                             <?php } ?>
                         <?php } ?>
@@ -225,6 +256,8 @@ $getCategory = getCategory($conn);
     <script src="js/script.js"></script>
     <!-- JavaScript สำหรับปุ่ม Love -->
     <script src="js/scriptLove.js"></script>
+    <!-- JavaScript สำหรับปุ่ม Comments -->
+    <script src="js/scriptComments.js"></script>
 </body>
 
 </html>
