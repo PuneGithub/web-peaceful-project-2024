@@ -8,7 +8,18 @@ document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("commentForm_" + postId)
             const commentsBoxs = document.getElementById("commentsBoxs_" + postId);
 
-            form.classList.toggle("hidden");
+            const isHidden = form.classList.contains("hidden");
+
+            if (isHidden) {
+                form.classList.remove("hidden");
+                commentsBoxs.classList.remove("hidden");
+            } else {
+                form.classList.add("hidden");
+                commentsBoxs.classList.add("hidden");
+            }
+
+            // form.classList.toggle("hidden");
+            // commentsBoxs.classList.toggle("hidden");
         })
     })
 })

@@ -230,7 +230,7 @@ if (isset($_SESSION['userId'])) {
                                             </button>
                                         </div>
                                     </form>
-                                    <div class="card-white" id="commentsBoxs_<?php echo $post['postId']; ?>">
+                                    <div class="card-white hidden" id="commentsBoxs_<?php echo $post['postId']; ?>">
                                         <h2 class="text-center font-semibold">Comments</h2>
                                         <?php
                                         $getComment = getCommentByPostId($conn, $post['postId']);
@@ -240,6 +240,7 @@ if (isset($_SESSION['userId'])) {
                                             <p class="text-sm font-semibold"><?php echo $comment['username']; ?> <span class="text-xs text-gray-400"><?php echo $comment['commentDate']; ?></span></p>
                                             <p class="text-gray-700"><?php echo $comment['text']; ?></p>
                                         </div>
+                                        <hr>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>

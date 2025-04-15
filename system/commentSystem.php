@@ -4,6 +4,11 @@ function createComment($conn, $postId, $userId, $text) {
 
     $commentDate = date("Y-m-d H:i:s");
 
+    $sqlCheck = "SELECT commentDate FROM comments WHERE userId = :userId";
+
+    $currentTime = new DateTime();
+
+
     $sql = "INSERT INTO comments (postId, userId, text, commentDate) VALUES (:postId, :userId, :text, :commentDate)";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':postId', $postId);
