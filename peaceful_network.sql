@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 12, 2025 at 02:39 AM
+-- Generation Time: Apr 25, 2025 at 11:37 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -57,6 +57,59 @@ CREATE TABLE `comments` (
   `commentDate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `comments`
+--
+
+INSERT INTO `comments` (`commentId`, `postId`, `userId`, `text`, `commentDate`) VALUES
+(59, 46, 27, 'test', '2025-04-14 03:40:21'),
+(60, 39, 27, 'muahahaha', '2025-04-14 03:40:45'),
+(61, 43, 27, 'wwwwwwwwwwwwwwwwwwww', '2025-04-14 03:40:55'),
+(62, 46, 27, 'adwadawd', '2025-04-15 02:25:47'),
+(63, 46, 27, 'adwadawd', '2025-04-15 02:26:30'),
+(64, 43, 27, 'gregadawdawdadw', '2025-04-15 02:27:46'),
+(65, 39, 27, 'Hello World', '2025-04-15 02:28:32'),
+(66, 39, 27, 'สหหหหหหหหหหหหห', '2025-04-15 02:29:01'),
+(67, 39, 27, 'สหหหหหหหหหหหหห', '2025-04-15 02:29:14'),
+(68, 39, 27, 'สหหหหหหหหหหหหห', '2025-04-15 02:29:27'),
+(69, 39, 27, 'สหหหหหหหหหหหหห', '2025-04-15 02:29:46'),
+(70, 39, 27, 'สหหหหหหหหหหหหห', '2025-04-15 02:30:15'),
+(71, 39, 27, 'สหหหหหหหหหหหหห', '2025-04-15 02:30:25'),
+(72, 46, 27, 'awdjoawijd', '2025-04-15 03:21:09'),
+(73, 46, 27, '5555+', '2025-04-15 03:21:16'),
+(74, 46, 27, '5555+', '2025-04-15 03:38:33'),
+(75, 46, 27, '5555+', '2025-04-15 03:39:31'),
+(76, 46, 27, '5555+', '2025-04-15 03:44:30'),
+(77, 46, 27, '5555+', '2025-04-15 03:44:56'),
+(78, 46, 27, '5555+', '2025-04-15 03:45:37'),
+(79, 45, 27, 'test', '2025-04-15 11:42:13'),
+(80, 45, 27, 'awdawd', '2025-04-15 11:42:17'),
+(81, 45, 27, 'awdwadaw', '2025-04-15 11:42:22'),
+(82, 45, 27, 'awdwadaw', '2025-04-15 11:42:26'),
+(83, 45, 27, '5656', '2025-04-15 11:42:31'),
+(84, 45, 27, '5656', '2025-04-15 11:47:29'),
+(85, 43, 27, 'awdawdad', '2025-04-15 11:47:52'),
+(86, 46, 27, '1aw32d1aw5d65aw4', '2025-04-15 11:48:05'),
+(87, 46, 27, 'kak', '2025-04-15 11:48:24'),
+(88, 46, 27, 'บลาๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆ', '2025-04-15 11:49:19'),
+(89, 46, 27, 'sssssssssssssssssss', '2025-04-19 04:30:26'),
+(90, 46, 27, 'ssssssssssssaaa', '2025-04-19 04:30:38'),
+(91, 46, 27, 'กาก', '2025-04-19 04:31:38'),
+(92, 39, 27, 'ไไไไไ', '2025-04-19 04:32:07'),
+(93, 39, 27, 'ฟไกฟไกไฟ', '2025-04-19 04:32:17'),
+(94, 44, 27, 'หหหหห', '2025-04-19 04:32:44'),
+(95, 46, 27, 'ฟกไฟกฟ', '2025-04-19 04:33:02'),
+(96, 46, 27, 'mawsssss', '2025-04-19 04:39:39'),
+(97, 39, 27, 'ดีๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆๆ', '2025-04-19 04:40:11'),
+(98, 39, 27, '5555555555555555555555555555555555555959555555555555555555555555555555555555555555999999999999999999999999999999999999', '2025-04-19 04:40:31'),
+(99, 49, 27, 'test', '2025-04-19 04:56:59'),
+(100, 48, 27, '123', '2025-04-19 04:57:49'),
+(101, 47, 27, '123', '2025-04-19 04:58:02'),
+(102, 47, 27, 'ไ4ฟ65ก465', '2025-04-19 04:58:15'),
+(103, 46, 27, 'ทดสอบ', '2025-04-19 05:01:00'),
+(104, 46, 27, 'ล่าสุด', '2025-04-19 05:01:39'),
+(105, 46, 27, 'เด', '2025-04-19 05:01:56');
+
 -- --------------------------------------------------------
 
 --
@@ -74,6 +127,7 @@ CREATE TABLE `lovelogs` (
 --
 
 INSERT INTO `lovelogs` (`loveId`, `userId`, `postId`) VALUES
+(77, 27, 47),
 (6, 32, 39),
 (7, 32, 43);
 
@@ -103,7 +157,11 @@ INSERT INTO `posts` (`postId`, `userId`, `title`, `content`, `createdAt`, `categ
 (43, 32, 'awdad4564', 'awdrf4w5ef4wef', '2025-03-23 12:23:09', 1, 1, NULL),
 (44, 27, 'wdadad', 'efwefewf', '2025-04-07 02:54:19', 1, 0, NULL),
 (45, 27, 'sadawdawd', 'sadawdawdawdawdawdawdawdawdawdawd\r\ndawdawdadaw\r\nawdawdfejfuihgihdshfiuhifuehuifhuif\r\ndjaiowjdojaoidjioe', '2025-04-07 03:03:54', 1, 0, NULL),
-(46, 27, 'muhahahahahah', 'muhahahahahah', '2025-04-07 03:09:28', 1, 0, NULL);
+(46, 27, 'muhahahahahah', 'muhahahahahah', '2025-04-07 03:09:28', 1, 0, NULL),
+(47, 27, 'ทดสอบ', 'ทดสอบ', '2025-04-19 04:44:30', 4, 1, 'post_1745037870ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png'),
+(48, 27, 'ทดสอบ', 'ทดสอบ', '2025-04-19 04:48:25', 4, 0, 'post_1745038105ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png'),
+(49, 27, 'ทดสอบ', 'ทดสอบ', '2025-04-19 04:49:43', 4, 0, 'post_1745038183ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png'),
+(50, 27, 'หหไกฟกฟไก', 'ฟไไไไไไไไ', '2025-04-19 05:00:00', 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -150,7 +208,9 @@ ALTER TABLE `category`
 -- Indexes for table `comments`
 --
 ALTER TABLE `comments`
-  ADD PRIMARY KEY (`commentId`);
+  ADD PRIMARY KEY (`commentId`),
+  ADD KEY `postId` (`postId`),
+  ADD KEY `userId` (`userId`);
 
 --
 -- Indexes for table `lovelogs`
@@ -188,19 +248,19 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `commentId` int NOT NULL AUTO_INCREMENT;
+  MODIFY `commentId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- AUTO_INCREMENT for table `lovelogs`
 --
 ALTER TABLE `lovelogs`
-  MODIFY `loveId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `loveId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `postId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `postId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -211,6 +271,13 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `comments`
+--
+ALTER TABLE `comments`
+  ADD CONSTRAINT `postId` FOREIGN KEY (`postId`) REFERENCES `posts` (`postId`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  ADD CONSTRAINT `userId` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `lovelogs`
