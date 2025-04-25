@@ -18,8 +18,40 @@ document.addEventListener("DOMContentLoaded", function () {
                 commentsBoxs.classList.add("hidden");
             }
 
-            // form.classList.toggle("hidden");
-            // commentsBoxs.classList.toggle("hidden");
         })
     })
+    
+    // Comment Form System
+    const commentForms = document.querySelectorAll(".commentForm");
+    commentForms.forEach(form => {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const postId = this.dataset.postid;
+            const commentInput = this.querySelector('input[name="text"]');
+            const commentText = commentInput.value;
+
+            if (commentText.trim() === "") return;
+
+            const formData = new URLSearchParams();
+            formData.append("postId", postId);
+            formData.append("comment", commentText);
+            formData.append("btnComment", "1");
+
+            fetch("system/commentSystem.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData.toString()
+            })
+                .then(response => response.text())
+                .then(data => {
+                    const commentsBoxs = document.getElementById("commentsBoxs_" + postId)
+                    commentsBoxs.innerHTML += data;
+                    commentInput.value = "";
+                })
+        })
+    })
+
 })

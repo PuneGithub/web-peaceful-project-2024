@@ -9,20 +9,6 @@ require_once("system/loveSystem.php");
 
 $getCategory = getCategory($conn);
 
-//Comment System
-if (isset($_SESSION['userId'])) {
-    if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnComment'])) {
-        $userId = $_SESSION['userId'];
-        $postId = htmlspecialchars($_POST['postId']);
-        $text = htmlspecialchars($_POST['text']);
-
-        $commentResult = createComment($conn, $postId, $userId, $text);
-
-        if ($commentResult) {
-            echo $commentResult;
-        }
-    }
-}
 
 ?>
 <!DOCTYPE html>
@@ -216,11 +202,12 @@ if (isset($_SESSION['userId'])) {
                                             </button>
                                         <?php endif; ?>
                                     </div>
-                                    <form action="" id="commentForm_<?php echo $post['postId']; ?>" class="hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data" method="post">
+                                    <!-- Form Comments -->
+                                    <form action="" id="commentForm_<?php echo $post['postId']; ?>" data-postid="<?php echo $post['postId']; ?>" class="commentForm hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data" method="post">
                                         <div class="mb-4">
                                             <label for="comment" class="block text-gray-700 text-sm font-bold mb-2">comment</label>
                                             <input type="text" name="text" class="input-form" placeholder="Enter Comment" required>
-                                            <input type="hidden" name="postId" value="<?php echo $post['postId']; ?>">
+                                            <!-- <input type="hidden" name="postId" value="<?php //echo $post['postId']; ?>"> -->
                                         </div>
 
                                         <!-- Submit Button -->
@@ -230,17 +217,17 @@ if (isset($_SESSION['userId'])) {
                                             </button>
                                         </div>
                                     </form>
-                                    <div class="card-white hidden" id="commentsBoxs_<?php echo $post['postId']; ?>">
+                                    <div class="card-white overflow-y-scroll max-h-64 hidden" id="commentsBoxs_<?php echo $post['postId']; ?>">
                                         <h2 class="text-center font-semibold">Comments</h2>
                                         <?php
                                         $getComment = getCommentByPostId($conn, $post['postId']);
                                         foreach ($getComment as $comment):
                                         ?>
-                                        <div class="mb-2">
-                                            <p class="text-sm font-semibold"><?php echo $comment['username']; ?> <span class="text-xs text-gray-400"><?php echo $comment['commentDate']; ?></span></p>
-                                            <p class="text-gray-700"><?php echo $comment['text']; ?></p>
-                                        </div>
-                                        <hr>
+                                            <div class="mb-2">
+                                                <p class="text-sm font-semibold"><?php echo $comment['username']; ?> <span class="text-xs text-gray-400"><?php echo $comment['commentDate']; ?></span></p>
+                                                <p class="text-gray-700"><?php echo $comment['text']; ?></p>
+                                            </div>
+                                            <hr>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
