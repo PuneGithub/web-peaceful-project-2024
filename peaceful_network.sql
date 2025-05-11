@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 25, 2025 at 11:37 PM
--- Server version: 8.0.30
--- PHP Version: 8.1.10
+-- Generation Time: May 11, 2025 at 01:49 AM
+-- Server version: 8.4.3
+-- PHP Version: 8.3.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,13 +24,28 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `blogs`
+--
+
+CREATE TABLE `blogs` (
+  `blogId` int NOT NULL,
+  `userId` int NOT NULL,
+  `blogTitle` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `blogContent` text COLLATE utf8mb4_general_ci,
+  `blogImage` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `createdAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `category`
 --
 
 CREATE TABLE `category` (
   `categoryId` int NOT NULL,
-  `categoryName` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` text COLLATE utf8mb4_general_ci
+  `categoryName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -53,7 +68,7 @@ CREATE TABLE `comments` (
   `commentId` int NOT NULL,
   `postId` int NOT NULL,
   `userId` int NOT NULL,
-  `text` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `commentDate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -108,7 +123,11 @@ INSERT INTO `comments` (`commentId`, `postId`, `userId`, `text`, `commentDate`) 
 (102, 47, 27, 'ไ4ฟ65ก465', '2025-04-19 04:58:15'),
 (103, 46, 27, 'ทดสอบ', '2025-04-19 05:01:00'),
 (104, 46, 27, 'ล่าสุด', '2025-04-19 05:01:39'),
-(105, 46, 27, 'เด', '2025-04-19 05:01:56');
+(105, 46, 27, 'เด', '2025-04-19 05:01:56'),
+(112, 49, 27, 'ฟฟ', '2025-04-26 14:22:00'),
+(116, 49, 27, 'uwu', '2025-04-26 14:48:36'),
+(118, 49, 32, 'Hello', '2025-05-01 01:41:13'),
+(119, 49, 32, 'awdwad', '2025-05-01 01:41:25');
 
 -- --------------------------------------------------------
 
@@ -127,7 +146,14 @@ CREATE TABLE `lovelogs` (
 --
 
 INSERT INTO `lovelogs` (`loveId`, `userId`, `postId`) VALUES
-(77, 27, 47),
+(99, 27, 39),
+(98, 27, 43),
+(101, 27, 44),
+(96, 27, 45),
+(94, 27, 46),
+(95, 27, 47),
+(93, 27, 48),
+(92, 27, 49),
 (6, 32, 39),
 (7, 32, 43);
 
@@ -140,12 +166,12 @@ INSERT INTO `lovelogs` (`loveId`, `userId`, `postId`) VALUES
 CREATE TABLE `posts` (
   `postId` int NOT NULL,
   `userId` int NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `content` text COLLATE utf8mb4_general_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `createdAt` datetime NOT NULL,
   `categoryId` int NOT NULL,
   `loveCount` int NOT NULL DEFAULT '0',
-  `imagePost` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `imagePost` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -153,15 +179,14 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`postId`, `userId`, `title`, `content`, `createdAt`, `categoryId`, `loveCount`, `imagePost`) VALUES
-(39, 27, 'test123ฟฟรไฟกdawd', 'dwadawdfhwdwadawd&lt;br&gt;\r\ndaw4d65asddwad', '2025-03-05 13:38:08', 1, 1, 'post_17411829287c8ae7bf-71d5-49e2-9c16-3bcf82aadb5d.jpg'),
-(43, 32, 'awdad4564', 'awdrf4w5ef4wef', '2025-03-23 12:23:09', 1, 1, NULL),
-(44, 27, 'wdadad', 'efwefewf', '2025-04-07 02:54:19', 1, 0, NULL),
-(45, 27, 'sadawdawd', 'sadawdawdawdawdawdawdawdawdawdawd\r\ndawdawdadaw\r\nawdawdfejfuihgihdshfiuhifuehuifhuif\r\ndjaiowjdojaoidjioe', '2025-04-07 03:03:54', 1, 0, NULL),
-(46, 27, 'muhahahahahah', 'muhahahahahah', '2025-04-07 03:09:28', 1, 0, NULL),
+(39, 27, 'test123ฟฟรไฟกdawd', 'dwadawdfhwdwadawd&lt;br&gt;\r\ndaw4d65asddwad', '2025-03-05 13:38:08', 1, 2, 'post_17411829287c8ae7bf-71d5-49e2-9c16-3bcf82aadb5d.jpg'),
+(43, 32, 'awdad4564', 'awdrf4w5ef4wef', '2025-03-23 12:23:09', 1, 2, NULL),
+(44, 27, 'wdadad', 'efwefewf', '2025-04-07 02:54:19', 1, 1, NULL),
+(45, 27, 'sadawdawd', 'sadawdawdawdawdawdawdawdawdawdawd\r\ndawdawdadaw\r\nawdawdfejfuihgihdshfiuhifuehuifhuif\r\ndjaiowjdojaoidjioe', '2025-04-07 03:03:54', 1, 1, NULL),
+(46, 27, 'muhahahahahah', 'muhahahahahah', '2025-04-07 03:09:28', 1, 1, NULL),
 (47, 27, 'ทดสอบ', 'ทดสอบ', '2025-04-19 04:44:30', 4, 1, 'post_1745037870ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png'),
-(48, 27, 'ทดสอบ', 'ทดสอบ', '2025-04-19 04:48:25', 4, 0, 'post_1745038105ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png'),
-(49, 27, 'ทดสอบ', 'ทดสอบ', '2025-04-19 04:49:43', 4, 0, 'post_1745038183ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png'),
-(50, 27, 'หหไกฟกฟไก', 'ฟไไไไไไไไ', '2025-04-19 05:00:00', 1, 0, NULL);
+(48, 27, 'ทดสอบ', 'ทดสอบ', '2025-04-19 04:48:25', 4, 1, 'post_1745038105ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png'),
+(49, 27, 'ทดสอบ', 'ทดสอบ', '2025-04-19 04:49:43', 4, 1, 'post_1745038183ดีไซน์ที่ยังไม่ได้ตั้งชื่อ.png');
 
 -- --------------------------------------------------------
 
@@ -171,16 +196,16 @@ INSERT INTO `posts` (`postId`, `userId`, `title`, `content`, `createdAt`, `categ
 
 CREATE TABLE `users` (
   `userId` int NOT NULL,
-  `username` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `profileImage` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `verifyEmail` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `resetCode` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `profileImage` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `verifyEmail` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `resetCode` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `createDate` date NOT NULL,
-  `verifyStatus` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `status` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'offline',
-  `role` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'user'
+  `verifyStatus` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'offline',
+  `role` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -188,7 +213,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userId`, `username`, `password`, `email`, `profileImage`, `verifyEmail`, `resetCode`, `createDate`, `verifyStatus`, `status`, `role`) VALUES
-(27, 'test123', '$2y$10$P6s3We3rkqeMQZl9yEo.UO..qKEZQAHB1wRMk5uyCq0X.yNsxsLxW', 'dev.peaceful@gmail.com', NULL, NULL, NULL, '2025-01-28', 'verified', 'offline', 'user'),
+(27, 'test123', '$2y$10$P6s3We3rkqeMQZl9yEo.UO..qKEZQAHB1wRMk5uyCq0X.yNsxsLxW', 'dev.peaceful@gmail.com', 'profile_1746092128.png', NULL, NULL, '2025-01-28', 'verified', 'offline', 'admin'),
 (28, 'pune2024', '$2y$10$s9suTUqwdWrWkseR5p7hrOz1oAaUvVaqjQlAzMc7akzUhBZRs.6pC', 'minecraftpune@gmail.com', NULL, NULL, NULL, '2025-03-07', 'verified', 'offline', 'user'),
 (29, 'dwadawd', '$2y$10$VNWUUkDtcHiafOqYsxD6XO1f1d7uka1cZwttiUU8gyRyBFwnAUwQm', 'wjf1oawdaw@gmail.com', NULL, '7b99387da6ffad9c93ecc9e693a7b7a8bd30a5dd213a17dea80114f0dec39fb8a394937330f114e87c16e5631fb832a79332', NULL, '2025-03-12', 'unverified', 'offline', 'user'),
 (30, 'muhaha', '$2y$10$0Fw/bjdaZ.fqDHj/oEbG..hDcwYOZkh7Pbux4fsuPKAJ.WDydJttK', 'muhahahah@gmail.com', NULL, '38faaeb0bc9eef6a1db85087385ccb3769729beea459b1729bc565d1b0de272ba6fcc8728d428c582ba231462fb914c37e79', NULL, '2025-03-12', 'unverified', 'offline', 'user'),
@@ -197,6 +222,12 @@ INSERT INTO `users` (`userId`, `username`, `password`, `email`, `profileImage`, 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `blogs`
+--
+ALTER TABLE `blogs`
+  ADD PRIMARY KEY (`blogId`);
 
 --
 -- Indexes for table `category`
@@ -239,6 +270,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `blogs`
+--
+ALTER TABLE `blogs`
+  MODIFY `blogId` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
@@ -248,19 +285,19 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `commentId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `commentId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
 
 --
 -- AUTO_INCREMENT for table `lovelogs`
 --
 ALTER TABLE `lovelogs`
-  MODIFY `loveId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `loveId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `postId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `postId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `users`
