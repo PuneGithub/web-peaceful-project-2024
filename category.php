@@ -1,8 +1,11 @@
 <?php
 //connect database
-require_once("system/conn.php");
-require_once("system/postSystem.php");
 session_start();
+require_once("system/conn.php");
+require_once("system/config.php");
+require_once("system/postSystem.php");
+require_once("system/commentSystem.php");
+require_once("system/loveSystem.php");
 if (!isset($_GET['categoryId']) || !is_numeric($_GET['categoryId'])) {
     header('Location: /index.php');
     exit();
@@ -197,17 +200,50 @@ $getCategory = getCategory($conn);
                                     <div class="mt-4 flex items-center justify-between">
                                         <span id="loveCount" class="text-gray-500">Loves: <?php echo $post['loveCount']; ?></span>
                                         <?php
-                                        if (isset($_SESSION['username'])) {
+                                        if (isset($_SESSION['username'])):
                                         ?>
-                                            <button class="love-btn" data-postid="<?php echo $post['postId']; ?>">
-                                                <span class="heart-icon"><?php echo userHasLoved($conn, $post['postId'], $_SESSION['username']) ? "<i class='text-red-400 fa-solid fa-heart'></i>" : "<i class='text-red-300 fa-solid fa-heart'></i>"; ?></span>
+                                            <button class="love-btn" check-btnLove="btnLove" data-postid="<?php echo $post['postId']; ?>">
+                                                <span class="heart-icon fa-lg"><?php echo userHasLoved($conn, $post['postId'], $_SESSION['username']) ? "<i class='text-red-400 fa-solid fa-heart'></i>" : "<i class='text-red-300 fa-solid fa-heart'></i>"; ?></span>
                                             </button>
-                                        <?php } else { ?>
+                                            <button id="toggleComment_<?php echo $post['postId']; ?>" class="btn-blue-500">
+                                                comment
+                                            </button>
+                                        <?php else: ?>
                                             <button disabled>
                                                 <i class='text-red-300 fa-solid fa-heart'></i>
                                             </button>
-                                        <?php } ?>
-                                        <button class="btn-blue-500">Comment</button>
+                                            <button disabled class="disabled:opacity-75 cursor-not-allowed btn-blue-500">
+                                                comment
+                                            </button>
+                                        <?php endif; ?>
+                                    </div>
+                                    <!-- Form Comments -->
+                                    <form action="" id="commentForm_<?php echo $post['postId']; ?>" data-postid="<?php echo $post['postId']; ?>" class="commentForm hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data" method="post">
+                                        <div class="mb-4">
+                                            <label for="comment" class="block text-gray-700 text-sm font-bold mb-2">comment</label>
+                                            <input type="text" name="text" class="input-form" placeholder="Enter Comment" required>
+                                            <input type="hidden" name="username" value="<?php echo $_SESSION['username']; ?>">
+                                        </div>
+
+                                        <!-- Submit Button -->
+                                        <div class="text-center">
+                                            <button type="submit" name="btnComment">
+                                                <i class="fa-solid fa-comment fa-lg text-sky-300"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <div class="card-white overflow-y-scroll max-h-64 hidden" id="commentsBoxs_<?php echo $post['postId']; ?>">
+                                        <h2 class="text-center font-semibold">Comments</h2>
+                                        <?php
+                                        $getComment = getCommentByPostId($conn, $post['postId']);
+                                        foreach ($getComment as $comment):
+                                        ?>
+                                            <div class="mb-2">
+                                                <p class="text-sm font-semibold"><?php echo $comment['username']; ?> <span class="text-xs text-gray-400"><?php echo $comment['commentDate']; ?></span></p>
+                                                <p class="text-gray-700"><?php echo $comment['text']; ?></p>
+                                            </div>
+                                            <hr>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -216,26 +252,16 @@ $getCategory = getCategory($conn);
                 </div>
             </div>
 
-            <div class="max-w-2xl mx-auto space-y-5 hidden lg:block">
-                <div class="card-white">
-                    <div class="flex items-center space-x-4">
-                        <h2 class="text-lg font-bold text-gray-500">Forums</h2>
-                    </div>
-
-                    <!-- Forums Buttons -->
-                    <div class="flex flex-col p-3 space-y-3">
-                        <a href="#" class="btn-blue-500-full">Ask a question about Minecraft</a>
-                        <a href="#" class="btn-blue-500-full">Minecraft 2</a>
-                        <a href="#" class="btn-blue-500-full">Minecraft 3</a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
     <!-- footer -->
     <?php include_once("components/footer.php"); ?>
     <script src="js/script.js"></script>
+    <!-- JavaScript สำหรับปุ่ม Love -->
+    <script src="js/scriptLove.js"></script>
+    <!-- JavaScript สำหรับปุ่ม Comments -->
+    <script src="js/scriptComments.js"></script>
 </body>
 
 </html>

@@ -5,8 +5,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-function createComment($conn, $postId, $userId, $text)
+function createComment($conn, $postId, $userId, $text, $username)
 {
+
 
     $commentDate = date("Y-m-d H:i:s");
 
@@ -39,12 +40,8 @@ function createComment($conn, $postId, $userId, $text)
 
     // สร้าง HTML ของคอมเมนต์ใหม่ แล้วส่งกลับไปแสดง
     return "
-        <div class='mb-2 border-b pb-2'>
-            <div class='flex items-center gap-2'>
-                
-                
-                <span class='text-xs text-gray-400'>{$commentDate}</span>
-            </div>
+        <div class='mb-2'>
+            <p class='text-sm font-semibold'>{$username}<span class='text-xs text-gray-400'>{$commentDate}</span></p>
             <p class='text-gray-700 mt-1 text-sm'>" . htmlspecialchars($text) . "</p>
         </div>";
 }
@@ -69,12 +66,13 @@ if (isset($_SESSION['userId'])) {
         $postId = $_POST['postId'] ?? null;
         $text = $_POST['comment'] ?? null;
         $userId = $_SESSION['userId'] ?? null;
+        $username = $_SESSION['username'];
 
         if (!$postId || !$text || !$userId) {
             echo "<div class='text-red-500 text-sm'>เกิดข้อผิดพลาด: กรุณาล็อกอินก่อนแสดงความคิดเห็น</div>";
             exit;
         }
 
-        echo createComment($conn, $postId, $userId, $text);
+        echo createComment($conn, $postId, $userId, $text, $username);
     }
 }

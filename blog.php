@@ -1,6 +1,7 @@
 <?php
 //connect database
 require_once("system/conn.php");
+require_once("system/config.php");
 session_start();
 ?>
 <!DOCTYPE html>

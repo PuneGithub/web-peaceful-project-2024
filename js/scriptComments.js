@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault();
 
             const postId = this.dataset.postid;
+            const username = this.querySelector('input[name="username"]');
             const commentInput = this.querySelector('input[name="text"]');
             const commentText = commentInput.value;
 
@@ -36,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const formData = new URLSearchParams();
             formData.append("postId", postId);
             formData.append("comment", commentText);
+            formData.append("username", username);
             formData.append("btnComment", "1");
 
             fetch("system/commentSystem.php", {

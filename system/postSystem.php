@@ -183,7 +183,10 @@ function deletePost($conn , $delete, $imagePost)
         }
     }
 
-    $sql = "DELETE FROM posts WHERE postId = :postId";
+    $sql = "DELETE posts, comments
+      FROM posts
+      INNER JOIN comments ON posts.postId = comments.postId
+      WHERE posts.postId = :postId";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(":postId", $delete);

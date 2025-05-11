@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../system/conn.php';
+require_once '../system/config.php';
 require_once '../system/accountSystem.php';
 
 //Check user login
@@ -55,7 +56,6 @@ try {
     <link rel="stylesheet" href="../css/output.css">
     <title>Peaceful Network</title>
 </head>
-<script src="../js/script.js"></script>
 
 <body style="background-image: url('../img/bg.webp');">
 
@@ -129,6 +129,10 @@ try {
             </form>
         </div>
     </div>
+
+    <?php include_once("../components/footer.php"); ?>
+
+    <script src="../js/script.js"></script>
 
 </body>
 

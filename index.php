@@ -1,7 +1,11 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 //connect database
 session_start();
 require_once("system/conn.php");
+require_once("system/config.php");
 require_once("system/postSystem.php");
 require_once("system/commentSystem.php");
 require_once("system/loveSystem.php");
@@ -45,8 +49,8 @@ $getCategory = getCategory($conn);
                     <h4 class="font-bold text-2xl">Welcome! <?php echo $_SESSION['username']; ?></h4><br>
                     <a href="account/managePosts.php" class="btn-blue-500"><i class="fa-solid fa-pen-to-square"></i> Manage Posts</a>
                 <?php } else { ?>
-                    <a href="/account/signup.php" class="btn-blue-400-outline">SIGN UP</a>
-                    <a href="/account/login.php" class="btn-green-400-outline">LOGIN</a>
+                    <a href="<?= base_url('/account/signup.php') ?>" class="btn-blue-400-outline">SIGN UP</a>
+                    <a href="<?= base_url('/account/login.php') ?>" class="btn-green-400-outline">LOGIN</a>
                 <?php } ?>
             </div>
         </div>
@@ -207,7 +211,7 @@ $getCategory = getCategory($conn);
                                         <div class="mb-4">
                                             <label for="comment" class="block text-gray-700 text-sm font-bold mb-2">comment</label>
                                             <input type="text" name="text" class="input-form" placeholder="Enter Comment" required>
-                                            <!-- <input type="hidden" name="postId" value="<?php //echo $post['postId']; ?>"> -->
+                                            <input type="hidden" name="username" value="<?php echo $_SESSION['username']; ?>">
                                         </div>
 
                                         <!-- Submit Button -->
@@ -241,6 +245,7 @@ $getCategory = getCategory($conn);
 
     <!-- footer -->
     <?php include_once("components/footer.php"); ?>
+
     <script src="js/script.js"></script>
     <!-- JavaScript สำหรับปุ่ม Love -->
     <script src="js/scriptLove.js"></script>

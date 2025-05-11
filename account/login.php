@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../system/conn.php';
+require_once("../system/config.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">

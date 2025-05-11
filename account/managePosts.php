@@ -1,10 +1,16 @@
 <?php
 //connect database
 require_once("../system/conn.php");
+require_once("../system/config.php");
 require_once("../system/postSystem.php");
 
 session_start();
 
+//Check user login
+if (!isset($_SESSION['userId'])) {
+    header("Location: ./login.php");
+    exit();
+}
 
 ?>
 <!DOCTYPE html>
