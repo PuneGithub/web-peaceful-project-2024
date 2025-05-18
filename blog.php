@@ -1,7 +1,8 @@
 <?php
 //connect database
-require_once("system/conn.php");
-require_once("system/config.php");
+require_once "system/conn.php";
+require_once "system/config.php";
+require_once "system/blogSystem.php";
 session_start();
 ?>
 <!DOCTYPE html>

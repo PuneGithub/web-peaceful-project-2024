@@ -43,21 +43,23 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                         <th class="border border-slate-300">blogId</th>
                                         <th class="border border-slate-300">userId</th>
                                         <th class="border border-slate-300">blogTitle</th>
-                                        <th class="border border-slate-300">blogContent</th>
                                         <th class="border border-slate-300">blogImage</th>
-                                        <th class="border border-slate-300">createAt</th>
+                                        <th class="border border-slate-300">createdAt</th>
                                         <th class="border border-slate-300">edit</th>
                                         <th class="border border-slate-300">delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    $fetchAllBlogs = fetchAllBlogs($conn);
+                                    foreach ($fetchAllBlogs as $blog) {
+                                    ?>
                                     <tr>
-                                        <td class="border border-slate-300"></td>
-                                        <td class="border border-slate-300"></td>
-                                        <td class="border border-slate-300"></td>
-                                        <td class="border border-slate-300"></td>
-                                        <td class="border border-slate-300"></td>
-                                        <td class="border border-slate-300"></td>
+                                        <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogId']); ?></td>
+                                        <td class="border border-slate-300"><?php echo htmlspecialchars($blog['userId']); ?></td>
+                                        <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogTitle']); ?></td>
+                                        <td class="border border-slate-300"><img src="../img/blogs_image/<?php echo htmlspecialchars($blog['blogImage']); ?>" alt="blogImage" class="w-32 h-32 object-cover rounded"></td>
+                                        <td class="border border-slate-300"><?php echo htmlspecialchars($blog['createdAt']); ?></td>
                                         <td class="border border-slate-300">
                                             <a href="editBlog.php?blogId=" class="btn-orange-500 inline-block">Edit</a>
                                         </td>
@@ -68,6 +70,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                             </form>
                                         </td>
                                     </tr>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
