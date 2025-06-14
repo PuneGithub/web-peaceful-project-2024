@@ -1,39 +1,51 @@
-<p>ประเภทสินค้า อุปกรณ์ Eaton 9A UPS แบบ Rack</p>
+<p>ประเภทสินค้า อุปกรณ์ Server Rack</p>
 <table>
     <thead>
         <tr>
             <th>แบรนด์</th>
-            <th>Eaton</th>
+            <th>เลอโนโว</th>
         </tr>
         <tr>
             <th>รุ่น</th>
-            <th>9103-53973</th>
+            <th>7D9GCTO1WW</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>Rated Capacity</td>
-            <td>3000 VA/2700 W</td>
+            <td>Processor</td>
+            <td>1x 4th Gen AMD EPYC processor</td>
         </tr>
         <tr>
-            <td>Type</td>
-            <td>Online Double Conversion</td>
+            <td>Processor Speed / Core</td>
+            <td>Up to 128 cores</td>
         </tr>
         <tr>
-            <td>Voltage rating</td>
-            <td>220/230/240VAC</td>
+            <td>Memory</td>
+            <td>DDR5 memory operating up to 6400 MHz</td>
         </tr>
         <tr>
-            <td>Input Frequency</td>
-            <td>40-70Hz</td>
+            <td>Software RAID</td>
+            <td>On Board SATA Software RAID Mode</td>
         </tr>
         <tr>
-            <td>Dimensions (W x D x H)</td>
-            <td>190 x 325 x 400 mm</td>
+            <td>Internal storage</td>
+            <td>
+                10x 2.5-inch front hot-swap drive bays<br /> 
+                Combinations of SAS/SATA, NVMe, or AnyBay<br /> 
+                16 x E1.S (5.9mm) EDSFF<br /> 
+                2x 2.5" SAS/SATA or NVMe rear hot-swap drives<br />
+                2x 7mm hot-swap rear hot-swap drives (optional RAID support)<br />
+                Internal M.2 module (PCIe x4) supporting up to two M.2 drives<br /> 
+                Supports M.2 with NVMe x4 interface
+            </td>
         </tr>
         <tr>
-            <td>Weight (Kg)</td>
-            <td>23.5</td>
+            <td>Power Supply</td>
+            <td>750W, 1100W, 1800W AC Platinum/Titanium Hot Plug PSU</td>
+        </tr>
+        <tr>
+            <td>Window</td>
+            <td>No OS pre-installed</td>
         </tr>
     </tbody>
 </table>

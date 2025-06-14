@@ -8,7 +8,7 @@
         <!-- Menu Links Desktop -->
         <div class="hidden sm:flex space-x-6">
             <a href="<?= base_url('/index.php') ?>" class="font-semibold text-gray-300 hover:text-white">HOME</a>
-            <a href="<?= base_url('/blog.php') ?>" class="font-semibold text-gray-300 hover:text-white">BLOG</a>
+            <a href="<?= base_url('/blogs.php') ?>" class="font-semibold text-gray-300 hover:text-white">BLOG</a>
             <a href="<?= base_url('/forum.php') ?>" class="font-semibold text-gray-300 hover:text-white">FORUM</a>
             <a href="<?= base_url('/resources.php') ?>" class="font-semibold text-gray-300 hover:text-white">RESOURCES</a>
             <a href="<?= base_url('/about.php') ?>" class="font-semibold text-gray-300 hover:text-white">ABOUT</a>
@@ -42,7 +42,7 @@
         <!-- Menu Links Mobile -->
         <div id="mobile-menu" class="hidden sm:hidden">
             <a href="<?= base_url('/index.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">HOME</a>
-            <a href="<?= base_url('/blog.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">BLOG</a>
+            <a href="<?= base_url('/blogs.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">BLOG</a>
             <a href="<?= base_url('/forum.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">FORUM</a>
             <a href="<?= base_url('/resources.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">RESOURCES</a>
             <a href="<?= base_url('/about.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">ABOUT</a>

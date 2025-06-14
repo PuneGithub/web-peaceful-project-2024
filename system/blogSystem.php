@@ -16,3 +16,11 @@ function fetchAllBlogs($conn)
         return [];
     }
 }
+
+function fetchBlog($conn, $slug)
+{
+    $stmt = $conn->prepare("SELECT * FROM blogs WHERE slug = :slug LIMIT 1");
+    $stmt->bindParam(':slug', $slug);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
