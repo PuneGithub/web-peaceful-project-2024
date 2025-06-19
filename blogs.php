@@ -4,6 +4,8 @@ require_once "system/conn.php";
 require_once "system/config.php";
 require_once "system/blogSystem.php";
 session_start();
+
+$fetchLatestBlog = fetchLatestBlog($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,11 +31,11 @@ session_start();
             <h2 class="text-2xl font-bold text-center">BLOG</h2>
             <div class="card-white max-w-4xl mx-auto flex items-center space-x-6">
                 <!-- Image -->
-                <img src="https://via.placeholder.com/300" alt="Example image" class="w-1/2 rounded-lg">
+                <img src="img/blogs_image/<?php echo $fetchLatestBlog['blogImage']; ?>" alt="Example image" class="w-1/2 rounded-lg">
 
                 <div class="flex flex-col justify-between w-1/2">
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-900">Hello World</h2>
+                        <h2 class="text-2xl font-bold text-gray-900"><?php echo $fetchLatestBlog['blogTitle']; ?></h2>
                         <p class="text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius, corrupti.</p>
                     </div>
 
@@ -51,7 +53,7 @@ session_start();
                             <img src="img/blogs_image/<?php echo $blog['blogImage']; ?>" alt="Example image" class="rounded-lg">
 
                             <div class="flex flex-col">
-                                <div class="text-white space-y-3">
+                                <div class="space-y-3">
                                     <h2 class="text-2xl font-bold"><?php echo $blog['blogTitle']; ?></h2>
                                     <p class="text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius, corrupti.</p>
                                 </div>

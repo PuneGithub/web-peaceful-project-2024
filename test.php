@@ -1,51 +1,38 @@
-<p>ประเภทสินค้า อุปกรณ์ Server Rack</p>
+<p>ประเภทสินค้า อุปกรณ์ Wireless Buttons</p>
 <table>
     <thead>
         <tr>
-            <th>แบรนด์</th>
-            <th>เลอโนโว</th>
+            <td>แบรนด์</td>
+            <td>Fanvil</td>
         </tr>
         <tr>
-            <th>รุ่น</th>
-            <th>7D9GCTO1WW</th>
+            <td>รุ่น</td>
+            <td>FNV-KT20</td>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>Processor</td>
-            <td>1x 4th Gen AMD EPYC processor</td>
+            <td>Material</td>
+            <td>ABS</td>
         </tr>
         <tr>
-            <td>Processor Speed / Core</td>
-            <td>Up to 128 cores</td>
+            <td>Modulation Mode</td>
+            <td>FSK</td>
         </tr>
         <tr>
-            <td>Memory</td>
-            <td>DDR5 memory operating up to 6400 MHz</td>
+            <td>Radio Frequency</td>
+            <td>433MHz</td>
         </tr>
         <tr>
-            <td>Software RAID</td>
-            <td>On Board SATA Software RAID Mode</td>
+            <td>Dimension</td>
+            <td>74mm x 74mm x 42.8mm</td>
         </tr>
         <tr>
-            <td>Internal storage</td>
+            <td>Operate Range</td>
             <td>
-                10x 2.5-inch front hot-swap drive bays<br /> 
-                Combinations of SAS/SATA, NVMe, or AnyBay<br /> 
-                16 x E1.S (5.9mm) EDSFF<br /> 
-                2x 2.5" SAS/SATA or NVMe rear hot-swap drives<br />
-                2x 7mm hot-swap rear hot-swap drives (optional RAID support)<br />
-                Internal M.2 module (PCIe x4) supporting up to two M.2 drives<br /> 
-                Supports M.2 with NVMe x4 interface
+                Spacious outdoors: 120-130m<br>
+                Spacious indoors: 12-25m
             </td>
-        </tr>
-        <tr>
-            <td>Power Supply</td>
-            <td>750W, 1100W, 1800W AC Platinum/Titanium Hot Plug PSU</td>
-        </tr>
-        <tr>
-            <td>Window</td>
-            <td>No OS pre-installed</td>
         </tr>
     </tbody>
 </table>

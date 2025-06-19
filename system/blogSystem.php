@@ -24,3 +24,17 @@ function fetchBlog($conn, $slug)
     $stmt->execute();
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
+
+function fetchLatestBlog($conn)
+{
+    try {
+        $sql = "SELECT * FROM blogs ORDER BY createdAt DESC LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $error){
+        echo "Error fetching latest blog:" . $error->getMessage();
+        return null;
+    }
+}

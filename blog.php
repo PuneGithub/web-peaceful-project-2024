@@ -38,14 +38,19 @@ if (isset($_GET['slug'])) {
     include_once("components/header-navbar.php");
     ?>
 
-    <div class="container mx-auto">
+    <div class="container mx-auto px-4">
         <div class="card">
             <div class="card-white">
                 <img src="<?= base_url('/img/blogs_image/' . $blog['blogImage']); ?>" alt="" class="block mx-auto object-contain md:h-96 shadow-lg rounded-lg">
                 <h1 class="text-center font-semibold text-2xl">
                     <?php echo $blog['blogTitle']; ?>
                 </h1>
-                <?php echo $blog['blogContent']; ?>
+                <p class="text-lg text-gray-600">
+                    By <span class="font-semibold text-blue-600">Admin</span> Created on: <?php echo $blog['createdAt']; ?>
+                </p>
+                <div class="px-6">
+                    <?php echo $blog['blogContent']; ?>
+                </div>
             </div>
         </div>
     </div>
