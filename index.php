@@ -10,8 +10,30 @@ require_once("system/postSystem.php");
 require_once("system/commentSystem.php");
 require_once("system/loveSystem.php");
 
+$sortBy = $_GET['sort'] ?? 'latest'; //กำหนดค่าเริ่มต้นเป็น 'latest' หากไม่มีค่าใน query string
+
+if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnPost'])) {
+
+    $userId = $_SESSION['userId'];
+    $title = htmlspecialchars($_POST['title']);
+    $content = htmlspecialchars($_POST['content']);
+    $categoryId = htmlspecialchars($_POST['categoryId']);
+
+    $imagePath = NULL;
+    $postResult = createPost($conn, $userId, $title, $content, $imagePath, $categoryId);
+
+    if ($postResult) {
+        $_SESSION['message'] = $postResult;
+        header("Location: " . base_url('/index.php'));
+        exit;
+    }
+}
 
 $getCategory = getCategory($conn);
+
+//ดึงข้อความจาก SESSION ถ้ามี
+$message = $_SESSION['message'] ?? null;
+unset($_SESSION['message']);
 
 
 ?>
@@ -23,8 +45,9 @@ $getCategory = getCategory($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/output.css">
+    
     <link rel="icon" href="data:,">
-    <title>Peaceful Network</title>
+    <title>Zencrafterly</title>
 </head>
 
 <body>
@@ -40,14 +63,19 @@ $getCategory = getCategory($conn);
 
         <!-- Content -->
         <div class="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
-            <h1 class="text-4xl font-bold mb-4">Minecraft Peaceful Network</h1>
+            <h1 class="text-4xl font-bold mb-4">Minecraft Zencrafterly</h1>
             <p class="text-lg mb-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, consectetur.</p>
             <div class="space-x-4">
                 <?php
                 if (isset($_SESSION['userId'])) {
                 ?>
                     <h4 class="font-bold text-2xl">Welcome! <?php echo $_SESSION['username']; ?></h4><br>
-                    <a href="account/managePosts.php" class="btn-blue-500"><i class="fa-solid fa-pen-to-square"></i> Manage Posts</a>
+                    <?php if ($_SESSION['verifyStatus'] === "verified") {
+                    ?>
+                        <a href="account/managePosts.php" class="btn-blue-500"><i class="fa-solid fa-pen-to-square"></i> Manage Posts</a>
+                    <?php } else { ?>
+                        <button class="btn-red-500" disabled>โปรดยืนยัน Email ก่อนเริ่มสร้าง POST</button>
+                    <?php } ?>
                 <?php } else { ?>
                     <a href="<?= base_url('/account/signup.php') ?>" class="btn-blue-400-outline">SIGN UP</a>
                     <a href="<?= base_url('/account/login.php') ?>" class="btn-green-400-outline">LOGIN</a>
@@ -101,73 +129,77 @@ $getCategory = getCategory($conn);
             <div class="flex flex-col">
                 <!-- Form Post -->
                 <?php if (isset($_SESSION['userId'])) { ?>
-                    <?php
-                    if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnPost'])) {
 
-                        $userId = $_SESSION['userId'];
-                        $title = htmlspecialchars($_POST['title']);
-                        $content = htmlspecialchars($_POST['content']);
-                        $categoryId = htmlspecialchars($_POST['categoryId']);
-
-                        $imagePath = NULL;
-                        $postResult = createPost($conn, $userId, $title, $content, $imagePath, $categoryId);
-
-                        if ($postResult) {
-                            echo $postResult;
-                        }
-                    }
+                    <?php if ($_SESSION['verifyStatus'] === "verified") {
                     ?>
-                    <div class="w-full max-w-md mx-auto">
-                        <!-- Toggle Post Button -->
-                        <button id="togglePost" class="btn-blue-500 w-full">
-                            Create Post
-                        </button>
+                        <?php
+                        if ($message):
+                            echo $message;
+                        endif;
+                        ?>
+                        <div class="w-full max-w-md mx-auto">
+                            <!-- Toggle Post Button -->
+                            <button id="togglePost" class="btn-blue-500 w-full">
+                                Create Post
+                            </button>
 
-                        <form action="" id="postForm" method="post" class="hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data">
-                            <h2 class="text-lg font-bold mb-4 text-center">Post Form</h2>
+                            <form action="" id="postForm" method="post" class="hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data">
+                                <h2 class="text-lg font-bold mb-4 text-center">Post Form</h2>
 
-                            <div class="mb-4">
-                                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
-                                <input type="text" name="title" class="input-form" placeholder="Enter title" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Content</label>
-                                <textarea name="content" rows="4" class="input-form" placeholder="Enter content" required></textarea>
-                            </div>
-                            <div class="mb-4">
-                                <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Select Category</label>
-                                <select name="categoryId" id="categoryId" class="input-form" required>
-                                    <option value="" disabled selected>Select Category</option>
-                                    <option value="1">Minecraft Java Edition</option>
-                                    <option value="2">Minecraft Bedrock Edition</option>
-                                    <option value="3">Promote Minecraft Server</option>
-                                    <option value="4">Other Games</option>
-                                </select>
-                            </div>
-                            <div class="mb-4">
-                                <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Upload Image</label>
-                                <input type="file" name="imagePost" accept="image/*">
-                            </div>
+                                <div class="mb-4">
+                                    <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
+                                    <input type="text" name="title" class="input-form" placeholder="Enter title" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Content</label>
+                                    <textarea name="content" rows="4" class="input-form" placeholder="Enter content" required></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="content" class="block text-gray-700 text-sm font-bold mb-2">Select Category</label>
+                                    <select name="categoryId" id="categoryId" class="input-form" required>
+                                        <option value="" disabled selected>Select Category</option>
+                                        <option value="1">Minecraft Java Edition</option>
+                                        <option value="2">Minecraft Bedrock Edition</option>
+                                        <option value="3">Promote Minecraft Server</option>
+                                        <option value="4">Other Games</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Upload Image</label>
+                                    <input type="file" name="imagePost" accept="image/*">
+                                </div>
 
-                            <!-- Submit Button -->
-                            <div class="text-center">
-                                <input type="submit" name="btnPost" class="btn-green-500 w-full" value="Post">
-                            </div>
-                        </form>
-                    </div>
+                                <!-- Submit Button -->
+                                <div class="text-center">
+                                    <input type="submit" name="btnPost" class="btn-green-500 w-full" value="Post">
+                                </div>
+                            </form>
+                        </div>
+                    <?php } ?>
                     <br>
                 <?php } ?>
+
+                <div class="flex space-x-2 mb-4 w-full mmax-w-md mx-auto">
+                    <a href="?sort=latest" class="<?= ($sortBy === 'latest' || $sortBy === '') ? 'btn-blue-500-full' : 'btn-gray-500-full' ?>">
+                        <i class="fa-solid fa-clock"></i> โพสต์ล่าสุด
+                    </a>
+                    <a href="?sort=most_loved" class="<?= ($sortBy === 'most_loved') ? 'btn-red-500-full' : 'btn-gray-500-full' ?>">
+                        <i class="fa-solid fa-heart"></i> โพสต์ยอดนิยม
+                    </a>
+                </div>
+
                 <!-- Post Feed -->
                 <div class="space-y-6">
                     <div class="max-w-4xl mx-auto p-4 space-y-4">
                         <?php
-                        $fetchPosts = fetchAllPosts($conn);
+
+                        $fetchPosts = fetchAllPosts($conn, $sortBy);
                         if (!empty($fetchPosts)) {
                             foreach ($fetchPosts as $post) {
                         ?>
                                 <div class="card-white">
                                     <div class="flex items-center space-x-4">
-                                        <?php if (!empty($post['profileImage']) && file_exists("img/profile_image/" . $post['profileImage'])): ?>
+                                        <?php if (!empty($post['profileImage']) && file_exists("img/profile_users/" . $post['profileImage'])): ?>
                                             <img src="img/profile_users/<?php echo $post['profileImage']; ?>" alt="Profile" class="w-10 h-10 rounded-full">
                                         <?php else: ?>
                                             <img src="img/profile_users/profile_default/default.webp" alt="Profile Default" class="w-10 h-10 rounded-full">

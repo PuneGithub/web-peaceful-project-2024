@@ -12,6 +12,41 @@ if (!isset($_SESSION['userId'])) {
     exit();
 }
 
+
+//Delete Post
+if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['delete'])) {
+    $delete = $_POST['delete'];
+
+    $imagePost = $_POST['imagePost'];
+
+    $deleteResult = deletePost($conn, $delete, $imagePost);
+
+    if ($deleteResult) {
+        $_SESSION['msgPost'] = $deleteResult;
+    }
+    header("Location: " . base_url('/account/managePosts.php'));
+}
+
+//Update Post
+if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['postId'])) {
+
+    $postId = $_POST['postId'];
+
+
+    $imagePath = NULL;
+
+    $title = htmlspecialchars($_POST['title']);
+    $content = htmlspecialchars($_POST['content']);
+    $categoryId = htmlspecialchars($_POST['categoryId']);
+    $postResult = updatePost($conn, $postId, $title, $content, $categoryId, $imagePath);
+
+    if ($postResult) {
+        $_SESSION['msgPost'] = $postResult;
+    }
+}
+
+$userId = $_SESSION['userId'];
+$fetchPostUser = fetchPostUser($conn, $userId);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +57,7 @@ if (!isset($_SESSION['userId'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../css/output.css">
     <link rel="icon" href="data:,">
-    <title>Peaceful Network</title>
+    <title>Zencrafterly</title>
 </head>
 
 <body>
@@ -45,7 +80,6 @@ if (!isset($_SESSION['userId'])) {
                 if (isset($_SESSION['userId'])) {
                 ?>
                     <h4 class="font-bold text-2xl">Welcome! <?php echo $_SESSION['username']; ?></h4><br>
-                    <a href="account/managePosts.php" class="btn-blue-500"><i class="fa-solid fa-pen-to-square"></i> Manage Posts</a>
                 <?php } else { ?>
                     <a href="/account/signup.php" class="btn-blue-400-outline">SIGN UP</a>
                     <a href="/account/login.php" class="btn-green-400-outline">LOGIN</a>
@@ -56,6 +90,12 @@ if (!isset($_SESSION['userId'])) {
 
     <div class="bg-gray-100 min-h-screen p-6">
         <div class="card-white">
+            <?php 
+            if (isset($_SESSION['msgPost'])) {
+                echo $_SESSION['msgPost'];
+                unset($_SESSION['msgPost']);
+            }
+            ?>
             <h1 class="text-4xl text-center font-bold">จัดการโพสต์</h1>
             <div class="overflow-x-auto overflow-y-auto h-96">
                 <table class="table-auto w-full border border-slate-400 border-collapse text-center">
@@ -72,40 +112,7 @@ if (!isset($_SESSION['userId'])) {
                     </thead>
                     <tbody>
                         <?php
-                        $userId = $_SESSION['userId'];
 
-                        //Delete Post
-                        if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['delete'])) {
-                            $delete = $_POST['delete'];
-
-                            $imagePost = $_POST['imagePost'];
-
-                            $deleteResult = deletePost($conn, $delete, $imagePost);
-
-                            if ($deleteResult) {
-                                echo $deleteResult;
-                            }
-                        }
-                        
-                        //Update Post
-                        if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['postId'])) {
-                            
-                            $postId = $_POST['postId'];
-                            
-                            
-                            $imagePath = NULL;
-
-                            $title = htmlspecialchars($_POST['title']);
-                            $content = htmlspecialchars($_POST['content']);
-                            $categoryId = htmlspecialchars($_POST['categoryId']);
-                            $postResult = updatePost($conn, $postId, $title, $content, $categoryId, $imagePath);
-                            
-                            if ($postResult) {
-                                echo $postResult;
-                            }
-                        }
-
-                        $fetchPostUser = fetchPostUser($conn, $userId);
                         foreach ($fetchPostUser as $post) {
 
                         ?>

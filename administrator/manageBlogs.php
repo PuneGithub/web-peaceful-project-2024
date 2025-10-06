@@ -4,6 +4,30 @@ session_start();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: index.php");
 }
+
+//ข้อความเมื่อกดปุ่ม Delete
+$msgBlog = null;
+
+//Delete Blogs
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['blogId'])) {
+    $blogId = $_POST['blogId'];
+    if (deleteBlog($conn, $blogId)) {
+        $msgBlog = "<div class='alert-green'>ลบบล็อกสำเร็จแล้ว</div>";
+    } else {
+        $msgBlog = "<div class='alert-danger'>เกิดข้อผิดพลาดในการลบบล็อก</div>";
+    }
+}
+
+//กำหนด Path ของรูปภาพตาม blogCategory
+$imagePathsMap = [
+    'papermc' => '/img/blogs_image/blogs_server/papermc/',
+    'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
+];
+
+
+$fetchAllBlogs = fetchAllBlogs($conn);
+$totalPosts = countPosts($conn);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,12 +50,14 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-12 sm:col-span-4">
                     <div class="card-white">
-                        <?php $totalPosts = countPosts($conn); ?>
                         <h2 class="font-bold text-lg">จำนวนโพสต์: <?php echo $totalPosts; ?> โพสต์</h2>
                     </div>
                 </div>
                 <div class="col-span-12 sm:col-span-8">
                     <div class="card-white">
+                        <?php if ($msgBlog) {
+                            echo $msgBlog;
+                        } ?>
                         <div class="flex items-center">
                             <a href="addBlog.php" class="btn btn-blue-500">New Blog</a>
                             <h2 class="font-bold flex-1 text-center text-xl">Manage Blogs</h2>
@@ -51,25 +77,26 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $fetchAllBlogs = fetchAllBlogs($conn);
                                     foreach ($fetchAllBlogs as $blog) {
+                                        // ใช้ blogCategory ที่ดึงมาจากฐานข้อมูลเพื่อเลือก path ที่ถูกต้อง
+                                        $imagePath = $imagePathsMap[$blog['blogCategory']] ?? '';
                                     ?>
-                                    <tr>
-                                        <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogId']); ?></td>
-                                        <td class="border border-slate-300"><?php echo htmlspecialchars($blog['userId']); ?></td>
-                                        <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogTitle']); ?></td>
-                                        <td class="border border-slate-300"><img src="../img/blogs_image/<?php echo htmlspecialchars($blog['blogImage']); ?>" alt="blogImage" class="w-32 h-32 object-cover rounded"></td>
-                                        <td class="border border-slate-300"><?php echo htmlspecialchars($blog['createdAt']); ?></td>
-                                        <td class="border border-slate-300">
-                                            <a href="editBlog.php?blogId=" class="btn-orange-500 inline-block">Edit</a>
-                                        </td>
-                                        <td class="border border-slate-300">
-                                            <form action="" method="post">
-                                                <input type="hidden" name="userId" value="<?php ?>">
-                                                <input type="submit" class="btn-red-500 inline-block" value="Delete">
-                                            </form>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogId']); ?></td>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($blog['userId']); ?></td>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogTitle']); ?></td>
+                                            <td class="border border-slate-300"><img src="..<?php echo htmlspecialchars($imagePath . $blog['blogImage']); ?>" alt="blogImage" class="w-32 h-32 object-cover rounded"></td>
+                                            <td class="border border-slate-300"><?php echo htmlspecialchars($blog['createdAt']); ?></td>
+                                            <td class="border border-slate-300">
+                                                <a href="editBlog.php?blogId=<?php echo $blog['blogId']; ?>" class="btn-orange-500 inline-block">Edit</a>
+                                            </td>
+                                            <td class="border border-slate-300">
+                                                <form action="" method="post" onsubmit="return confirm('ต้องการลบ blog นี้ใช่ไหม?');">
+                                                    <input type="hidden" name="blogId" value="<?php echo $blog['blogId']; ?>">
+                                                    <input type="submit" class="btn-red-500 inline-block" value="Delete">
+                                                </form>
+                                            </td>
+                                        </tr>
                                     <?php } ?>
                                 </tbody>
                             </table>

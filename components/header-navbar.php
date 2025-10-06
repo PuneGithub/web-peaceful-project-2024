@@ -2,7 +2,7 @@
     <div class="container mx-auto flex justify-center items-center space-x-6">
         <!-- Logo -->
         <div class="text-white text-xl font-bold">
-            Peaceful Network
+            Zencrafterly
         </div>
 
         <!-- Menu Links Desktop -->

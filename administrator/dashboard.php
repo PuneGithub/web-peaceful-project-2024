@@ -70,7 +70,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                                 <a href="editUser.php?userId=<?php echo $user['userId']; ?>" class="btn-orange-500 inline-block">Edit</a>
                                             </td>
                                             <td class="border border-slate-300">
-                                                <form action="editUser.php" method="post">
+                                                <form action="" method="post">
                                                     <input type="hidden" name="userId" value="<?php echo $user['userId']; ?>">
                                                     <input type="submit" class="btn-red-500 inline-block" value="Delete">
                                                 </form>

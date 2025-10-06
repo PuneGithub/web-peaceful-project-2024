@@ -5,6 +5,23 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     header("Location: index.php");
 }
 
+$totalPosts = countPosts($conn);
+
+if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnBlog'])) {
+
+    $userId = $_SESSION['userId'];
+    $blogTitle = htmlspecialchars($_POST['blogTitle']);
+    $blogContent = $_POST['blogContent'];
+    $blogUrl = $_POST['blogUrl'];
+    $metaDescription = $_POST['metaDescription'];
+    $blogCategory = htmlspecialchars($_POST['blogCategory']);
+    $newImage = $_FILES['blogImage'];
+
+    $slug = createSlug($blogUrl);
+
+    $blogImage = NULL;
+    $blogResult = createBlog($conn, $userId, $blogTitle, $blogContent, $newImage, $metaDescription, $slug, $blogCategory);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,7 +44,6 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-12 sm:col-span-4">
                     <div class="card-white">
-                        <?php $totalPosts = countPosts($conn); ?>
                         <h2 class="font-bold text-lg">จำนวนโพสต์: <?php echo $totalPosts; ?> โพสต์</h2>
                     </div>
                 </div>
@@ -37,20 +53,8 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                             <h2 class="font-bold flex-1 text-center text-xl">Add Blog</h2>
                         </div>
                         <?php
-                        if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnBlog'])) {
-
-                            $userId = $_SESSION['userId'];
-                            $blogTitle = htmlspecialchars($_POST['blogTitle']);
-                            $blogContent = $_POST['blogContent'];
-                            $blogUrl = $_POST['blogUrl'];
-                            $slug = createSlug($blogUrl);
-
-                            $blogImage = NULL;
-                            $blogResult = createBlog($conn, $userId, $blogTitle, $blogContent, $blogImage, $slug);
-
-                            if ($blogResult) {
-                                echo $blogResult;
-                            }
+                        if (isset($blogResult)) {
+                            echo $blogResult;
                         }
                         ?>
                         <form action="" method="post" class="space-y-4" enctype="multipart/form-data">
@@ -65,6 +69,18 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                             <div>
                                 <label for="Code HTML" class="block text-sm font-medium">Code HTML</label>
                                 <textarea name="blogContent" id="blogContent" class="input-form" rows="5" cols="30"></textarea>
+                            </div>
+                            <div>
+                                <label for="metaDescription" class="block text-sm font-medium">metaDescription</label>
+                                <input type="text" name="metaDescription" class="input-form" placeholder="Enter metaDescription" required>
+                            </div>
+                            <div>
+                                <label for="blogCategory" class="block text-sm font-medium">blogCategory</label>
+                                <select name="blogCategory" class="input-form" required>
+                                    <option value="">เลือกหมวดหมู่</option>
+                                    <option value="papermc">PaperMC</option>
+                                    <option value="plugin">Plugin</option>
+                                </select>
                             </div>
                             <div>
                                 <label for="blogImage" class="block text-sm font-medium">blogImage</label>

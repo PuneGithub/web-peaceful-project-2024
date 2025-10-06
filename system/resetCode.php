@@ -42,12 +42,12 @@ function forgotPassword($email)
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 
     //Email Setting
-    $mail->setFrom('system@support.peaceful-network.com', 'Peaceful Network'); //ชื่อผู้ส่ง
+    $mail->setFrom('system@support.peaceful-network.com', 'Zencrafterly'); //ชื่อผู้ส่ง
     $mail->addAddress($email); // send to email
     $mail->addReplyTo('system@support.peaceful-network.com', 'Support');
 
     //ส่ง ยืนยันอีเมล์
-    $message_subject = "Peaceful Network Reset your password";
+    $message_subject = "Zencrafterly Reset your password";
     $mail->Subject = $message_subject;
 
     $mail->isHTML(true);
@@ -56,7 +56,7 @@ function forgotPassword($email)
              <h1>คุณได้ทำการกดลืมรหัสผ่าน</p></h1>
              <p>กรุณาคลิกลิงก์เพื่อรีเซ็ตรหัสผ่านของคุณ: <a href="' . $resetLink . '">คลิกที่นี่</a></p>
              <p>หากคุณไม่ได้กดลืมรหัสผ่าน กรุณาละเว้นข้อความนี้</p>
-             <p>จาก <b>Peaceful Network</b></p>
+             <p>จาก <b>Zencrafterly</b></p>
              ';
     $mail->AltBody = 'กรุณาคลิกลิงก์นี้เพื่อรีเซ็ตรหัสผ่านของคุณ: ' . $resetLink;
 

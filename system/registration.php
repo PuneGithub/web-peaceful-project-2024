@@ -44,11 +44,11 @@ function signup($username, $password, $email)
     $existingUser = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
     if ($existingUser && $existingUser['email'] === $email) {
-        return "This email is already registered.";
+        return "Email นี้มีผู้ใช้งานแล้ว โปรดลองใหม่!";
     }
 
     if ($existingUser && $existingUser['username'] === $username) {
-        return "This username is already registered.";
+        return "Username นี้มีผู้ใช้งานแล้ว โปรดลองใหม่!";
     }
 
     $hashPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -87,7 +87,7 @@ function signup($username, $password, $email)
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 
         //Email Setting
-        $mail->setFrom('system@support.peaceful-network.com', 'Peaceful Network'); //ชื่อผู้ส่ง
+        $mail->setFrom('system@support.peaceful-network.com', 'Zencrafterly'); //ชื่อผู้ส่ง
         $mail->addAddress($email); // send to email
         $mail->addReplyTo('system@support.peaceful-network.com', 'Support');
 
@@ -95,16 +95,16 @@ function signup($username, $password, $email)
         $mail->addCustomHeader('X-Mailer', 'PHPMailer');
 
         //ส่ง ยืนยันอีเมล์
-        $message_subject = "Peaceful Network Email Verification";
+        $message_subject = "Zencrafterly Email Verification";
         $mail->Subject = $message_subject;
 
         $mail->isHTML(true);
         $verificationLink = "http://localhost/web_peaceful_project_2024/system/verifyEmail.php?token=" . $token;
         $mail->Body = '
-         <h1>ยินดีต้อนรับ!</h1> <p>ขอบคุณที่สมัครใช้งาน <b>Peaceful Network</b>.</p>
+         <h1>ยินดีต้อนรับ!</h1> <p>ขอบคุณที่สมัครใช้งาน <b>Zencrafterly</b>.</p>
          <p>กรุณาคลิกลิงก์เพื่อยืนยันอีเมลของคุณ: <a href="' . $verificationLink . '">คลิกที่นี่</a></p>
          <p>หากคุณไม่ได้ลงทะเบียนกับเรา กรุณาละเว้นข้อความนี้</p>
-         <p>จาก <b>Peaceful Network</b></p>
+         <p>จาก <b>Zencrafterly</b></p>
          ';
         $mail->AltBody = 'กรุณาคลิกลิงก์นี้เพื่อยืนยันอีเมลของคุณ: ' . $verificationLink;
 
@@ -134,6 +134,7 @@ function login($identifier, $password)
                 $_SESSION['userId'] = $user['userId'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['email'] = $user['email'];
+                $_SESSION['verifyStatus'] = $user['verifyStatus'];
 
                 echo "<div class='alert-green'>Login successful! Redirecting...</div>";
 

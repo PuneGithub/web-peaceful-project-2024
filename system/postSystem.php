@@ -65,13 +65,34 @@ function createPost($conn, $userId, $title, $content, $imagePath, $categoryId)
     }
 }
 
-function fetchAllPosts($conn)
+function fetchAllPosts($conn, $sortBy = 'latest')
 {
+    if ($sortBy === 'most_loved') {
+        //เรียงตาม loveCount มากสุด
+        $orderBy = 'posts.loveCount DESC, posts.createdAt DESC';
+    } else {
+        $orderBy = 'posts.createdAt DESC';
+    }
+
     try {
-        $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, posts.loveCount, users.username, users.profileImage 
-        FROM posts
-        JOIN users ON posts.userId = users.userId
-        ORDER BY posts.createdAt DESC";
+        // $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, posts.loveCount, users.username, users.profileImage 
+        // FROM posts
+        // JOIN users ON posts.userId = users.userId
+        // ORDER BY posts.createdAt DESC";
+        // $stmt = $conn->prepare($sql);
+        // $stmt->execute();
+
+        $sql = " SELECT
+                    posts.*,
+                    users.username,
+                    users.profileImage,
+                    category.categoryName
+                FROM
+                    posts
+                INNER JOIN users ON posts.userId = users.userId
+                INNER JOIN category ON posts.categoryId = category.categoryId
+                ORDER BY " . $orderBy;
+
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
@@ -177,23 +198,30 @@ function deletePost($conn , $delete, $imagePost)
 
     $uploadPath = "../img/posts_image/" . $imagePost;
 
-    if (!empty($imagePost)) {
-        if (file_exists($uploadPath)) {
-            unlink($uploadPath);
+    if (!empty($imagePost) && file_exists($uploadPath)) {
+        unlink($uploadPath);
+    }
+
+    try {
+        //delete comments
+        $sqlComments = "DELETE FROM comments WHERE postId = :postId";
+        $stmtComments = $conn->prepare($sqlComments);
+        $stmtComments->bindParam(":postId", $delete);
+        $stmtComments->execute();
+
+        //delete posts
+        $sqlPosts = "DELETE FROM posts WHERE postId = :postId";
+        $stmtPosts = $conn->prepare($sqlPosts);
+        $stmtPosts->bindParam(":postId", $delete);
+
+        if ($stmtPosts->execute()) {
+            return "<div class='alert-danger'>ลบโพสต์เรียบร้อยแล้ว</div>";
         }
+
+    } catch (PDOException $error) {
+        return "<div class='alert-danger'>เกิดข้อผิดพลาด: " . $error->getMessage() . "</div>";
     }
 
-    $sql = "DELETE posts, comments
-      FROM posts
-      INNER JOIN comments ON posts.postId = comments.postId
-      WHERE posts.postId = :postId";
-
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(":postId", $delete);
-
-    if ($stmt->execute()) {
-        return "<div class='alert-danger'>ลบโพสต์เรียบร้อยแล้ว</div>";
-    }
 }
 
 

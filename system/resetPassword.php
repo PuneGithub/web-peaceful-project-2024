@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'conn.php';
+require_once "config.php";
 
 //ตรวจสอบ Token
 if (!isset($_GET['token']) || empty($_GET['token'])) {

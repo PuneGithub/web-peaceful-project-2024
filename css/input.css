@@ -29,6 +29,12 @@
     .btn-blue-500-full {
         @apply bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition cursor-pointer
     }
+    .btn-gray-500-full {
+        @apply bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition cursor-pointer
+    }
+    .btn-red-500-full {
+        @apply bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition cursor-pointer
+    }
 
 
     .card-white {
@@ -37,6 +43,10 @@
 
     .card-gray-300 {
         @apply bg-gray-300 p-4 rounded-lg shadow-md
+    }
+
+    .card-code-gray {
+        @apply bg-gray-800 text-white p-4 rounded-md overflow-x-auto
     }
 
 

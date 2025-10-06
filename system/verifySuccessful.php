@@ -1,15 +1,16 @@
 <?php
-// session_start();
+include_once "config.php";
+session_start();
 
-// // ตรวจสอบ session ว่าได้รับการตั้งค่า และมีสถานะ success
-// if (isset($_SESSION['success']) && $_SESSION['success'] === true) {
-//     // ล้าง session หลังจากใช้งาน
-//     unset($_SESSION['success']);
-// } else {
-//     // หากไม่มี session หรือไม่ใช่ success ให้เปลี่ยนเส้นทางไปยังหน้าหลัก
-//     header("Location: ../index.php");
-//     exit();
-// }
+// ตรวจสอบ session ว่าได้รับการตั้งค่า และมีสถานะ success
+if (isset($_SESSION['success'])) {
+    // ล้าง session หลังจากใช้งาน
+    unset($_SESSION['success']);
+} else {
+    // หากไม่มี session หรือไม่ใช่ success ให้เปลี่ยนเส้นทางไปยังหน้าหลัก
+    header("Location: ../index.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

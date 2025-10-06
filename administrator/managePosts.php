@@ -4,6 +4,20 @@ session_start();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: index.php");
 }
+
+
+$msgPost = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['postId'])) {
+    $postId = $_POST['postId'];
+    $result = deletePost($conn, $postId);
+
+    if ($result['status']) {
+        $msgPost = "<div class='alert-green text-center'>" . htmlspecialchars($result['message']) . "</div>";
+    } else {
+        $msgPost = "<div class='alert-danger text-center'>" . htmlspecialchars($result['message']) . "</div>";
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,15 +47,8 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 <div class="col-span-12 sm:col-span-8">
                     <div class="card-white">
                         <?php
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['postId'])) {
-                            $postId = $_POST['postId'];
-                            $result = deletePost($conn, $postId);
-
-                            if ($result['status']) {
-                                echo "<div class='alert-success text-center'>" . htmlspecialchars($result['message']) . "</div>";
-                            } else {
-                                echo "<div class='alert-danger text-center'>" . htmlspecialchars($result['message']) . "</div>";
-                            }
+                        if ($msgPost) {
+                            echo $msgPost;
                         }
                         ?>
                         <div class="overflow-x-auto overflow-y-auto h-96">

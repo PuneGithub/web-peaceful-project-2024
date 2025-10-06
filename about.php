@@ -12,7 +12,7 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/output.css">
-    <title>Peaceful Network</title>
+    <title>Zencrafterly</title>
 </head>
 <script src="js/script.js"></script>
 
@@ -29,7 +29,7 @@ session_start();
 
         <!-- Content -->
         <div class="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
-            <h1 class="text-4xl font-bold mb-4">Minecraft Peaceful Network</h1>
+            <h1 class="text-4xl font-bold mb-4">Minecraft Zencrafterly</h1>
             <p class="text-lg mb-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, consectetur.</p>
             <div class="space-x-4">
                 <a href="/web_peaceful_project_2024/account/signup.php" class="btn-blue-400-outline">SIGN UP</a>

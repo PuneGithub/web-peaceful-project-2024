@@ -23,7 +23,7 @@ require_once("../system/config.php");
             <h2 class="text-xl font-semibold text-center">Forgot Password</h2>
             <?php
             if ($_SERVER['REQUEST_METHOD'] === "POST") {
-                require_once ('../system/resetCode.php');
+                require_once '../system/resetCode.php';
                 $email = htmlspecialchars(str_replace(' ', '', $_POST['email']));
 
                 $result = forgotPassword($email);
