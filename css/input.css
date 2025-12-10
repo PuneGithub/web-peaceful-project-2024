@@ -41,9 +41,10 @@
         @apply bg-white p-4 rounded-lg shadow-md
     }
 
-    .card-gray-300 {
-        @apply bg-gray-300 p-4 rounded-lg shadow-md
+    .card-green-100 {
+        @apply bg-green-100 p-4 rounded-lg shadow-md
     }
+
 
     .card-code-gray {
         @apply bg-gray-800 text-white p-4 rounded-md overflow-x-auto
@@ -51,7 +52,7 @@
 
 
     .input-form {
-        @apply mt-1 block w-full px-4 py-2 border border-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+        @apply mt-1 block w-full px-4 py-2 border rounded-md border-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
     }
 
     .table-hover {

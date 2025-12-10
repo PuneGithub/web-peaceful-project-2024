@@ -19,6 +19,7 @@ function loginAdmin($conn, $identifier, $password)
         $_SESSION['userId'] = $admin['userId'];
         $_SESSION['username'] = $admin['username'];
         $_SESSION['role'] = $admin['role'];
+        $_SESSION['verifyStatus'] = $admin['verifyStatus'];
         header('Location: ../administrator/dashboard.php');
         exit;
     }

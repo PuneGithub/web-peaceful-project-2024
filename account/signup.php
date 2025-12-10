@@ -67,7 +67,7 @@ require_once("../system/config.php");
                 </div>
                 <div>
                     <input type="checkbox" name="check" required>
-                    <label for="check" class="text-sm font-medium">I agree to the Terms and Privacy Policy.</label>
+                    <label for="check" class="text-sm font-medium">I agree to the Terms and Privacy Policy. <a href="../legal.php" class="text-blue-500" target="_blank">Read More</a></label>
                 </div>
                 <div>
                     <input type="submit" class="btn-blue-500" value="Sign Up">

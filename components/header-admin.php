@@ -7,6 +7,7 @@
         <li class="mb-4"><a href="../administrator/dashboard.php" class="block py-2 px-4 hover:bg-gray-700 rounded">Dashboard</a></li>
         <li class="mb-4"><a href="../administrator/information.php" class="block py-2 px-4 hover:bg-gray-700 rounded">System Information</a></li>
         <li class="mb-4"><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded">Users</a></li>
+        <li class="mb-4"><a href="../administrator/customization.php" class="block py-2 px-4 hover:bg-gray-700 rounded">Customization</a></li>
         <li class="mb-4"><a href="../administrator/managePosts.php" class="block py-2 px-4 hover:bg-gray-700 rounded">Manage Posts</a></li>
         <li class="mb-4"><a href="../administrator/manageBlogs.php" class="block py-2 px-4 hover:bg-gray-700 rounded">Manage Blogs</a></li>
         <li class="mb-4"><a href="../logout.php" class="block py-2 px-4 hover:bg-gray-700 rounded">Logout</a></li>

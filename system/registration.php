@@ -79,17 +79,17 @@ function signup($username, $password, $email)
         $mail = new PHPMailer(true);
         $mail->CharSet = "utf-8";
         $mail->isSMTP();
-        $mail->Host = "smtp.mailgun.org";
+        $mail->Host = "smtp.zoho.com";
         $mail->SMTPAuth = true;
-        $mail->Username = "system@support.peaceful-network.com"; // email
-        $mail->Password = "3735e6a4cbb335377053775dfe8da14c-c02fd0ba-3dc50d2e";
+        $mail->Username = "support@zencrafterly.com"; // email
+        $mail->Password = "tGh3Cs6P5R2A";
         $mail->Port = 587;
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 
         //Email Setting
-        $mail->setFrom('system@support.peaceful-network.com', 'Zencrafterly'); //ชื่อผู้ส่ง
+        $mail->setFrom('support@zencrafterly.com', 'Zencrafterly'); //ชื่อผู้ส่ง
         $mail->addAddress($email); // send to email
-        $mail->addReplyTo('system@support.peaceful-network.com', 'Support');
+        $mail->addReplyTo('support@zencrafterly.com', 'Support');
 
 
         $mail->addCustomHeader('X-Mailer', 'PHPMailer');
