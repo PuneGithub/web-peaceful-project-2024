@@ -153,7 +153,7 @@ unset($_SESSION['message']);
                                 Create Post
                             </button>
 
-                            <form action="" id="postForm" method="post" class="hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data">
+                            <form action="" id="postForm" method="post" class="hidden bg-white shadow-md rounded-sm m-4 p-4" enctype="multipart/form-data">
                                 <h2 class="text-lg font-bold mb-4 text-center">Post Form</h2>
 
                                 <div class="mb-4">
@@ -254,7 +254,7 @@ unset($_SESSION['message']);
     <!-- JavaScript สำหรับปุ่ม Love -->
     <script src="js/scriptLove.js"></script>
     <!-- JavaScript สำหรับปุ่ม Comments -->
-    <script src="js/scriptComments.js"></script>
+    <!-- <script src="js/scriptComments.js"></script> -->
 </body>
 
 </html>

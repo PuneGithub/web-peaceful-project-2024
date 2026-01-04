@@ -135,7 +135,7 @@ $getCategory = getCategory($conn);
                             Create Post
                         </button>
 
-                        <form action="" id="postForm" method="post" class="hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data">
+                        <form action="" id="postForm" method="post" class="hidden bg-white shadow-md rounded-sm m-4 p-4" enctype="multipart/form-data">
                             <h2 class="text-lg font-bold mb-4 text-center">Post Form</h2>
 
                             <div class="mb-4">
@@ -218,7 +218,7 @@ $getCategory = getCategory($conn);
                                         <?php endif; ?>
                                     </div>
                                     <!-- Form Comments -->
-                                    <form action="" id="commentForm_<?php echo $post['postId']; ?>" data-postid="<?php echo $post['postId']; ?>" class="commentForm hidden bg-white shadow-md rounded m-4 p-4" enctype="multipart/form-data" method="post">
+                                    <form action="" id="commentForm_<?php echo $post['postId']; ?>" data-postid="<?php echo $post['postId']; ?>" class="commentForm hidden bg-white shadow-md rounded-sm m-4 p-4" enctype="multipart/form-data" method="post">
                                         <div class="mb-4">
                                             <label for="comment" class="block text-gray-700 text-sm font-bold mb-2">comment</label>
                                             <input type="text" name="text" class="input-form" placeholder="Enter Comment" required>

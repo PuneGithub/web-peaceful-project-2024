@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['postId'])) {
                                             <td class="border border-slate-300"><?php echo htmlspecialchars($post['title']); ?></td>
                                             <td class="border border-slate-300"><?php echo htmlspecialchars($post['content']); ?></td>
                                             <td class="border border-slate-300"><?php echo htmlspecialchars($post['createdAt']); ?></td>
-                                            <td class="border border-slate-300"><img src="../img/posts_image/<?php echo htmlspecialchars($post['imagePost']); ?>" class="w-32 h-32 object-cover rounded" alt="profile"></td>
+                                            <td class="border border-slate-300"><img src="../img/posts_image/<?php echo htmlspecialchars($post['imagePost']); ?>" class="w-32 h-32 object-cover rounded-sm" alt="profile"></td>
                                             <td class="border border-slate-300">
                                                 <form action="" method="post" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?');">
                                                     <input type="hidden" name="postId" value="<?php echo $post['postId']; ?>">

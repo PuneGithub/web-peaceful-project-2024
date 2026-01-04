@@ -1,70 +1,87 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@layer components {
-    .btn-blue-500 {
-        @apply bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer
-    }
-    .btn-green-500 {
-        @apply bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 cursor-pointer
-    }
-    .btn-cyan-500 {
-        @apply bg-cyan-400 text-white px-4 py-2 rounded-md hover:bg-cyan-600 cursor-pointer
-    }
-    .btn-red-500 {
-        @apply bg-red-400 text-white px-4 py-2 rounded-md hover:bg-red-600 cursor-pointer
-    }
-    .btn-orange-500 {
-        @apply bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 cursor-pointer
-    }
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
 
-    .btn-blue-400-outline {
-        @apply border-2 border-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-500 cursor-pointer
-    }
-    .btn-green-400-outline {
-        @apply border-2 border-green-400 text-white px-4 py-2 rounded-md hover:bg-green-500 cursor-pointer
-    }
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
-    .btn-blue-500-full {
-        @apply bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition cursor-pointer
-    }
-    .btn-gray-500-full {
-        @apply bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition cursor-pointer
-    }
-    .btn-red-500-full {
-        @apply bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition cursor-pointer
-    }
+@utility btn-blue-500 {
+  @apply bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer;
+}
 
+@utility btn-green-500 {
+  @apply bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 cursor-pointer;
+}
 
-    .card-white {
-        @apply bg-white p-4 rounded-lg shadow-md
-    }
+@utility btn-cyan-500 {
+  @apply bg-cyan-400 text-white px-4 py-2 rounded-md hover:bg-cyan-600 cursor-pointer;
+}
 
-    .card-green-100 {
-        @apply bg-green-100 p-4 rounded-lg shadow-md
-    }
+@utility btn-red-500 {
+  @apply bg-red-400 text-white px-4 py-2 rounded-md hover:bg-red-600 cursor-pointer;
+}
 
+@utility btn-orange-500 {
+  @apply bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 cursor-pointer;
+}
 
-    .card-code-gray {
-        @apply bg-gray-800 text-white p-4 rounded-md overflow-x-auto
-    }
+@utility btn-blue-400-outline {
+  @apply border-2 border-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-500 cursor-pointer;
+}
 
+@utility btn-green-400-outline {
+  @apply border-2 border-green-400 text-white px-4 py-2 rounded-md hover:bg-green-500 cursor-pointer;
+}
 
-    .input-form {
-        @apply mt-1 block w-full px-4 py-2 border rounded-md border-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-    }
+@utility btn-blue-500-full {
+  @apply bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition cursor-pointer;
+}
 
-    .table-hover {
-        @apply border border-gray-300 hover:bg-gray-100 transition duration-200
-    }
+@utility btn-gray-500-full {
+  @apply bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 transition cursor-pointer;
+}
 
-    .alert-green {
-        @apply p-4 mt-4 mb-4 text-green-700 bg-green-100 border border-green-300 rounded
-    }
+@utility btn-red-500-full {
+  @apply bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition cursor-pointer;
+}
 
-    .alert-danger {
-        @apply p-4 mt-4 mb-4 text-red-700 bg-red-100 border border-red-300 rounded
-    }
+@utility card-white {
+  @apply bg-white p-4 rounded-lg shadow-md;
+}
 
+@utility card-green-100 {
+  @apply bg-green-100 p-4 rounded-lg shadow-md;
+}
+
+@utility card-code-gray {
+  @apply bg-gray-800 text-white p-4 rounded-md overflow-x-auto;
+}
+
+@utility input-form {
+  @apply mt-1 block w-full px-4 py-2 border rounded-md border-gray-500 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+@utility table-hover {
+  @apply border border-gray-300 hover:bg-gray-100 transition duration-200;
+}
+
+@utility alert-green {
+  @apply p-4 mt-4 mb-4 text-green-700 bg-green-100 border border-green-300 rounded-sm;
+}
+
+@utility alert-danger {
+  @apply p-4 mt-4 mb-4 text-red-700 bg-red-100 border border-red-300 rounded-sm;
 }

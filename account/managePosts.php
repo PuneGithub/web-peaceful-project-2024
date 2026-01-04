@@ -121,10 +121,10 @@ $fetchPostUser = fetchPostUser($conn, $userId);
                                 <td><?php echo htmlspecialchars($post['content']); ?></td>
                                 <td><?php echo htmlspecialchars($post['createdAt']); ?></td>
                                 <td><i class="text-red-400 fa-solid fa-heart"></i> <?php echo htmlspecialchars($post['loveCount']); ?></td>
-                                <td class="flex justify-center items-center"><img src="../img/posts_image/<?php echo htmlspecialchars($post['imagePost']); ?>" class="w-32 h-32 object-cover rounded" alt="post"></td>
+                                <td class="flex justify-center items-center"><img src="../img/posts_image/<?php echo htmlspecialchars($post['imagePost']); ?>" class="w-32 h-32 object-cover rounded-sm" alt="post"></td>
                                 <td>
                                     <!-- ปุ่มเปิด Modal -->
-                                    <button id="modalToggle-<?php echo $post['postId']; ?>" class="bg-blue-500 text-white px-4 py-2 rounded">
+                                    <button id="modalToggle-<?php echo $post['postId']; ?>" class="bg-blue-500 text-white px-4 py-2 rounded-sm">
                                         Edit Post
                                     </button>
 
@@ -168,8 +168,8 @@ $fetchPostUser = fetchPostUser($conn, $userId);
                                                     </div>
                                                     <!-- Form Action Buttons -->
                                                     <div class="flex justify-end space-x-2">
-                                                        <button type="button" id="closeModal-<?php echo $post['postId']; ?>" class="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
-                                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Post</button>
+                                                        <button type="button" id="closeModal-<?php echo $post['postId']; ?>" class="bg-gray-500 text-white px-4 py-2 rounded-sm">Cancel</button>
+                                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-sm">Post</button>
                                                     </div>
                                                 </form>
                                             </div>

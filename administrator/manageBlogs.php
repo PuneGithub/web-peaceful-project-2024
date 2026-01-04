@@ -85,7 +85,7 @@ $totalPosts = countPosts($conn);
                                             <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogId']); ?></td>
                                             <td class="border border-slate-300"><?php echo htmlspecialchars($blog['userId']); ?></td>
                                             <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogTitle']); ?></td>
-                                            <td class="border border-slate-300"><img src="..<?php echo htmlspecialchars($imagePath . $blog['blogImage']); ?>" alt="blogImage" class="w-32 h-32 object-cover rounded"></td>
+                                            <td class="border border-slate-300"><img src="..<?php echo htmlspecialchars($imagePath . $blog['blogImage']); ?>" alt="blogImage" class="w-32 h-32 object-cover rounded-sm"></td>
                                             <td class="border border-slate-300"><?php echo htmlspecialchars($blog['createdAt']); ?></td>
                                             <td class="border border-slate-300">
                                                 <a href="editBlog.php?blogId=<?php echo $blog['blogId']; ?>" class="btn-orange-500 inline-block">Edit</a>
