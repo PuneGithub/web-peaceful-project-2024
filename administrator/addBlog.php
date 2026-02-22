@@ -5,7 +5,8 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     header("Location: index.php");
 }
 
-$totalPosts = countPosts($conn);
+//ดึงหมวดหมู่มาแสดง
+$getCategory = getCategory($conn);
 
 if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnBlog'])) {
 
@@ -14,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnBlog'])) {
     $blogContent = $_POST['blogContent'];
     $blogUrl = $_POST['blogUrl'];
     $metaDescription = $_POST['metaDescription'];
-    $blogCategory = htmlspecialchars($_POST['blogCategory']);
+    $Category = htmlspecialchars($_POST['Category']);
     $newImage = $_FILES['blogImage'];
 
     $slug = createSlug($blogUrl);
@@ -44,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnBlog'])) {
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-12 sm:col-span-4">
                     <div class="card-white">
-                        <h2 class="font-bold text-lg">จำนวนโพสต์: <?php echo $totalPosts; ?> โพสต์</h2>
+                        <h2 class="font-bold text-lg">จำนวนบทความ: <?php ?> บทความ</h2>
                     </div>
                 </div>
                 <div class="col-span-12 sm:col-span-8">
@@ -78,8 +79,15 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnBlog'])) {
                                 <label for="blogCategory" class="block text-sm font-medium">blogCategory</label>
                                 <select name="blogCategory" class="input-form" required>
                                     <option value="">เลือกหมวดหมู่</option>
-                                    <option value="papermc">PaperMC</option>
-                                    <option value="plugin">Plugin</option>
+                                    <?php
+                                    if (!empty($getCategory)) {
+                                        foreach ($getCategory as $Category) {
+                                    ?>
+                                    <option value="<?php echo $Category['categoryId']; ?>"><?php echo $Category['categoryName']; ?></option>
+                                    <?php 
+                                        }
+                                    }
+                                    ?>
                                 </select>
                             </div>
                             <div>

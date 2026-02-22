@@ -112,63 +112,63 @@ function deleteUser($conn, $userId)
 }
 
 //Manage Posts
-function fetchAllPosts($conn)
-{
-    try {
-        $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, users.username, users.userId  
-        FROM posts
-        JOIN users ON posts.userId = users.userId";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+// function fetchAllPosts($conn)
+// {
+//     try {
+//         $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, users.username, users.userId  
+//         FROM posts
+//         JOIN users ON posts.userId = users.userId";
+//         $stmt = $conn->prepare($sql);
+//         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $error) {
-        echo "Error: " . $error->getMessage();
-        return [];
-    }
-}
+//         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+//     } catch (PDOException $error) {
+//         echo "Error: " . $error->getMessage();
+//         return [];
+//     }
+// }
 
-function countPosts($conn)
-{
-    $sql = "SELECT COUNT(*) as totalPosts FROM posts";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
+// function countPosts($conn)
+// {
+//     $sql = "SELECT COUNT(*) as totalPosts FROM posts";
+//     $stmt = $conn->prepare($sql);
+//     $stmt->execute();
 
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $result['totalPosts'];
-}
+//     $result = $stmt->fetch(PDO::FETCH_ASSOC);
+//     return $result['totalPosts'];
+// }
 
-function deletePost($conn, $postId)
-{
-    try {
-        $sql = "SELECT imagePost FROM posts WHERE postId = :postId";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
-        $stmt->execute();
+// function deletePost($conn, $postId)
+// {
+//     try {
+//         $sql = "SELECT imagePost FROM posts WHERE postId = :postId";
+//         $stmt = $conn->prepare($sql);
+//         $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
+//         $stmt->execute();
 
-        $post = $stmt->fetch(PDO::FETCH_ASSOC);
+//         $post = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($post) {
-            //delete image post
-            if (!empty($post['imagePost'])) {
-                $imagePath = '../img/posts_image/' . $post['imagePost'];
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-            }
-            $deleteSql = "DELETE FROM posts WHERE postId = :postId";
-            $deleteStmt = $conn->prepare($deleteSql);
-            $deleteStmt->bindParam(':postId', $postId, PDO::PARAM_INT);
-            $deleteStmt->execute();
+//         if ($post) {
+//             //delete image post
+//             if (!empty($post['imagePost'])) {
+//                 $imagePath = '../img/posts_image/' . $post['imagePost'];
+//                 if (file_exists($imagePath)) {
+//                     unlink($imagePath);
+//                 }
+//             }
+//             $deleteSql = "DELETE FROM posts WHERE postId = :postId";
+//             $deleteStmt = $conn->prepare($deleteSql);
+//             $deleteStmt->bindParam(':postId', $postId, PDO::PARAM_INT);
+//             $deleteStmt->execute();
 
-            return ['status' => true, 'message' => "ทำการลบโพสต์แล้ว!"];
-        } else {
-            return ['status' => false, 'message' => "ไม่พบโพสต์ที่ต้องการลบ!"];
-        }
-    } catch (PDOException $error) {
-        return ['status' => false, 'message' => "Error: " . $error->getMessage()];
-    }
-}
+//             return ['status' => true, 'message' => "ทำการลบโพสต์แล้ว!"];
+//         } else {
+//             return ['status' => false, 'message' => "ไม่พบโพสต์ที่ต้องการลบ!"];
+//         }
+//     } catch (PDOException $error) {
+//         return ['status' => false, 'message' => "Error: " . $error->getMessage()];
+//     }
+// }
 
 //manage blogs
 function createSlug($url)
@@ -384,4 +384,62 @@ function deleteBlog($conn, $blogId)
         echo "Error: " . $e->getMessage();
         return false;
     }
+}
+
+//Category
+function getCategory($conn)
+{
+    try {
+        $sql = "SELECT * FROM category";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $error) {
+        die("Error: " . $error->getMessage());
+    }
+}
+
+function createCategory($conn, $categoryName, $description)
+{
+    try {
+        $sql = "INSERT INTO category (categoryName, description) VALUES (:categoryName, :description)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':categoryName', $categoryName);
+        $stmt->bindParam(':description', $description);
+
+        if ($stmt->execute()) {
+            return "<div class='alert-green'>เพิ่มหมวดหมู่แล้ว</b></div>";
+        } else {
+            return "<div class='alert-danger'>เกิดข้อผิดพลาดในเพิ่มหมวดหมู่</b></div>";
+        }
+    } catch (PDOException $error) {
+        die("Error:" . $error->getMessage());
+    }
+}
+
+function deleteCategory($conn, $categoryId)
+{
+    try {
+            //delete data
+            $sqlDelete = "DELETE FROM category WHERE categoryId = :categoryId";
+            $stmtDelete = $conn->prepare($sqlDelete);
+            $stmtDelete->bindParam(':categoryId', $categoryId, PDO::PARAM_INT);
+            $stmtDelete->execute();
+
+        return true; //ลบสำเร็จ
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
+        return false;
+    }
+}
+
+function countCategory($conn)
+{
+    $sql = "SELECT COUNT(*) as totalCategory FROM category";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['totalCategory'];
 }

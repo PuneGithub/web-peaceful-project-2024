@@ -9,7 +9,18 @@ if (isset($_GET['slug'])) {
     $slug = $_GET['slug'];
     $blog = fetchBlog($conn, $slug);
 
-    if (!$blog) {
+    if ($blog) {
+        $blogId = $blog['blogId'];
+
+        if (!isset($_SESSION['viewed_posts'])) {
+            $_SESSION['viewed_posts'] = [];
+        }
+
+        if (!in_array($blogId, $_SESSION['viewed_posts'])) {
+            updateViewCount($conn, $blogId);
+            $_SESSION['viewed_posts'][] = $blogId;
+        }
+    } else {
         header("HTTP/1.0 404 Not Found");
         echo "<h1>ไม่พบบทความ</h1>";
         exit;
@@ -54,11 +65,12 @@ $imagePath = $image_paths[$blog['blogCategory']];
                 <h1 class="text-center font-semibold text-2xl">
                     <?php echo $blog['blogTitle']; ?>
                 </h1>
-                <p class="text-lg text-gray-600">
-                    By <span class="font-semibold text-blue-600">KoonPune</span> Created on: <?php echo $blog['createdAt']; ?>
-                </p>
+
                 <!-- Content -->
                 <div class="px-6">
+                    <p class="flex text-lg text-gray-600">
+                        By <span class="font-semibold text-blue-600">KoonPune</span> Created on: <?php echo $blog['createdAt']; ?> <span class="ml-auto"><?php echo $blog['views']; ?> views</span>
+                    </p>
                     <?php echo $blog['blogContent']; ?>
                 </div>
             </div>

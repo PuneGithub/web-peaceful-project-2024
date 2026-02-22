@@ -225,18 +225,6 @@ function deletePost($conn , $delete, $imagePost)
 }
 
 
-function getCategory($conn)
-{
-    try {
-        $sql = "SELECT * FROM category";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $error) {
-        die("Error: " . $error->getMessage());
-    }
-}
 
 function getPostsByCategory($conn, $categoryId)
 {
