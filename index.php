@@ -7,6 +7,7 @@ session_start();
 require_once("system/conn.php");
 require_once("system/config.php");
 require_once("system/blogSystem.php");
+require_once("system/serverSystem.php");
 require_once("system/websiteSettingsSystem.php");
 
 $sortBy = $_GET['sort'] ?? 'latest'; //กำหนดค่าเริ่มต้นเป็น 'latest' หากไม่มีค่าใน query string
@@ -27,6 +28,9 @@ $totalBlogs = countAllBlogs($conn);
 
 //ดึงหมวดหมู่บทความมาแสดง
 $getBlogCategory = getCategory($conn);
+
+//ดึงรายชื่อเซิฟเวอร์มาแสดง
+$topServers = fetchApprovedServers($conn, 3);
 
 //ดึงข้อความจาก SESSION ถ้ามี
 $message = $_SESSION['message'] ?? null;
@@ -111,19 +115,62 @@ unset($_SESSION['message']);
                         </div>
                     <?php endif; ?>
                 </div>
-                
+
                 <!-- Server List -->
                 <div class="card-white">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-bold text-gray-500">
                             <i class="fa-solid fa-server mr-2 text-blue-500"></i>เซิร์ฟเวอร์ยอดนิยม
                         </h2>
-                        <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full animate-pulse">Online</span>
+                        <span class="text-[10px] bg-green-100 text-green-600 px-2 py-1 rounded-full animate-pulse font-bold">SERVER ONLINE</span>
                     </div>
 
                     <div class="space-y-4">
+                        <?php if (!empty($topServers)): ?>
+                            <?php foreach ($topServers as $server): ?>
+                                <div class="group border-b border-gray-50 pb-3 last:border-0 last:pb-0">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="relative">
+                                            <img src="img/server-icons/<?php echo $server['serverImage']; ?>"
+                                                class="w-12 h-12 rounded-xl object-cover border-2 border-gray-100 group-hover:border-blue-400 transition"
+                                                onerror="this.src='img/default_server.webp'">
+                                            <span class="absolute -top-1 -left-1 bg-blue-600 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
+                                                <?php echo $server['votes']; ?>
+                                            </span>
+                                        </div>
 
+                                        <div class="flex-1">
+                                            <h3 class="font-bold text-sm text-gray-800 leading-tight mb-1">
+                                                <?php echo $server['serverName']; ?>
+                                            </h3>
+                                            <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">
+                                                <?php echo $server['serverVersion']; ?> • <?php echo $server['serverCategory']; ?>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-2 flex items-center bg-gray-50 rounded-lg p-1 border border-gray-100 group-hover:bg-blue-50 transition">
+                                        <code class="text-[10px] flex-1 px-2 font-mono text-gray-500 truncate" id="ip-<?php echo $server['serverId']; ?>">
+                                            <?php echo $server['serverIP']; ?>
+                                        </code>
+                                        <button onclick="copyIP('ip-<?php echo $server['serverId']; ?>')"
+                                            class="bg-white border text-[10px] px-3 py-1 rounded-md shadow-sm hover:bg-blue-500 hover:text-white transition font-bold">
+                                            COPY
+                                        </button>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="text-center py-6">
+                                <i class="fa-solid fa-ghost text-gray-200 text-3xl mb-2"></i>
+                                <p class="text-xs text-gray-400 italic">ยังไม่มีเซิร์ฟเวอร์แนะนำในขณะนี้</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
+
+                    <a href="servers.php" class="block text-center mt-5 py-2 text-xs font-bold text-blue-500 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+                        ดูเซิร์ฟเวอร์ทั้งหมด <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </a>
                 </div>
 
             </div>
