@@ -1,13 +1,22 @@
 <?php
 require_once __DIR__ . "/conn.php";
 
-function fetchAllBlogs($conn, $sort = 'latest', $limit = null, $offset = 0)
+function fetchAllBlogs($conn, $sort = 'latest', $limit = null, $offset = 0, $search = null, $categoryId = null)
 {
     try {
         $sql = "SELECT blogs.*, users.username, users.profileImage
                 FROM blogs
-                JOIN users ON blogs.userId = users.userId";
+                JOIN users ON blogs.userId = users.userId
+                WHERE 1=1";
         
+        if ($categoryId !== null && $categoryId !== '') {
+            $sql .= " AND blogs.categoryId = :categoryId";
+        }
+
+        if ($search !== null && $search !== '') {
+            $sql .= " AND (blogs.blogTitle LIKE :search OR blogs.blogContent LIKE :search)";
+        }
+
         if ($sort === 'popular') {
             $sql .= " ORDER BY blogs.views DESC";
         } else {
@@ -19,6 +28,17 @@ function fetchAllBlogs($conn, $sort = 'latest', $limit = null, $offset = 0)
         }
 
         $stmt = $conn->prepare($sql);
+
+        //Bind ค่า Category ID (ถ้ามี)
+        if ($categoryId !== null && $categoryId !== '') {
+            $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        }
+
+        //Bind ค่า Search (ถ้ามีการค้นหา)
+        if ($search !== null && $search !== '') {
+            $searchParam = "%$search%";
+            $stmt->bindValue(':search', $searchParam, PDO::PARAM_STR);
+        }
 
         // Bind ค่า Limit และ Offset ถ้ามีการส่งมา
         if ($limit !== null) {
@@ -35,13 +55,18 @@ function fetchAllBlogs($conn, $sort = 'latest', $limit = null, $offset = 0)
     }
 }
 
-function countAllBlogs($conn) {
-    try {
-        $stmt = $conn->query("SELECT COUNT(*) FROM blogs");
-        return $stmt->fetchColumn();
-    } catch (PDOException $e) {
-        return 0;
+function countAllBlogs($conn, $categoryId = null) {
+    $sql = "SELECT COUNT(*) FROM blogs WHERE 1=1";
+    if ($categoryId) {
+        $sql .= " AND categoryId = :catId";
     }
+    
+    $stmt = $conn->prepare($sql);
+    if ($categoryId) {
+        $stmt->bindValue(':catId', $categoryId, PDO::PARAM_INT);
+    }
+    $stmt->execute();
+    return $stmt->fetchColumn();
 }
 
 function fetchBlog($conn, $slug)
@@ -60,7 +85,7 @@ function fetchLatestBlog($conn)
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $error){
+    } catch (PDOException $error) {
         echo "Error fetching latest blog:" . $error->getMessage();
         return null;
     }
@@ -79,7 +104,8 @@ function getCategory($conn)
     }
 }
 
-function updateViewCount($conn, $blogId) {
+function updateViewCount($conn, $blogId)
+{
     try {
         $sql = "UPDATE blogs SET views = views + 1 WHERE blogId = :blogId";
         $stmt = $conn->prepare($sql);

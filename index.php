@@ -10,7 +10,8 @@ require_once("system/blogSystem.php");
 require_once("system/serverSystem.php");
 require_once("system/websiteSettingsSystem.php");
 
-$sortBy = $_GET['sort'] ?? 'latest'; //กำหนดค่าเริ่มต้นเป็น 'latest' หากไม่มีค่าใน query string
+$categoryId = $_GET['categoryId'] ?? null; // รับค่าหมวดหมู่จาก URL
+$sortBy = $_GET['sort'] ?? 'latest';       // รับการเรียงลำดับ
 
 
 $image_blogs_paths = [
@@ -19,12 +20,13 @@ $image_blogs_paths = [
 ];
 
 
-//ดึง Settings
-$settings = getWebsiteSettings($conn);
 
 //ดึงบทความมาแสดง
-$fetchAllBlogs = fetchAllBlogs($conn, $sortBy);
-$totalBlogs = countAllBlogs($conn);
+$fetchAllBlogs = fetchAllBlogs($conn, $sortBy, $categoryId);
+$totalBlogs = countAllBlogs($conn, $categoryId);
+
+//ดึง Settings
+$settings = getWebsiteSettings($conn);
 
 //ดึงหมวดหมู่บทความมาแสดง
 $getBlogCategory = getCategory($conn);
@@ -44,11 +46,27 @@ unset($_SESSION['message']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <?php
+    $seoTitle = !empty($settings['site_seo_title']) ? $settings['site_seo_title'] : $settings['webTitle'];
+    $seoDesc  = !empty($settings['site_seo_description']) ? $settings['site_seo_description'] : $settings['heroTitle'];
+    $seoKey   = !empty($settings['site_seo_keywords']) ? $settings['site_seo_keywords'] : "Minecraft, บทความ, โปรโมทเซิร์ฟเวอร์";
+    ?>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/output.css">
 
     <link rel="icon" href="data:,">
-    <title>Zencrafterly</title>
+    <title><?= htmlspecialchars($seoTitle) ?></title>
+    <meta name="description" content="<?= htmlspecialchars($seoDesc) ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($seoKey) ?>">
+    <meta name="author" content="Zencrafterly Team">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?= base_url('/') ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($seoTitle) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($seoDesc) ?>">
+
 </head>
 
 <body>
@@ -74,7 +92,7 @@ unset($_SESSION['message']);
                     ?>
                         <!-- <a href="account/managePosts.php" class="btn-blue-500"><i class="fa-solid fa-pen-to-square"></i> Manage Posts</a> -->
                     <?php } else { ?>
-                        <button class="btn-red-500" disabled>โปรดยืนยัน Email ก่อนเริ่มสร้าง POST</button>
+                        <button class="btn-red-500" disabled>โปรดยืนยัน Email ก่อนเพิ่มเซิร์ฟเวอร์</button>
                     <?php } ?>
                 <?php } else { ?>
                     <a href="<?= base_url('/account/signup.php') ?>" class="btn-blue-400-outline">SIGN UP</a>
@@ -83,6 +101,7 @@ unset($_SESSION['message']);
             </div>
         </div>
     </section>
+
     <div class="bg-gray-100 min-h-screen p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
 
@@ -91,7 +110,7 @@ unset($_SESSION['message']);
                 <div class="card-white mb-5">
                     <h2 class="text-lg font-bold text-gray-500 mb-3">Search</h2>
                     <form action="search.php" method="GET" class="relative">
-                        <input type="text" name="q" placeholder="ค้นหาบทความ..." class="w-full px-4 py-2 border rounded-full focus:outline-none focus:border-blue-500 bg-gray-50 pr-10">
+                        <input type="text" name="q" placeholder="ค้นหาบทความ..." class="w-full px-4 py-2 border rounded-full focus:outline-none focus:border-blue-500 bg-gray-50 pr-10" required>
                         <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500">
                             <i class="fa-solid fa-search fa-lg cursor-pointer"></i>
                         </button>
@@ -104,16 +123,20 @@ unset($_SESSION['message']);
                         <h2 class="text-lg font-bold text-gray-500">Category</h2>
                     </div>
 
-                    <?php
-                    if (!empty($getBlogCategory)):
-                    ?>
-                        <!-- Category Buttons -->
-                        <div class="flex flex-col p-3 space-y-3">
+                    <div class="flex flex-col p-3 space-y-3">
+                        <a href="index.php" class="<?= !$categoryId ? 'btn-blue-500-full' : 'btn-gray-500-full' ?>">
+                            ทั้งหมด
+                        </a>
+
+                        <?php if (!empty($getBlogCategory)): ?>
                             <?php foreach ($getBlogCategory as $category): ?>
-                                <a href="category.php?categoryId=<?php echo $category['categoryId']; ?>" class="btn-blue-500-full"><?php echo $category['categoryName']; ?></a>
+                                <a href="index.php?categoryId=<?php echo $category['categoryId']; ?>&sort=<?= $sortBy ?>"
+                                    class="<?= ($categoryId == $category['categoryId']) ? 'btn-blue-500-full' : 'btn-gray-500-full' ?>">
+                                    <?php echo $category['categoryName']; ?>
+                                </a>
                             <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
 
                 <!-- Server List -->
@@ -127,39 +150,49 @@ unset($_SESSION['message']);
 
                     <div class="space-y-4">
                         <?php if (!empty($topServers)): ?>
-                            <?php foreach ($topServers as $server): ?>
-                                <div class="group border-b border-gray-50 pb-3 last:border-0 last:pb-0">
+                            <?php
+                            $rank = 1;
+                            foreach ($topServers as $server):
+                                $medalColor = [1 => 'text-yellow-400', 2 => 'text-slate-300', 3 => 'text-orange-400'];
+                            ?>
+                                <div class="group border-b border-gray-50 pb-3 last:border-0 last:pb-0 relative">
                                     <div class="flex items-center space-x-3">
                                         <div class="relative">
-                                            <img src="img/server-icons/<?php echo $server['serverImage']; ?>"
+                                            <img src="img/server-icons/<?= $server['serverImage'] ?: 'default_server.webp' ?>"
                                                 class="w-12 h-12 rounded-xl object-cover border-2 border-gray-100 group-hover:border-blue-400 transition"
-                                                onerror="this.src='img/default_server.webp'">
-                                            <span class="absolute -top-1 -left-1 bg-blue-600 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
-                                                <?php echo $server['votes']; ?>
+                                                onerror="this.src='img/server-icons/default_server.webp'">
+
+                                            <span class="absolute -top-1 -left-1 <?= $medalColor[$rank] ?> text-xs drop-shadow-md">
+                                                <i class="fa-solid fa-crown"></i>
                                             </span>
                                         </div>
 
                                         <div class="flex-1">
-                                            <h3 class="font-bold text-sm text-gray-800 leading-tight mb-1">
-                                                <?php echo $server['serverName']; ?>
+                                            <h3 class="font-bold text-sm text-gray-800 leading-tight flex items-center gap-1">
+                                                <?= htmlspecialchars($server['serverName']) ?>
+                                                <span class="text-[10px] text-blue-500 font-normal">(<?= number_format($server['votes']) ?> โหวต)</span>
                                             </h3>
-                                            <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">
-                                                <?php echo $server['serverVersion']; ?> • <?php echo $server['serverCategory']; ?>
-                                            </p>
+
+                                            <span class="server-status text-[9px] font-bold" data-ip="<?= htmlspecialchars($server['serverIP']) ?>">
+                                                <i class="fa-solid fa-spinner fa-spin"></i> Checking...
+                                            </span>
                                         </div>
                                     </div>
 
-                                    <div class="mt-2 flex items-center bg-gray-50 rounded-lg p-1 border border-gray-100 group-hover:bg-blue-50 transition">
-                                        <code class="text-[10px] flex-1 px-2 font-mono text-gray-500 truncate" id="ip-<?php echo $server['serverId']; ?>">
-                                            <?php echo $server['serverIP']; ?>
+                                    <div class="mt-2 flex items-center bg-gray-50 rounded-lg p-1 border border-gray-100">
+                                        <code class="text-[10px] flex-1 px-2 font-mono text-gray-500 truncate" id="ip-<?= $server['serverId'] ?>">
+                                            <?= htmlspecialchars($server['serverIP']) ?>
                                         </code>
-                                        <button onclick="copyIP('ip-<?php echo $server['serverId']; ?>')"
-                                            class="bg-white border text-[10px] px-3 py-1 rounded-md shadow-sm hover:bg-blue-500 hover:text-white transition font-bold">
+                                        <button onclick="copyIP('ip-<?= $server['serverId'] ?>')"
+                                            class="bg-white border text-[9px] px-2 py-1 rounded shadow-sm hover:bg-blue-600 hover:text-white transition font-bold uppercase">
                                             COPY
                                         </button>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                            <?php
+                                $rank++;
+                            endforeach;
+                            ?>
                         <?php else: ?>
                             <div class="text-center py-6">
                                 <i class="fa-solid fa-ghost text-gray-200 text-3xl mb-2"></i>
@@ -167,6 +200,7 @@ unset($_SESSION['message']);
                             </div>
                         <?php endif; ?>
                     </div>
+
 
                     <a href="servers.php" class="block text-center mt-5 py-2 text-xs font-bold text-blue-500 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
                         ดูเซิร์ฟเวอร์ทั้งหมด <i class="fa-solid fa-arrow-right ml-1"></i>
@@ -259,10 +293,13 @@ unset($_SESSION['message']);
             </div>
         </div>
     </div>
+
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
     <!-- footer -->
     <?php include_once("components/footer.php"); ?>
 
     <script src="js/script.js"></script>
+
     <!-- JavaScript สำหรับปุ่ม Love -->
     <!-- <script src="js/scriptLove.js"></script> -->
     <!-- JavaScript สำหรับปุ่ม Comments -->

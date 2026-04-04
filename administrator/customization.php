@@ -28,6 +28,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnSaveAnnounce'])) {
     $msgSettings = updateAnnounceSettings($conn, $announce);
 }
 
+// 🚩 เพิ่ม Logic บันทึก SEO ต่อจากระบบเดิม
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnSaveSEO'])) {
+    $seoData = [
+        'site_seo_title' => $_POST['site_seo_title'],
+        'site_seo_description' => $_POST['site_seo_description'],
+        'site_seo_keywords' => $_POST['site_seo_keywords']
+    ];
+
+    // เรียกใช้ฟังก์ชันบันทึก (เราจะไปสร้างฟังก์ชันนี้ในขั้นตอนถัดไป)
+    $msgSettings = updateSEOSettings($conn, $seoData);
+}
+
 //Get data
 $settings = getWebsiteSettings($conn);
 ?>
@@ -89,6 +101,45 @@ $settings = getWebsiteSettings($conn);
                         <div class="flex justify-end pt-4">
                             <button type="submit" name="btnSaveAnnounce" class="btn-green-500">
                                 <i class="fa-solid fa-save mr-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-white p-6 mb-6 shadow-sm">
+                    <h3 class="text-xl font-semibold mb-4 border-b pb-2 text-blue-600">
+                        <i class="fa-solid fa-search mr-2"></i> SEO Optimization
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-4">* ข้อมูลส่วนนี้จะไปแสดงผลบน Google และ Social Media</p>
+
+                    <form action="" method="post" class="space-y-4">
+                        <div class="flex flex-col md:flex-row md:items-start">
+                            <label class="w-full md:w-1/4 font-medium text-gray-700 pt-2">SEO Title</label>
+                            <div class="w-full md:w-3/4">
+                                <input type="text" name="site_seo_title" value="<?php echo htmlspecialchars($settings['site_seo_title'] ?? ''); ?>" class="input-form w-full" placeholder="Zencrafterly - แหล่งรวมเซิร์ฟเวอร์ Minecraft">
+                                <p class="text-[10px] text-gray-400 mt-1">แนะนำความยาว 50-60 ตัวอักษร</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row md:items-start">
+                            <label class="w-full md:w-1/4 font-medium text-gray-700 pt-2">Meta Description</label>
+                            <div class="w-full md:w-3/4">
+                                <textarea name="site_seo_description" rows="3" class="input-form w-full" placeholder="สรุปเนื้อหาเว็บไซต์ของคุณ..."><?php echo htmlspecialchars($settings['site_seo_description'] ?? ''); ?></textarea>
+                                <p class="text-[10px] text-gray-400 mt-1">แนะนำความยาว 150-160 ตัวอักษร</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row md:items-start">
+                            <label class="w-full md:w-1/4 font-medium text-gray-700 pt-2">Keywords</label>
+                            <div class="w-full md:w-3/4">
+                                <input type="text" name="site_seo_keywords" value="<?php echo htmlspecialchars($settings['site_seo_keywords'] ?? ''); ?>" class="input-form w-full" placeholder="Minecraft, เซิร์ฟเวอร์มายคราฟ, โปรโมทเซิร์ฟ">
+                                <p class="text-[10px] text-gray-400 mt-1">คั่นแต่ละคำด้วยเครื่องหมายคอมม่า ( , )</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end pt-4 border-t">
+                            <button type="submit" name="btnSaveSEO" class="btn-blue-500">
+                                <i class="fa-solid fa-cloud-upload-alt mr-2"></i> Update SEO Settings
                             </button>
                         </div>
                     </form>

@@ -18,6 +18,7 @@ if (isset($_GET['token'])) {
 
             $_SESSION['success'] = "Email verification successful! You can now log in.";
             header("Location: verifySuccessful.php");
+            exit;
         } else {
             $_SESSION['error'] = "Invalid or expired token.";
             header("Location: ../index.php");

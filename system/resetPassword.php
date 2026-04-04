@@ -3,14 +3,27 @@ session_start();
 require_once 'conn.php';
 require_once "config.php";
 
+$token = $_GET['token'] ?? null;
+$error = null;
+$success = null;
+$tokenValid = false;
+
 //ตรวจสอบ Token
-if (!isset($_GET['token']) || empty($_GET['token'])) {
-    die("Invalid or missing reset token.");
+// 1. ตรวจสอบเบื้องต้นว่า Token มีในระบบและยังไม่หมดอายุไหม
+if ($token) {
+    $stmt = $conn->prepare("SELECT userId FROM users WHERE resetCode = :token");
+    $stmt->execute([':token' => $token]);
+    if ($stmt->rowCount() === 1) {
+        $tokenValid = true;
+    } else {
+        $error = "รหัสอ้างอิง (Token) ไม่ถูกต้องหรือหมดอายุแล้ว";
+    }
+} else {
+    $error = "ไม่พบรหัสอ้างอิงสำหรับการเปลี่ยนรหัสผ่าน";
 }
 
-$token = htmlspecialchars($_GET['token']);
 
-if ($_SERVER['REQUEST_METHOD'] === "POST") {
+if ($_SERVER['REQUEST_METHOD'] === "POST" && $tokenValid) {
     
     $newPassword = $_POST['newPassword'];
     $conPassword = $_POST['conPassword'];

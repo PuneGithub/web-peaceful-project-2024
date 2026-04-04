@@ -34,24 +34,25 @@ function forgotPassword($email)
     $mail = new PHPMailer(true);
     $mail->CharSet = "utf-8";
     $mail->isSMTP();
-    $mail->Host = "smtp.mailgun.org";
+    $mail->Host = "smtp.zoho.com";
     $mail->SMTPAuth = true;
-    $mail->Username = "system@support.peaceful-network.com"; // email
-    $mail->Password = "3735e6a4cbb335377053775dfe8da14c-c02fd0ba-3dc50d2e";
+    $mail->Username = "support@zencrafterly.com"; // email
+    $mail->Password = "tGh3Cs6P5R2A";
     $mail->Port = 587;
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 
     //Email Setting
-    $mail->setFrom('system@support.peaceful-network.com', 'Zencrafterly'); //ชื่อผู้ส่ง
+    $mail->setFrom('support@zencrafterly.com', 'Zencrafterly'); //ชื่อผู้ส่ง
     $mail->addAddress($email); // send to email
-    $mail->addReplyTo('system@support.peaceful-network.com', 'Support');
+    $mail->addReplyTo('support@zencrafterly.com', 'Support');
 
     //ส่ง ยืนยันอีเมล์
     $message_subject = "Zencrafterly Reset your password";
     $mail->Subject = $message_subject;
 
     $mail->isHTML(true);
-    $resetLink = "http://localhost/web_peaceful_project_2024/system/resetPassword.php?token=" . $resetToken;
+    // $resetLink = "http://localhost/web_peaceful_project_2024/system/resetPassword.php?token=" . $resetToken; //test local
+    $resetLink = "https://zencrafterly.com/system/resetPassword.php?token=" . $resetToken; //production
     $mail->Body = '
              <h1>คุณได้ทำการกดลืมรหัสผ่าน</p></h1>
              <p>กรุณาคลิกลิงก์เพื่อรีเซ็ตรหัสผ่านของคุณ: <a href="' . $resetLink . '">คลิกที่นี่</a></p>

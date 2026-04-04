@@ -111,65 +111,6 @@ function deleteUser($conn, $userId)
     }
 }
 
-//Manage Posts
-// function fetchAllPosts($conn)
-// {
-//     try {
-//         $sql = "SELECT posts.postId, posts.title, posts.content, posts.imagePost, posts.createdAt, users.username, users.userId  
-//         FROM posts
-//         JOIN users ON posts.userId = users.userId";
-//         $stmt = $conn->prepare($sql);
-//         $stmt->execute();
-
-//         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-//     } catch (PDOException $error) {
-//         echo "Error: " . $error->getMessage();
-//         return [];
-//     }
-// }
-
-// function countPosts($conn)
-// {
-//     $sql = "SELECT COUNT(*) as totalPosts FROM posts";
-//     $stmt = $conn->prepare($sql);
-//     $stmt->execute();
-
-//     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-//     return $result['totalPosts'];
-// }
-
-// function deletePost($conn, $postId)
-// {
-//     try {
-//         $sql = "SELECT imagePost FROM posts WHERE postId = :postId";
-//         $stmt = $conn->prepare($sql);
-//         $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
-//         $stmt->execute();
-
-//         $post = $stmt->fetch(PDO::FETCH_ASSOC);
-
-//         if ($post) {
-//             //delete image post
-//             if (!empty($post['imagePost'])) {
-//                 $imagePath = '../img/posts_image/' . $post['imagePost'];
-//                 if (file_exists($imagePath)) {
-//                     unlink($imagePath);
-//                 }
-//             }
-//             $deleteSql = "DELETE FROM posts WHERE postId = :postId";
-//             $deleteStmt = $conn->prepare($deleteSql);
-//             $deleteStmt->bindParam(':postId', $postId, PDO::PARAM_INT);
-//             $deleteStmt->execute();
-
-//             return ['status' => true, 'message' => "ทำการลบโพสต์แล้ว!"];
-//         } else {
-//             return ['status' => false, 'message' => "ไม่พบโพสต์ที่ต้องการลบ!"];
-//         }
-//     } catch (PDOException $error) {
-//         return ['status' => false, 'message' => "Error: " . $error->getMessage()];
-//     }
-// }
-
 //manage blogs
 function createSlug($url)
 {
@@ -187,54 +128,78 @@ function createSlug($url)
     return $slug;
 }
 
-function createBlog($conn, $userId, $blogTitle, $blogContent, $newImage, $metaDescription, $slug, $blogCategory)
+function createBlog($conn, $userId, $blogTitle, $blogContent, $newImage, $slug, $categoryId, $blogCategoryStr, $seo_title, $seo_description, $seo_keywords)
 {
+    try {
+        $imageName = NULL;
+        $maxSize = 3 * 1024 * 1024; // 3MB
 
-    $maxSize = 3 * 1024 * 1024; // 3MB
-    if (!empty($_FILES['blogImage']['name'])) {
-        $uploadPathMap = [
-            'papermc' => '../img/blogs_image/blogs_server/papermc/',
-            'plugin' => '../img/blogs_image/blogs_plugin/plugin/',
-        ];
-        $uploadPath = $uploadPathMap[$blogCategory] ?? null;
+        // 1. จัดการเรื่องรูปภาพ (ใช้ค่าจาก $newImage ที่ส่งมาจากหน้าบ้าน)
+        if (isset($newImage['name']) && $newImage['error'] === 0) {
+            $uploadPathMap = [
+                'papermc' => '../img/blogs_image/blogs_server/papermc/',
+                'plugin' => '../img/blogs_image/blogs_plugin/plugin/',
+                'server' => '../img/blogs_image/blogs_server/server/',
+                ];
+            $uploadPath = $uploadPathMap[$blogCategoryStr] ?? '../img/blogs_image/default/';
 
-        $fileName = "blog_" . time() . basename($_FILES['blogImage']['name']);
-        $targetFilePath = $uploadPath . $fileName;
-        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+            $fileName = "blog_" . time() . "_" . basename($newImage['name']);
+            $targetFilePath = $uploadPath . $fileName;
+            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
-        $allowTypes = array('jpg', 'jpeg', 'png', 'gif', 'webp');
-        if ($_FILES['blogImage']['size'] < $maxSize) {
-            if (in_array($fileType, $allowTypes)) {
-                if (move_uploaded_file($_FILES['blogImage']['tmp_name'], $targetFilePath)) {
-                    $newImage = $fileName;
+            $allowTypes = array('jpg', 'jpeg', 'png', 'gif', 'webp');
+            
+            if ($newImage['size'] <= $maxSize) {
+                if (in_array($fileType, $allowTypes)) {
+                    if (move_uploaded_file($newImage['tmp_name'], $targetFilePath)) {
+                        $imageName = $fileName;
+                    } else {
+                        return "<div class='alert-danger'>เกิดข้อผิดพลาดในการอัปโหลดไฟล์</div>";
+                    }
                 } else {
-                    return "<div class='alert-danger'>เกิดข้อผิดพลาดในการอัปโหลดไฟล์</b></div>";
+                    return "<div class='alert-danger'>รองรับเฉพาะไฟล์ JPG, JPEG, PNG, WEBP และ GIF เท่านั้น</div>";
                 }
             } else {
-                return "<div class='alert-danger'>รองรับเฉพาะไฟล์ JPG, JPEG, PNG, WEBP และ GIF เท่านั้น</b></div>";
+                return "<div class='alert-danger'>รูปภาพต้องไม่เกินขนาด 3 MB</div>";
             }
-        } else {
-            return "<div class='alert-danger'>รูปภาพต้องไม่เกินขนาด 3 MB</b></div>";
         }
-    }
 
-    $createdAt = date('Y-m-d H:i:s');
+        // 2. คำสั่ง SQL INSERT (ปรับให้ตรงกับ Table Structure ล่าสุด)
+        // 🚩 ลบ metaDescription ออก และเพิ่ม seo_title, seo_description, seo_keywords, categoryId
+        $sql = "INSERT INTO blogs (
+                    userId, blogTitle, blogContent, blogImage, slug, 
+                    categoryId, blogCategory, 
+                    seo_title, seo_description, seo_keywords, createdAt
+                ) VALUES (
+                    :userId, :title, :content, :image, :slug, 
+                    :catId, :catStr, 
+                    :s_title, :s_desc, :s_key, NOW()
+                )";
 
-    $sql = "INSERT INTO blogs (userId, blogTitle, blogContent, createdAt, blogImage, metaDescription, slug, blogCategory) VALUES (:userId, :blogTitle, :blogContent, :createdAt, :blogImage, :metaDescription, :slug, :blogCategory)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':userId', $userId);
-    $stmt->bindParam(':blogTitle', $blogTitle);
-    $stmt->bindParam(':blogContent', $blogContent);
-    $stmt->bindParam(':createdAt', $createdAt);
-    $stmt->bindParam(':blogImage', $newImage);
-    $stmt->bindParam(':metaDescription', $metaDescription);
-    $stmt->bindParam(':slug', $slug);
-    $stmt->bindParam(':blogCategory', $blogCategory);
+        $stmt = $conn->prepare($sql);
+        
+        $result = $stmt->execute([
+            ':userId'   => $userId,
+            ':title'    => $blogTitle,
+            ':content'  => $blogContent,
+            ':image'    => $imageName,
+            ':slug'     => $slug,
+            ':catId'    => $categoryId,    // 🚩 บันทึก ID ตัวเลข (แก้บัคที่เคยเจอ)
+            ':catStr'   => $blogCategoryStr, // 🚩 บันทึกชื่อหมวดหมู่
+            ':s_title'  => $seo_title,
+            ':s_desc'   => $seo_description,
+            ':s_key'    => $seo_keywords
+        ]);
 
-    if ($stmt->execute()) {
-        return "<div class='alert-green'>เพิ่มบทความแล้ว</b></div>";
-    } else {
-        return "<div class='alert-danger'>เกิดข้อผิดพลาดในเพิ่มบทความ</b></div>";
+        if ($result) {
+            return "<div class='alert-green'>เพิ่มบทความสำเร็จแล้ว!</div>";
+        } else {
+            return "<div class='alert-danger'>เกิดข้อผิดพลาดในการบันทึกข้อมูล</div>";
+        }
+
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        return "<div class='alert-danger'>Database Error: " . $e->getMessage() . "</div>";
     }
 }
 
@@ -274,71 +239,67 @@ function fetchEditBlog($conn, $blogId)
     }
 }
 
-function updateBlog($conn, $blogId, $blogTitle, $blogContent, $metaDescription, $blogCategory, $newImage, $oldImage)
-{
+function updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $newImage, $oldImage, $seo_title, $seo_description, $seo_keywords, $slug) {
     try {
-        $finalImage = $oldImage;
+        $imageName = $oldImage; // ตั้งค่าเริ่มต้นเป็นชื่อรูปเดิม
 
-        // ตรวจสอบว่ามีไฟล์รูปภาพใหม่ถูกอัปโหลดมาหรือไม่
-        if (!empty($newImage['name'])) {
-            // กำหนดพาธการอัปโหลดตามประเภทของบล็อก
-            $upload_path_map = [
+        // 1. จัดการเรื่องรูปภาพ (ถ้ามีการอัปโหลดใหม่)
+        if (isset($newImage) && $newImage['error'] === 0) {
+            
+            // กำหนด Path ตามหมวดหมู่ (เหมือนที่คุณใช้ในหน้าบ้าน)
+            $paths = [
                 'papermc' => '../img/blogs_image/blogs_server/papermc/',
-                'plugin' => '../img/blogs_image/blogs_plugin/plugin/',
+                'plugin' => '../img/blogs_image/blogs_plugin/plugin/'
             ];
-
-            $uploadPath = $upload_path_map[$blogCategory] ?? null;
-
-            // ตรวจสอบว่าประเภทบล็อกถูกต้องหรือไม่
-            if (!$uploadPath) {
-                return false;
+            
+            $uploadPath = $paths[$blogCategory] ?? '../img/blogs_image/default/';
+            
+            // ลบรูปภาพเก่าทิ้งก่อน (ถ้ามีรูปเก่าและไฟล์นั้นมีอยู่จริง)
+            if (!empty($oldImage) && file_exists($uploadPath . $oldImage)) {
+                unlink($uploadPath . $oldImage);
             }
 
-            $fileType = strtolower(pathinfo($newImage['name'], PATHINFO_EXTENSION));
-            $allowTypes = array('jpg', 'jpeg', 'png', 'gif', 'webp');
+            // ตั้งชื่อไฟล์ใหม่เพื่อป้องกันชื่อซ้ำ
+            $extension = pathinfo($newImage['name'], PATHINFO_EXTENSION);
+            $imageName = bin2hex(random_bytes(10)) . '.' . $extension;
 
-            // เช็คชนิด File Type
-            if (!in_array($fileType, $allowTypes)) {
-                return false;
-            }
-
-            // สร้างชื่อไฟล์ใหม่ที่ไม่ซ้ำกัน
-            $newFileName = "blog_" . time() . '.' . $fileType;
-            $targetFilePath = $uploadPath . $newFileName;
-
-            // ย้ายไฟล์ใหม่ไปที่พาธที่ถูกต้อง
-            if (move_uploaded_file($newImage['tmp_name'], $targetFilePath)) {
-                $finalImage = $newFileName;
-
-                // ลบรูปภาพเก่าถ้ามี และไม่ได้อยู่ในพาธเดียวกับรูปภาพใหม่
-                if (!empty($oldImage) && file_exists($uploadPath . $oldImage) && ($oldImage !== $newFileName)) {
-                    unlink($uploadPath . $oldImage);
-                }
-            } else {
-                return false; // เกิดข้อผิดพลาดในการย้ายไฟล์
+            // ย้ายไฟล์ขึ้นเซิร์ฟเวอร์
+            if (!move_uploaded_file($newImage['tmp_name'], $uploadPath . $imageName)) {
+                return false; // ถ้าย้ายไฟล์ไม่สำเร็จ ให้หยุดการทำงาน
             }
         }
 
-        // อัปเดตข้อมูลในฐานข้อมูล (ส่วนนี้จะถูกเรียกใช้เสมอ)
-        $sqlUpdate = "UPDATE blogs 
-                        SET blogTitle = :blogTitle, 
-                            blogContent = :blogContent, 
-                            metaDescription = :metaDescription,
-                            blogImage = :blogImage,
-                            blogCategory = :blogCategory
-                        WHERE blogId = :blogId";
+        // 2. คำสั่ง SQL Update
+        $sql = "UPDATE blogs SET 
+                blogTitle = :title, 
+                blogContent = :content, 
+                blogCategory = :category, 
+                blogImage = :image,
+                slug = :slug,
+                seo_title = :s_title,
+                seo_description = :s_desc,
+                seo_keywords = :s_key,
+                updatedAt = NOW()
+                WHERE blogId = :id";
 
-        $stmt = $conn->prepare($sqlUpdate);
-        $stmt->bindParam(':blogTitle', $blogTitle, PDO::PARAM_STR);
-        $stmt->bindParam(':blogContent', $blogContent, PDO::PARAM_STR);
-        $stmt->bindParam(':metaDescription', $metaDescription, PDO::PARAM_STR);
-        $stmt->bindParam(':blogImage', $finalImage, PDO::PARAM_STR);
-        $stmt->bindParam(':blogCategory', $blogCategory, PDO::PARAM_STR);
-        $stmt->bindParam(':blogId', $blogId, PDO::PARAM_INT);
+        $stmt = $conn->prepare($sql);
+        
+        $result = $stmt->execute([
+            ':title'    => $blogTitle,
+            ':content'  => $blogContent,
+            ':category' => $blogCategory,
+            ':image'    => $imageName,
+            ':slug'     => $slug,
+            ':s_title'  => $seo_title,
+            ':s_desc'   => $seo_description,
+            ':s_key'    => $seo_keywords,
+            ':id'       => $blogId
+        ]);
 
-        return $stmt->execute();
+        return $result;
+
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        error_log($e->getMessage());
         return false;
     }
 }
@@ -421,11 +382,11 @@ function createCategory($conn, $categoryName, $description)
 function deleteCategory($conn, $categoryId)
 {
     try {
-            //delete data
-            $sqlDelete = "DELETE FROM category WHERE categoryId = :categoryId";
-            $stmtDelete = $conn->prepare($sqlDelete);
-            $stmtDelete->bindParam(':categoryId', $categoryId, PDO::PARAM_INT);
-            $stmtDelete->execute();
+        //delete data
+        $sqlDelete = "DELETE FROM category WHERE categoryId = :categoryId";
+        $stmtDelete = $conn->prepare($sqlDelete);
+        $stmtDelete->bindParam(':categoryId', $categoryId, PDO::PARAM_INT);
+        $stmtDelete->execute();
 
         return true; //ลบสำเร็จ
     } catch (PDOException $e) {
@@ -442,4 +403,45 @@ function countCategory($conn)
 
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     return $result['totalCategory'];
+}
+
+
+//ลบเซิฟเวอร์
+function deleteServer($conn, $serverId)
+{
+    $stmt = $conn->prepare("DELETE FROM servers WHERE serverId = :serverId");
+    return $stmt->execute([':serverId' => $serverId]);
+}
+
+//ดึงข้อมูลเซิฟเวอร์ทั้งหมด
+function fetchAllServers($conn)
+{
+    $stmt = $conn->query("SELECT * FROM servers ORDER BY createdAt DESC");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+//อนุมัติเซิร์ฟเวอร์ให้แสดงผลหน้าเว็บ
+function approveServer($conn, $serverId)
+{
+    try {
+        $sql = "UPDATE servers SET status = 'approved', updatedAt = NOW() WHERE serverId = :serverId";
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([':serverId' => $serverId]);
+    } catch (PDOException $e) {
+        error_log("Approve Error: " . $e->getMessage());
+        return false;
+    }
+}
+
+//ปฏิเสธการนำเซิร์ฟเวอร์ลงระบบ
+function rejectServer($conn, $serverId)
+{
+    try {
+        $sql = "UPDATE servers SET status = 'rejected', updatedAt = NOW() WHERE serverId = :serverId";
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([':serverId' => $serverId]);
+    } catch (PDOException $e) {
+        error_log("Reject Error: " . $e->getMessage());
+        return false;
+    }
 }

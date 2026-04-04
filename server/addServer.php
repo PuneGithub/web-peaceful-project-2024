@@ -24,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnAddServer'])) {
     $imageFile = $_FILES['serverImage'];
 
     // โค้ดสำหรับเช็คว่าฟอร์มส่งข้อมูลมาไหม (ถ้าหน้าจอขึ้นข้อมูล แปลว่าปุ่มทำงานปกติ)
-    echo "<pre>";
-    print_r($_POST);
-    echo "</pre>";
+    // echo "<pre>";
+    // print_r($_POST);
+    // echo "</pre>";
 
     $imageName = "default_server.webp";
     if ($imageFile['error'] === 0) {
@@ -41,12 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnAddServer'])) {
 
     $result = createServer($conn, $userId, $serverName, $serverIP, $serverVersion, $serverCategory, $serverDescription, $imageName);
 
-    if ($result === true) {
-        $message = "<div class='bg-green-100 text-green-700 p-3 rounded mb-4'>ส่งข้อมูลสำเร็จ!</div>";
+    if ($result === "AUTO_APPROVED") {
+        // กรณีสำเร็จ: สมาชิกเก่า (Approved ทันที)
+        $message = "<div class='bg-blue-100 text-blue-700 p-3 rounded mb-4'>ยินดีด้วย! บัญชีของคุณมีความน่าเชื่อถือสูง เซิร์ฟเวอร์ถูกอนุมัติทันที</div>";
+    } elseif ($result === true) {
+        // กรณีสำเร็จ: สมาชิกใหม่ (รอตรวจสอบ)
+        $message = "<div class='bg-green-100 text-green-700 p-3 rounded mb-4'>ส่งข้อมูลสำเร็จ! โปรดรอแอดมินตรวจสอบ (ใช้เวลาไม่เกิน 24 ชม.)</div>";
     } elseif ($result === "IP_DUPLICATE") {
-        $message = "<div class='bg-yellow-100 text-yellow-700 p-3 rounded mb-4'> IP นี้ถูกใช้งานแล้ว หรือกำลังรอการตรวจสอบ</div>";
+        //  กรณีติดขัด: IP ซ้ำ
+        $message = "<div class='bg-yellow-100 text-yellow-700 p-3 rounded mb-4'>IP นี้ถูกลงทะเบียนไว้แล้ว หรือกำลังรอการตรวจสอบจากแอดมิน</div>";
     } else {
-        $message = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'> เกิดข้อผิดพลาดในการบันทึกข้อมูล</div>";
+        // กรณีผิดพลาด: เช่น Database พัง หรือไฟล์อัปโหลดมีปัญหา
+        $message = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>เกิดข้อผิดพลาดบางอย่างในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง</div>";
     }
 }
 ?>
@@ -60,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnAddServer'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../css/output.css">
     <link rel="stylesheet" href="../css/style.css">
-    <title>Manage Posts</title>
+    <title>Add Server</title>
 </head>
 
 <body>
@@ -94,6 +100,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnAddServer'])) {
                             <option value="Skyblock">Skyblock</option>
                             <option value="MiniGames">Mini Games</option>
                             <option value="MMORPG">MMORPG</option>
+                            <option value="Mod">Mod</option>
+                            <option value="Community">Community</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
                 </div>
@@ -112,6 +121,21 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnAddServer'])) {
                     <button type="submit" name="btnAddServer" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">
                         เพิ่มรายชื่อเซิร์ฟเวอร์
                     </button>
+                </div>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded-r-lg shadow-sm">
+                    <div class="flex">
+                        <div class="shrink-0">
+                            <i class="fa-solid fa-circle-info text-blue-500 mt-1"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-bold text-blue-800">เพื่อให้ระบบแสดงสถานะ "ออนไลน์" ได้ถูกต้อง:</h3>
+                            <div class="mt-2 text-xs text-blue-700 space-y-1">
+                                <p>1. สำหรับ **Java Edition**: หากเวอร์ชันต่ำกว่า 1.7 กรุณาตั้งค่า <code>enable-query=true</code> ในไฟล์ server.properties</p>
+                                <p>2. สำหรับ **Bedrock Edition**: กรุณาเปิด Query Port และเช็คว่า Firewall ไม่ได้บล็อกพอร์ตการเชื่อมต่อ</p>
+                                <p>3. หากใช้ระบบป้องกัน (Anti-DDoS) บางเจ้า อาจทำให้ระบบดึงจำนวนผู้เล่นไม่ได้</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

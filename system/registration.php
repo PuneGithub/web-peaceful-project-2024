@@ -9,24 +9,6 @@ function signup($username, $password, $email)
 {
     global $conn;
 
-    $secret = "6LeGT_IqAAAAANnMxxr_nj4q8oWF-sq80YYG4gSo";
-
-    //if check reCAPTCHA v2
-    $captcha = $_POST['g-recaptcha-response'];
-    $verifiyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . $secret . '&response=' . $captcha);
-
-    $responseData = json_decode($verifiyResponse);
-
-
-    if (!isset($_POST['g-recaptcha-response']) || empty($_POST['g-recaptcha-response'])) {
-        return "คุณไม่ได้กด reCAPTCHA !";
-    }
-
-    // ตรวจสอบว่า reCAPTCHA ยืนยันสำเร็จหรือไม่
-    if (!$responseData || !$responseData->success) {
-        return "ยืนยัน reCAPTCHA ไม่สำเร็จโปรดลองใหม่ !";
-    }
-
     if (strlen($password) < 6) {
         return "รหัสผ่านต้องมีอย่างน้อย 6 ตัว";
     }
@@ -43,12 +25,14 @@ function signup($username, $password, $email)
 
     $existingUser = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($existingUser && $existingUser['email'] === $email) {
-        return "Email นี้มีผู้ใช้งานแล้ว โปรดลองใหม่!";
-    }
+    if ($existingUser) {
+        if ($existingUser['email'] === $email) {
+            return "Email นี้มีผู้ใช้งานแล้ว โปรดลองใหม่!";
+        }
 
-    if ($existingUser && $existingUser['username'] === $username) {
-        return "Username นี้มีผู้ใช้งานแล้ว โปรดลองใหม่!";
+        if ($existingUser['username'] === $username) {
+            return "Username นี้มีผู้ใช้งานแล้ว โปรดลองใหม่!";
+        }
     }
 
     $hashPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -99,7 +83,8 @@ function signup($username, $password, $email)
         $mail->Subject = $message_subject;
 
         $mail->isHTML(true);
-        $verificationLink = "http://localhost/web_peaceful_project_2024/system/verifyEmail.php?token=" . $token;
+        // $verificationLink = "http://localhost/web_peaceful_project_2024/system/verifyEmail.php?token=" . $token; test local
+        $verificationLink = "https://zencrafterly.com/system/verifyEmail.php?token=" . $token; // production
         $mail->Body = '
          <h1>ยินดีต้อนรับ!</h1> <p>ขอบคุณที่สมัครใช้งาน <b>Zencrafterly</b>.</p>
          <p>กรุณาคลิกลิงก์เพื่อยืนยันอีเมลของคุณ: <a href="' . $verificationLink . '">คลิกที่นี่</a></p>
@@ -136,10 +121,7 @@ function login($identifier, $password)
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['verifyStatus'] = $user['verifyStatus'];
 
-                echo "<div class='alert-green'>Login successful! Redirecting...</div>";
-
-                header('refresh: 2; url=../index.php');
-                exit;
+                return true;
             } else {
                 return "การเข้าสู่ระบบล้มเหลว: รหัสผ่านไม่ถูกต้อง";
             }

@@ -1,2 +1,4 @@
 RewriteEngine On
 RewriteRule ^blog/([a-zA-Z0-9\-ก-๙]+)$ blog.php?slug=$1 [L,QSA]
+
+ErrorDocument 404 /404.php

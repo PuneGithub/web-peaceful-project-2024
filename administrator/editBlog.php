@@ -14,88 +14,137 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../css/output.css">
     <link rel="stylesheet" href="../css/style.css">
-    <title>Edit Blog</title>
+    <title>Edit Blog - Zencrafterly</title>
 </head>
 
-<body>
+<body class="bg-gray-50">
     <div class="flex">
         <?php include_once('../components/header-admin.php'); ?>
 
-        <!-- Content -->
         <div class="flex-1 p-6">
-            <div class="grid grid-cols-12 gap-4">
-                <div class="col-span-12 sm:col-span-4">
-                    <div class="card-white">
-                        <?php $totalUsers = countUsers($conn); ?>
-                        <h2 class="font-bold text-lg">จำนวนสมาชิก: <?php echo $totalUsers; ?> บัญชี</h2>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-8">
-                    <div class="card-white">
-                        <?php
-                        $blogId = $_GET['blogId'];
-                        $blog = fetchEditBlog($conn, $blogId);
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['blogId'])) {
-                            $blogTitle = $_POST['blogTitle'];
-                            $blogContent = $_POST['blogContent'];
-                            $metaDescription = $_POST['metaDescription'];
-                            $blogCategory = $_POST['blogCategory'];
-                            $oldImage = $blog['blogImage'];
-                            $newImage = $_FILES['blogImage'];
+            <div class="max-w-4xl mx-auto">
+                <div class="card-white p-8 shadow-sm">
+                    <?php
+                    $blogId = $_GET['blogId'];
+                    $blog = fetchEditBlog($conn, $blogId);
+                    
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['blogId'])) {
+                        $blogTitle = $_POST['blogTitle'];
+                        $blogContent = $_POST['blogContent'];
+                        $blogCategory = $_POST['blogCategory'];
 
-                            if (updateBlog($conn, $blogId, $blogTitle, $blogContent, $metaDescription, $blogCategory, $newImage, $oldImage)) {
-                                echo "<div class='alert-green text-center'>Update Successful!</div>";
-                            } else {
-                                echo "<div class='alert-danger text-center'>เกิดข้อผิดพลาดในการอัปเดตข้อมูล!</div>";
-                            }
+                        $slug = $_POST['slug'];
+
+                        $updateSlug = createSlug($slug);
+                        
+                        // 🚩 รับค่า SEO 3 ตัวใหม่ (ลบ metaDescription เก่าออกแล้ว)
+                        $seo_title = $_POST['seo_title'];
+                        $seo_description = $_POST['seo_description'];
+                        $seo_keywords = $_POST['seo_keywords'];
+
+                        $oldImage = $blog['blogImage'];
+                        $newImage = $_FILES['blogImage'];
+
+                        // 🚩 ส่งค่าเข้าฟังก์ชัน (อย่าลืมไปแก้ตัวรับค่าในฟังก์ชัน updateBlog ด้วยนะครับ)
+                        if (updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $newImage, $oldImage, $seo_title, $seo_description, $seo_keywords, $slug)) {
+                            echo "<div class='alert-green text-center mb-4'><i class='fa-solid fa-check-circle mr-2'></i>อัปเดตบทความสำเร็จ!</div>";
+                            // โหลดข้อมูลใหม่มาแสดง
+                            $blog = fetchEditBlog($conn, $blogId);
+                        } else {
+                            echo "<div class='alert-danger text-center mb-4'><i class='fa-solid fa-triangle-exclamation mr-2'></i>เกิดข้อผิดพลาดในการอัปเดตข้อมูล!</div>";
                         }
+                    }
 
-                        $imagePathsMap = [
-                            'papermc' => '/img/blogs_image/blogs_server/papermc/',
-                            'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
-                        ];
+                    $imagePathsMap = [
+                        'papermc' => '/img/blogs_image/blogs_server/papermc/',
+                        'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
+                    ];
+                    $imagePaths = $imagePathsMap[$blog['blogCategory']] ?? '';
+                    ?>
 
-                        $imagePaths = $imagePathsMap[$blog['blogCategory']] ?? '';
+                    <div class="flex items-center mb-6 border-b pb-4">
+                        <a href="manageBlogs.php" class="text-gray-400 hover:text-blue-500 mr-4 transition"><i class="fa-solid fa-arrow-left fa-lg"></i></a>
+                        <h2 class="text-2xl font-bold text-gray-800">Edit Blog: <span class="text-blue-600">#<?= htmlspecialchars($blog['blogId']) ?></span></h2>
+                    </div>
 
-                        ?>
-                        <h2 class="text-center text-xl font-bold mb-4">Edit Blog</h2>
-                        <form action="" enctype="multipart/form-data" method="post" class="space-y-4">
-                            <input type="hidden" name="blogId" value="<?php echo $blog['blogId']; ?>">
+                    <form action="" enctype="multipart/form-data" method="post" class="space-y-6">
+                        <input type="hidden" name="blogId" value="<?php echo $blog['blogId']; ?>">
+                        
+                        <div class="space-y-4">
                             <div>
-                                <label for="blogTitle" class="block text-sm font-medium">blogTitle</label>
-                                <input type="text" name="blogTitle" class="input-form" value="<?php echo $blog['blogTitle']; ?>" placeholder="Enter blogTitle" required>
+                                <label for="blogTitle" class="block text-sm font-bold text-gray-700 mb-1">ชื่อบทความ (Blog Title)</label>
+                                <input type="text" name="blogTitle" class="input-form w-full" value="<?php echo htmlspecialchars($blog['blogTitle']); ?>" required>
                             </div>
+
                             <div>
-                                <label for="blog" class="block text-sm font-medium">blogContent</label>
-                                <textarea name="blogContent" class="input-form" rows="5" cols="30" id=""><?php echo $blog['blogContent']; ?></textarea>
+                                <label for="slug" class="block text-sm font-bold text-gray-700 mb-1">Slug</label>
+                                <input type="text" name="slug" class="input-form w-full" value="<?php echo htmlspecialchars($blog['slug']); ?>" required>
                             </div>
+                            
                             <div>
-                                <label for="metaDescription" class="block text-sm font-medium">metaDescription</label>
-                                <input type="text" name="metaDescription" class="input-form" value="<?php echo $blog['metaDescription']; ?>" placeholder="Enter metaDescription" required>
-                            </div>
-                            <div>
-                                <label for="blogCategory" class="block text-sm font-medium">blogCategory</label>
-                                <select name="blogCategory" class="input-form">
+                                <label for="blogCategory" class="block text-sm font-bold text-gray-700 mb-1">หมวดหมู่ (Category)</label>
+                                <select name="blogCategory" class="input-form w-full bg-white">
                                     <option value="papermc" <?php echo ($blog['blogCategory'] === 'papermc') ? 'selected' : ''; ?>>PaperMC</option>
                                     <option value="plugin" <?php echo ($blog['blogCategory'] === 'plugin') ? 'selected' : ''; ?>>Plugin</option>
                                 </select>
+                            </div>
+
+                            <div>
+                                <label for="blogContent" class="block text-sm font-bold text-gray-700 mb-1">เนื้อหาบทความ (Content)</label>
+                                <textarea name="blogContent" class="input-form w-full" rows="10" required><?php echo htmlspecialchars($blog['blogContent']); ?></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">รูปภาพหน้าปก (Cover Image)</label>
+                                <?php if (!empty($blog['blogImage'])): ?>
+                                    <div class="mb-3 p-3 bg-gray-50 rounded-lg border inline-block">
+                                        <img src="..<?php echo htmlspecialchars($imagePaths . $blog['blogImage']); ?>" alt="Current Cover" class="w-48 h-32 object-cover rounded shadow-sm mb-2">
+                                        <p class="text-xs text-gray-500 font-mono"><?php echo htmlspecialchars($blog['blogImage']); ?></p>
+                                    </div>
+                                <?php endif; ?>
+                                <input type="file" name="blogImage" class="input-form w-full bg-white">
+                                <p class="text-[10px] text-gray-400 mt-1">อัปโหลดรูปใหม่เฉพาะเมื่อต้องการเปลี่ยนรูปหน้าปก</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-6 border-t-2 border-gray-100">
+                            <h3 class="text-lg font-bold text-blue-600 mb-4">
+                                <i class="fa-solid fa-magnifying-glass mr-2"></i> SEO Settings
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 gap-5 bg-blue-50/30 p-5 rounded-xl border border-blue-100">
                                 <div>
-                                    <label for="blogImage" class="block text-sm font-medium">blogImage</label>
-                                    <?php if (!empty($blog['blogImage'])): ?>
-                                        <p class="text-xs text-gray-500 mb-2">รูปภาพปัจจุบัน: <?php echo htmlspecialchars($blog['blogImage']); ?></p>
-                                        <img src="..<?php echo htmlspecialchars($imagePaths . $blog['blogImage']); ?>" alt="" class="w-32 h-32 object-cover mb-2">
-                                    <?php endif; ?>
-                                    <input type="file" name="blogImage" class="input-form" value="<?php echo $blog['blogImage']; ?>">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">SEO Title</label>
+                                    <input type="text" name="seo_title" class="input-form w-full bg-white" 
+                                           value="<?php echo htmlspecialchars($blog['seo_title'] ?? ''); ?>" 
+                                           placeholder="เช่น: 10 ปลั๊กอินมายคราฟที่ต้องมี - Zencrafterly">
+                                    <p class="text-[10px] text-gray-500 mt-1">ถ้าไม่กรอก ระบบจะใช้ "ชื่อบทความ" ด้านบนแทน</p>
                                 </div>
+
                                 <div>
-                                    <input type="submit" class="btn-blue-500" value="SAVE">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
+                                    <textarea name="seo_description" rows="3" class="input-form w-full bg-white" 
+                                              placeholder="สรุปเนื้อหาบทความสั้นๆ ให้น่าคลิก..."><?php echo htmlspecialchars($blog['seo_description'] ?? ''); ?></textarea>
                                 </div>
-                        </form>
-                    </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Keywords</label>
+                                    <input type="text" name="seo_keywords" class="input-form w-full bg-white" 
+                                           value="<?php echo htmlspecialchars($blog['seo_keywords'] ?? ''); ?>" 
+                                           placeholder="ปลั๊กอินมายคราฟ, รีวิวปลั๊กอิน, เซิร์ฟเวอร์">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-100">
+                            <button type="submit" class="btn-blue-500 w-full md:w-auto px-8 py-3 text-lg font-bold">
+                                <i class="fa-solid fa-save mr-2"></i> บันทึกการเปลี่ยนแปลง
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </body>
-
 </html>

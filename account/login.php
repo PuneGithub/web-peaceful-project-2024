@@ -2,6 +2,23 @@
 session_start();
 require_once '../system/conn.php';
 require_once("../system/config.php");
+require_once("../system/registration.php");
+
+$error = null;
+$success = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $identifier = $_POST['identifier'];
+    $password = $_POST['password'];
+
+    $result = login($identifier, $password);
+
+    if ($result === true) {
+        $success = true; // ตั้งค่าสถานะสำเร็จ
+    } else {
+        $error = $result; // เก็บข้อความ Error ไว้แสดงข้างล่าง
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,19 +41,17 @@ require_once("../system/config.php");
         <div class="card-white w-full max-w-md">
             <h2 class="text-xl font-semibold text-center">LOGIN</h2>
             <?php
-            require_once("../system/registration.php");
-
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $identifier = $_POST['identifier']; //email or username
-                $password = $_POST['password'];
-
-                //เรียกใช้ function login
-                $result = login($identifier, $password);
-                if ($result !== true) {
-                    echo "<div class='alert-danger text-center'>" . htmlspecialchars($result) . "</div>";
-                }
+            if ($success) {
+                echo "<div class='alert-green'><i class='fa-regular fa-circle-check'></i> Login successful! Redirecting...</div>";
+                echo "<script>
+                    setTimeout(function() {
+                        window.location.href = '../index.php';
+                    }, 2000);
+                </script>";
+                exit;
+            } elseif ($error) {
+                echo "<div class='alert-danger'><i class='fa-solid fa-triangle-exclamation'></i> $error</div>";
             }
-
             ?>
             <form action="" method="post" class="space-y-4">
                 <div>
@@ -57,6 +72,7 @@ require_once("../system/config.php");
         </div>
     </div>
 
+    <script src="<?php echo base_url('/js/script.js'); ?>"></script>
 </body>
 
 </html>

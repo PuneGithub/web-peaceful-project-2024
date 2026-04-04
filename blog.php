@@ -22,7 +22,7 @@ if (isset($_GET['slug'])) {
         }
     } else {
         header("HTTP/1.0 404 Not Found");
-        echo "<h1>ไม่พบบทความ</h1>";
+        header("Location: /404");
         exit;
     }
 } else {
@@ -43,12 +43,20 @@ $imagePath = $image_paths[$blog['blogCategory']];
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="<?php echo $blog['metaDescription']; ?>">
+    <?php
+    $titleTag = !empty($blog['seo_title']) ? $blog['seo_title'] : $blog['blogTitle'];
+    // ตัดเนื้อหาบางส่วนมาทำ Description ถ้าไม่ได้กรอกไว้หลังบ้าน
+    $descTag  = !empty($blog['seo_description']) ? $blog['seo_description'] : mb_substr(strip_tags($blog['blogContent']), 0, 160);
+    $keyTag   = !empty($blog['seo_keywords']) ? $blog['seo_keywords'] : "Minecraft, Zencrafterly";
+    ?>
+    <title><?= htmlspecialchars($titleTag) ?> | Zencrafterly</title>
+
+    <meta name="description" content="<?= htmlspecialchars($descTag) ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($keyTag) ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="<?= base_url('/css/output.css') ?>">
     <link rel="stylesheet" href="<?= base_url('/css/style.css') ?>">
-    <title><?php echo $blog['blogTitle']; ?> | Zencrafterly</title>
 </head>
 <script src="js/script.js"></script>
 
@@ -69,9 +77,11 @@ $imagePath = $image_paths[$blog['blogCategory']];
                 <!-- Content -->
                 <div class="px-6">
                     <p class="flex text-lg text-gray-600">
-                        By <span class="font-semibold text-blue-600">KoonPune</span> Created on: <?php echo $blog['createdAt']; ?> <span class="ml-auto"><?php echo $blog['views']; ?> views</span>
+                        By <span class="font-semibold text-blue-600">KoonPune</span> Created on: <?php echo htmlspecialchars($blog['createdAt']); ?> <span class="ml-auto"><?php echo htmlspecialchars($blog['views']); ?> views</span>
                     </p>
-                    <?php echo $blog['blogContent']; ?>
+                    <div class="prose max-w-none mt-6 text-gray-800 leading-relaxed">
+                        <?php echo $blog['blogContent']; ?>
+                    </div>
                 </div>
             </div>
         </div>

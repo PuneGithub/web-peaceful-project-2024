@@ -26,7 +26,7 @@ $imagePathsMap = [
 
 
 $fetchAllBlogs = fetchAllBlogs($conn);
-
+$totalBlogs = is_array($fetchAllBlogs) ? count($fetchAllBlogs) : 0;
 
 ?>
 <!DOCTYPE html>
@@ -50,7 +50,7 @@ $fetchAllBlogs = fetchAllBlogs($conn);
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-12 sm:col-span-4">
                     <div class="card-white">
-                        <h2 class="font-bold text-lg">จำนวนโพสต์: <?php echo $totalPosts; ?> โพสต์</h2>
+                        <h2 class="font-bold text-lg">จำนวนบทความ: <?php echo $totalBlogs; ?> บทความ</h2>
                     </div>
                 </div>
                 <div class="col-span-12 sm:col-span-8">
@@ -64,41 +64,54 @@ $fetchAllBlogs = fetchAllBlogs($conn);
                         </div>
                         <div class="overflow-x-auto mt-3">
                             <table class="table-auto w-full border border-slate-400 border-collapse text-center">
+
                                 <thead>
-                                    <tr>
-                                        <th class="border border-slate-300">blogId</th>
-                                        <th class="border border-slate-300">userId</th>
-                                        <th class="border border-slate-300">blogTitle</th>
-                                        <th class="border border-slate-300">blogImage</th>
-                                        <th class="border border-slate-300">createdAt</th>
-                                        <th class="border border-slate-300">edit</th>
-                                        <th class="border border-slate-300">delete</th>
+                                    <tr class="bg-gray-100">
+                                        <th class="p-2 border">ID</th>
+                                        <th class="p-2 border">หมวดหมู่</th>
+                                        <th class="p-2 border">ชื่อบทความ</th>
+                                        <th class="p-2 border">สถิติ</th>
+                                        <th class="p-2 border">SEO</th>
+                                        <th class="p-2 border">วันที่</th>
+                                        <th class="p-2 border">จัดการ</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
-                                    <?php
-                                    foreach ($fetchAllBlogs as $blog) {
-                                        // ใช้ blogCategory ที่ดึงมาจากฐานข้อมูลเพื่อเลือก path ที่ถูกต้อง
-                                        $imagePath = $imagePathsMap[$blog['blogCategory']] ?? '';
+                                    <?php foreach ($fetchAllBlogs as $blog):
+                                        $hasSEO = (!empty($blog['seo_title']) && !empty($blog['seo_description']));
                                     ?>
-                                        <tr>
-                                            <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogId']); ?></td>
-                                            <td class="border border-slate-300"><?php echo htmlspecialchars($blog['userId']); ?></td>
-                                            <td class="border border-slate-300"><?php echo htmlspecialchars($blog['blogTitle']); ?></td>
-                                            <td class="border border-slate-300"><img src="..<?php echo htmlspecialchars($imagePath . $blog['blogImage']); ?>" alt="blogImage" class="w-32 h-32 object-cover rounded-sm"></td>
-                                            <td class="border border-slate-300"><?php echo htmlspecialchars($blog['createdAt']); ?></td>
-                                            <td class="border border-slate-300">
-                                                <a href="editBlog.php?blogId=<?php echo $blog['blogId']; ?>" class="btn-orange-500 inline-block">Edit</a>
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="p-2 border"><?= $blog['blogId'] ?></td>
+                                            <td class="p-2 border text-xs uppercase font-bold text-blue-600"><?= $blog['blogCategory'] ?></td>
+                                            <td class="p-2 border text-left font-medium px-4"><?= htmlspecialchars($blog['blogTitle']) ?></td>
+
+                                            <td class="p-2 border text-xs">
+                                                <i class="fa-solid fa-eye mr-1 text-gray-400"></i> <?= number_format($blog['views']) ?>
                                             </td>
-                                            <td class="border border-slate-300">
-                                                <form action="" method="post" onsubmit="return confirm('ต้องการลบ blog นี้ใช่ไหม?');">
-                                                    <input type="hidden" name="blogId" value="<?php echo $blog['blogId']; ?>">
-                                                    <input type="submit" class="btn-red-500 inline-block" value="Delete">
-                                                </form>
+                                            <td class="p-2 border">
+                                                <i class="fa-solid <?= $hasSEO ? 'fa-circle-check text-green-500' : 'fa-circle-info text-gray-300' ?>" title="<?= $hasSEO ? 'SEO ทำแล้ว' : 'ยังไม่ได้ทำ SEO' ?>"></i>
+                                            </td>
+
+                                            <td class="p-2 border text-[10px] text-gray-500"><?= $blog['createdAt'] ?></td>
+
+                                            <td class="p-2 border">
+                                                <div class="flex gap-3 justify-center">
+                                                    <a href="editBlog.php?blogId=<?= $blog['blogId'] ?>" class="text-orange-500 hover:text-orange-700 transition" title="แก้ไข">
+                                                        <i class="fa-solid fa-pen-to-square fa-lg"></i>
+                                                    </a>
+                                                    <form action="" method="post" class="inline" onsubmit="return confirm('ยืนยันการลบโพสต์นี้ใช่ไหม?');">
+                                                        <input type="hidden" name="blogId" value="<?= $blog['blogId'] ?>">
+                                                        <button type="submit" class="text-red-500 hover:text-red-700 transition" title="ลบ">
+                                                            <i class="fa-solid fa-trash fa-lg"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
-                                    <?php } ?>
+                                    <?php endforeach; ?>
                                 </tbody>
+
                             </table>
                         </div>
                     </div>

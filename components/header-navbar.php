@@ -1,65 +1,77 @@
-<nav class="bg-gray-800 p-4">
-    <div class="container mx-auto flex justify-center items-center space-x-6">
-        <!-- Logo -->
-        <div class="text-white text-xl font-bold">
-            Zencrafterly
-        </div>
+<nav class="bg-gray-800 p-4 shadow-md">
+    <div class="container mx-auto">
+        <div class="flex justify-between items-center">
 
-        <!-- Menu Links Desktop -->
-        <div class="hidden sm:flex space-x-6">
-            <a href="<?= base_url('/index.php') ?>" class="font-semibold text-gray-300 hover:text-white">HOME</a>
-            <a href="<?= base_url('/blogs.php') ?>" class="font-semibold text-gray-300 hover:text-white">BLOG</a>
-            <a href="<?= base_url('/forum.php') ?>" class="font-semibold text-gray-300 hover:text-white">FORUM</a>
-            <a href="<?= base_url('/resources.php') ?>" class="font-semibold text-gray-300 hover:text-white">RESOURCES</a>
-            <a href="<?= base_url('/about.php') ?>" class="font-semibold text-gray-300 hover:text-white">ABOUT</a>
-        </div>
+            <div class="flex-shrink-0">
+                <a href="<?= base_url('/index.php') ?>" class="text-white text-2xl font-bold hover:text-blue-400 transition">
+                    Zencrafterly
+                </a>
+            </div>
 
-        <!-- Sign Up Button -->
-        <div class="hidden sm:block">
-            <?php
-            if (isset($_SESSION['userId'])) {
-            ?>
-                <div class="hidden sm:flex items-center space-x-4">
-                    <p class="font-bold text-lg text-white"><?php echo $_SESSION['username']; ?></p>
-                    <a href="<?= base_url('/account/account.php') ?>" class="btn-cyan-500">Account</a>
-                    <a href="<?= base_url('/account/logout.php') ?>" class="btn-red-500">Logout</a>
+            <div class="hidden lg:flex items-center space-x-8">
+                <div class="flex space-x-6">
+                    <a href="<?= base_url('/index.php') ?>" class="font-semibold text-gray-300 hover:text-white transition">HOME</a>
+                    <a href="<?= base_url('/blogs.php') ?>" class="font-semibold text-gray-300 hover:text-white transition">BLOG</a>
+                    <a href="<?= base_url('/forum.php') ?>" class="font-semibold text-gray-300 hover:text-white transition">FORUM</a>
+                    <a href="<?= base_url('/resources.php') ?>" class="font-semibold text-gray-300 hover:text-white transition">RESOURCES</a>
+                    <a href="<?= base_url('/about.php') ?>" class="font-semibold text-gray-300 hover:text-white transition">ABOUT</a>
                 </div>
-            <?php } else { ?>
-                <a href="<?= base_url('/account/signup.php') ?>" class="btn-blue-500 mr-2">SIGN UP</a>
-                <a href="<?= base_url('/account/login.php') ?>" class="btn-green-500">LOGIN</a>
-            <?php } ?>
+
+                <div class="flex items-center space-x-3 border-l border-gray-700 pl-6">
+                    <?php if (isset($_SESSION['userId'])): ?>
+                        <span class="text-white font-medium mr-2">
+                            <i class="fa-solid fa-user-circle mr-1"></i> <?= $_SESSION['username']; ?>
+                        </span>
+                        <a href="<?= base_url('/server/myServers.php') ?>" class="btn-lime-500 text-xs py-2">
+                            <i class="fa-solid fa-list-check"></i> เซิร์ฟเวอร์ของฉัน
+                        </a>
+                        <a href="<?= base_url('/account/account.php') ?>" class="btn-cyan-500 text-xs py-2">Account</a>
+                        <a href="<?= base_url('/account/logout.php') ?>" class="btn-red-500 text-xs py-2">Logout</a>
+                    <?php else: ?>
+                        <a href="<?= base_url('/account/signup.php') ?>" class="btn-blue-500 text-sm">SIGN UP</a>
+                        <a href="<?= base_url('/account/login.php') ?>" class="btn-green-500 text-sm">LOGIN</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="lg:hidden flex items-center">
+                <button class="text-gray-300 hover:text-white focus:outline-none cursor-pointer p-2" onclick="toggleMenu()">
+                    <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-8 h-8">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
-        <!-- Hamburger Menu Mobile -->
-        <div class="sm:hidden">
-            <button class="text-white focus:outline-hidden" onclick="toggleMenu()">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-        </div>
-
-        <!-- Menu Links Mobile -->
-        <div id="mobile-menu" class="hidden sm:hidden">
+        <div id="mobile-menu" class="hidden lg:hidden mt-4 pb-4 space-y-2 border-t border-gray-700 pt-4">
             <a href="<?= base_url('/index.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">HOME</a>
             <a href="<?= base_url('/blogs.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">BLOG</a>
             <a href="<?= base_url('/forum.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">FORUM</a>
             <a href="<?= base_url('/resources.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">RESOURCES</a>
             <a href="<?= base_url('/about.php') ?>" class="block font-semibold text-gray-300 hover:text-white py-2">ABOUT</a>
-            <?php if (isset($_SESSION['userId'])) {
-            ?>
-                <div class="flex flex-col gap-3">
-                    <p class="font-bold text-lg text-white"><?php echo $_SESSION['username']; ?></p>
-                    <a href="<?= base_url('/account/account.php') ?>" class="btn-cyan-500">Account</a>
-                    <a href="<?= base_url('/account/logout.php') ?>" class="btn-red-500">Logout</a>
-                </div>
-            <?php } else {  ?>
-                <div class="flex flex-col gap-3">
-                    <a href="<?= base_url('/account/signup.php') ?>" class="btn-blue-500">SIGN UP</a>
-                    <a href="<?= base_url('/account/login.php') ?>" class="btn-green-500">LOGIN</a>
-                </div>
-            <?php } ?>
-        </div>
 
+            <hr class="border-gray-700 my-2">
+
+            <?php if (isset($_SESSION['userId'])): ?>
+                <div class="flex flex-col gap-2">
+                    <p class="font-bold text-white mb-1"><i class="fa-solid fa-user mr-2"></i><?= $_SESSION['username']; ?></p>
+                    <a href="<?= base_url('/server/myServers.php') ?>" class="btn-lime-500 w-full text-center py-2 text-sm">เซิร์ฟเวอร์ของฉัน</a>
+                    <a href="<?= base_url('/account/account.php') ?>" class="btn-cyan-500 w-full text-center py-2 text-sm">Account</a>
+                    <a href="<?= base_url('/account/logout.php') ?>" class="btn-red-500 w-full text-center py-2 text-sm">Logout</a>
+                </div>
+            <?php else: ?>
+                <div class="flex flex-col gap-2">
+                    <a href="<?= base_url('/account/signup.php') ?>" class="btn-blue-500 w-full text-center py-2">SIGN UP</a>
+                    <a href="<?= base_url('/account/login.php') ?>" class="btn-green-500 w-full text-center py-2">LOGIN</a>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 </nav>
+
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('hidden');
+    }
+</script>

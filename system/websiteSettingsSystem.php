@@ -56,3 +56,24 @@ function updateAnnounceSettings($conn, $settingsData)
         return "<div class='alert-danger'>Error: " . $error->getMessage() . "</div>";
     }
 }
+
+function updateSEOSettings($conn, $data) {
+    try {
+        $sql = "UPDATE websettings SET 
+                site_seo_title = :site_seo_title, 
+                site_seo_description = :site_seo_description, 
+                site_seo_keywords = :site_seo_keywords 
+                WHERE webId = 1"; // ตรวจสอบ webId ให้ตรงกับในฐานข้อมูล
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([
+            ':site_seo_title' => $data['site_seo_title'],
+            ':site_seo_description' => $data['site_seo_description'],
+            ':site_seo_keywords' => $data['site_seo_keywords']
+        ]);
+
+        return "<div class='alert-green'><i class='fa-solid fa-circle-check mr-2'></i>บันทึกข้อมูล SEO เรียบร้อยแล้ว!</div>";
+    } catch (PDOException $e) {
+        return "<div class='alert-danger'>Error: " . $e->getMessage() . "</div>";
+    }
+}

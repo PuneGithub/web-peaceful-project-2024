@@ -1,0 +1,22 @@
+﻿User-agent: *
+
+#ส่วนที่ควรบล็อกจริงๆ (ไฟล์ระบบและความเป็นส่วนตัว)
+Disallow: /account/
+Disallow: /administrator/
+Disallow: /components/
+Disallow: /PHPMailer-master/
+Disallow: /system/
+Disallow: /config.php
+Disallow: /conn.php
+
+#อนุญาตให้ Bot เข้าถึงเพื่อการ Render หน้าเว็บที่ถูกต้อง
+Allow: /css/
+Allow: /js/
+Allow: /img/
+
+#อนุญาตส่วนเนื้อหา
+Allow: /
+Allow: /blog/
+
+#ชี้ทางไปหา Sitemap (ตรวจสอบว่าใช้ https และชื่อโดเมนถูก)
+Sitemap: https://zencrafterly.com/sitemap.xml
