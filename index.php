@@ -22,7 +22,7 @@ $image_blogs_paths = [
 
 
 
-//ดึงบทความมาแสดง
+//ดึงบทความมาแสดง1
 $fetchAllBlogs = fetchAllBlogs($conn, $sortBy, $categoryId);
 $totalBlogs = countAllBlogs($conn, $categoryId);
 
