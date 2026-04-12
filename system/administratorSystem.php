@@ -137,11 +137,13 @@ function createBlog($conn, $userId, $blogTitle, $blogContent, $newImage, $slug, 
         // 1. จัดการเรื่องรูปภาพ (ใช้ค่าจาก $newImage ที่ส่งมาจากหน้าบ้าน)
         if (isset($newImage['name']) && $newImage['error'] === 0) {
             $uploadPathMap = [
-                'papermc' => '../img/blogs_image/blogs_server/papermc/',
-                'plugin' => '../img/blogs_image/blogs_plugin/plugin/',
-                'server' => '../img/blogs_image/blogs_server/server/',
+                'papermc' => '/img/blogs_image/blogs_server/papermc/',
+                'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
+                'server' => '/img/blogs_image/blogs_server/server/',
+                'news'  => '/img/blogs_image/news/',
                 ];
-            $uploadPath = $uploadPathMap[$blogCategoryStr] ?? '../img/blogs_image/default/';
+            
+            $uploadPath = $uploadPathMap[$blogCategoryStr] ?? '/img/blogs_image/default/';
 
             $fileName = "blog_" . time() . "_" . basename($newImage['name']);
             $targetFilePath = $uploadPath . $fileName;
