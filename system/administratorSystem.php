@@ -1,5 +1,6 @@
 <?php
 require_once 'conn.php';
+require_once 'config.php';
 
 function loginAdmin($conn, $identifier, $password)
 {
@@ -137,20 +138,25 @@ function createBlog($conn, $userId, $blogTitle, $blogContent, $newImage, $slug, 
         // 1. จัดการเรื่องรูปภาพ (ใช้ค่าจาก $newImage ที่ส่งมาจากหน้าบ้าน)
         if (isset($newImage['name']) && $newImage['error'] === 0) {
             $uploadPathMap = [
-                'papermc' => '/img/blogs_image/blogs_server/papermc/',
-                'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
-                'server' => '/img/blogs_image/blogs_server/server/',
-                'news'  => '/img/blogs_image/news/',
-                ];
-            
-            $uploadPath = $uploadPathMap[$blogCategoryStr] ?? '/img/blogs_image/default/';
+                'papermc' => '../img/blogs_image/blogs_server/papermc/',
+                'plugin'  => '../img/blogs_image/blogs_plugin/plugin/',
+                'server'  => '../img/blogs_image/blogs_server/server/',
+                'news'    => '../img/blogs_image/news/',
+            ];
+
+            $uploadPath = $uploadPathMap[$blogCategoryStr] ?? '../img/blogs_image/default/';
+
+            // *** เพิ่มส่วนนี้: สร้างโฟลเดอร์อัตโนมัติถ้าไม่มี (ป้องกัน Error) ***
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
 
             $fileName = "blog_" . time() . "_" . basename($newImage['name']);
             $targetFilePath = $uploadPath . $fileName;
             $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
             $allowTypes = array('jpg', 'jpeg', 'png', 'gif', 'webp');
-            
+
             if ($newImage['size'] <= $maxSize) {
                 if (in_array($fileType, $allowTypes)) {
                     if (move_uploaded_file($newImage['tmp_name'], $targetFilePath)) {
@@ -179,7 +185,7 @@ function createBlog($conn, $userId, $blogTitle, $blogContent, $newImage, $slug, 
                 )";
 
         $stmt = $conn->prepare($sql);
-        
+
         $result = $stmt->execute([
             ':userId'   => $userId,
             ':title'    => $blogTitle,
@@ -198,7 +204,6 @@ function createBlog($conn, $userId, $blogTitle, $blogContent, $newImage, $slug, 
         } else {
             return "<div class='alert-danger'>เกิดข้อผิดพลาดในการบันทึกข้อมูล</div>";
         }
-
     } catch (PDOException $e) {
         error_log($e->getMessage());
         return "<div class='alert-danger'>Database Error: " . $e->getMessage() . "</div>";
@@ -241,21 +246,22 @@ function fetchEditBlog($conn, $blogId)
     }
 }
 
-function updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $newImage, $oldImage, $seo_title, $seo_description, $seo_keywords, $slug) {
+function updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $newImage, $oldImage, $seo_title, $seo_description, $seo_keywords, $slug)
+{
     try {
         $imageName = $oldImage; // ตั้งค่าเริ่มต้นเป็นชื่อรูปเดิม
 
         // 1. จัดการเรื่องรูปภาพ (ถ้ามีการอัปโหลดใหม่)
         if (isset($newImage) && $newImage['error'] === 0) {
-            
+
             // กำหนด Path ตามหมวดหมู่ (เหมือนที่คุณใช้ในหน้าบ้าน)
             $paths = [
                 'papermc' => '../img/blogs_image/blogs_server/papermc/',
                 'plugin' => '../img/blogs_image/blogs_plugin/plugin/'
             ];
-            
+
             $uploadPath = $paths[$blogCategory] ?? '../img/blogs_image/default/';
-            
+
             // ลบรูปภาพเก่าทิ้งก่อน (ถ้ามีรูปเก่าและไฟล์นั้นมีอยู่จริง)
             if (!empty($oldImage) && file_exists($uploadPath . $oldImage)) {
                 unlink($uploadPath . $oldImage);
@@ -285,7 +291,7 @@ function updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $ne
                 WHERE blogId = :id";
 
         $stmt = $conn->prepare($sql);
-        
+
         $result = $stmt->execute([
             ':title'    => $blogTitle,
             ':content'  => $blogContent,
@@ -299,7 +305,6 @@ function updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $ne
         ]);
 
         return $result;
-
     } catch (PDOException $e) {
         error_log($e->getMessage());
         return false;
