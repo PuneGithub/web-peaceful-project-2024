@@ -1,8 +1,8 @@
 <?php
-require_once 'conn.php';
-require_once 'config.php';
+require_once __DIR__ . '/conn.php';
+require_once __DIR__ . '/config.php';
 
-function loginAdmin($conn, $identifier, $password)
+function loginAdmin(PDO $conn, $identifier, $password)
 {
     $sql = "SELECT * FROM users WHERE (email = :identifier OR username = :identifier) AND role = 'admin'";
     $stmt = $conn->prepare($sql);
@@ -30,7 +30,7 @@ function loginAdmin($conn, $identifier, $password)
 
 
 //manage users
-function fetchUsers($conn)
+function fetchUsers(PDO $conn)
 {
     $sql = "SELECT * FROM users";
     $stmt = $conn->prepare($sql);
@@ -41,7 +41,7 @@ function fetchUsers($conn)
     return $users;
 }
 
-function fetchEditUser($conn, $userId)
+function fetchEditUser(PDO $conn, $userId)
 {
 
     $sql = "SELECT * FROM users WHERE userId = :userId";
@@ -62,7 +62,7 @@ function fetchEditUser($conn, $userId)
 }
 
 
-function editUser($conn, $userId, $username, $email, $role)
+function editUser(PDO $conn, $userId, $username, $email, $role)
 {
     $sql = "UPDATE users SET username = :username , email = :email , role = :role WHERE userId = :userId";
     $stmt = $conn->prepare($sql);
@@ -86,7 +86,7 @@ function countUsers($conn)
     return $result['totalUsers'];
 }
 
-function deleteUser($conn, $userId)
+function deleteUser(PDO $conn, $userId)
 {
     try {
         $stmtSelect = $conn->prepare("SELECT profileImage FROM users WHERE userId = :userId");
@@ -129,7 +129,7 @@ function createSlug($url)
     return $slug;
 }
 
-function createBlog($conn, $userId, $blogTitle, $blogContent, $newImage, $slug, $categoryId, $blogCategoryStr, $seo_title, $seo_description, $seo_keywords)
+function createBlog(PDO $conn, $userId, $blogTitle, $blogContent, $newImage, $slug, $categoryId, $blogCategoryStr, $seo_title, $seo_description, $seo_keywords)
 {
     try {
         $imageName = NULL;
@@ -210,11 +210,12 @@ function createBlog($conn, $userId, $blogTitle, $blogContent, $newImage, $slug, 
     }
 }
 
-function fetchAllBlogs($conn)
+function fetchAllBlogs( PDO $conn)
 {
     try {
-        $sql = "SELECT blogs.*, users.username
+        $sql = "SELECT blogs.*, users.username, category.categoryName
                 FROM blogs
+                JOIN category ON blogs.categoryId = category.categoryId
                 JOIN users ON blogs.userId = users.userId";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
@@ -226,62 +227,60 @@ function fetchAllBlogs($conn)
     }
 }
 
-function fetchEditBlog($conn, $blogId)
+function fetchEditBlog(PDO $conn, $blogId)
 {
-
-    $sql = "SELECT * FROM blogs WHERE blogId = :blogId";
+    // 🚩 เปลี่ยน SQL ให้ดึง folderPath ออกมาด้วยการ JOIN
+    $sql = "SELECT blogs.*, category.categoryName, storage.folderPath 
+            FROM blogs 
+            LEFT JOIN category ON blogs.categoryId = category.categoryId 
+            LEFT JOIN category_storage AS storage ON blogs.categoryId = storage.categoryId 
+            WHERE blogs.blogId = :blogId";
 
     try {
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':blogId', $blogId, PDO::PARAM_INT);
         $stmt->execute();
 
-        // ดึงข้อมูล blog
-        $fetchEditBlog = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $fetchEditBlog;
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $error) {
-        // จัดการข้อผิดพลาดในกรณี SQL ล้มเหลว
         throw new Exception("Database error: " . $error->getMessage());
     }
 }
 
-function updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $newImage, $oldImage, $seo_title, $seo_description, $seo_keywords, $slug)
+function updateBlog(PDO $conn, $blogId, $blogTitle, $blogContent, $categoryId, $newImage, $oldImage, $seo_title, $seo_description, $seo_keywords, $slug)
 {
     try {
-        $imageName = $oldImage; // ตั้งค่าเริ่มต้นเป็นชื่อรูปเดิม
+        // 🚩 1. แก้ไขให้ดึง 'folderPath' จากตาราง 'category_storage'
+        $stmtCat = $conn->prepare("SELECT folderPath FROM category_storage WHERE categoryId = :catId");
+        $stmtCat->execute([':catId' => $categoryId]);
+        $storage = $stmtCat->fetch(PDO::FETCH_ASSOC);
 
-        // 1. จัดการเรื่องรูปภาพ (ถ้ามีการอัปโหลดใหม่)
+        // ถ้าหาไม่เจอ ให้ใช้ default
+        $basePath = $storage['folderPath'] ?? 'img/blogs_image/default/';
+        $uploadPath = '../' . $basePath; 
+
+        $imageName = $oldImage;
+
+        // จัดการอัปโหลดรูปภาพใหม่
         if (isset($newImage) && $newImage['error'] === 0) {
-
-            // กำหนด Path ตามหมวดหมู่ (เหมือนที่คุณใช้ในหน้าบ้าน)
-            $paths = [
-                'papermc' => '../img/blogs_image/blogs_server/papermc/',
-                'plugin' => '../img/blogs_image/blogs_plugin/plugin/'
-            ];
-
-            $uploadPath = $paths[$blogCategory] ?? '../img/blogs_image/default/';
-
-            // ลบรูปภาพเก่าทิ้งก่อน (ถ้ามีรูปเก่าและไฟล์นั้นมีอยู่จริง)
+            // ลบรูปภาพเดิม
             if (!empty($oldImage) && file_exists($uploadPath . $oldImage)) {
                 unlink($uploadPath . $oldImage);
             }
 
-            // ตั้งชื่อไฟล์ใหม่เพื่อป้องกันชื่อซ้ำ
             $extension = pathinfo($newImage['name'], PATHINFO_EXTENSION);
             $imageName = bin2hex(random_bytes(10)) . '.' . $extension;
 
-            // ย้ายไฟล์ขึ้นเซิร์ฟเวอร์
             if (!move_uploaded_file($newImage['tmp_name'], $uploadPath . $imageName)) {
-                return false; // ถ้าย้ายไฟล์ไม่สำเร็จ ให้หยุดการทำงาน
+                return false;
             }
         }
 
-        // 2. คำสั่ง SQL Update
+        // 🚩 2. อัปเดตข้อมูล (ใช้ categoryId แทน blogCategory)
         $sql = "UPDATE blogs SET 
                 blogTitle = :title, 
                 blogContent = :content, 
-                blogCategory = :category, 
+                categoryId = :catId, 
                 blogImage = :image,
                 slug = :slug,
                 seo_title = :s_title,
@@ -289,29 +288,29 @@ function updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $ne
                 seo_keywords = :s_key,
                 updatedAt = NOW()
                 WHERE blogId = :id";
-
+        
         $stmt = $conn->prepare($sql);
-
         $result = $stmt->execute([
-            ':title'    => $blogTitle,
-            ':content'  => $blogContent,
-            ':category' => $blogCategory,
-            ':image'    => $imageName,
-            ':slug'     => $slug,
-            ':s_title'  => $seo_title,
-            ':s_desc'   => $seo_description,
-            ':s_key'    => $seo_keywords,
-            ':id'       => $blogId
+            ':title'   => $blogTitle,
+            ':content' => $blogContent,
+            ':catId'   => $categoryId,
+            ':image'   => $imageName,
+            ':slug'    => $slug,
+            ':s_title' => $seo_title,
+            ':s_desc'  => $seo_description,
+            ':s_key'   => $seo_keywords,
+            ':id'      => $blogId
         ]);
 
         return $result;
     } catch (PDOException $e) {
-        error_log($e->getMessage());
+        // เอากลับมาใช้ error_log ตามปกติ (ลบ die() ออกได้เลย)
+        error_log("Update Error: " . $e->getMessage());
         return false;
     }
 }
 
-function deleteBlog($conn, $blogId)
+function deleteBlog(PDO $conn, $blogId)
 {
     //Path รูปภาพตาม blogCategory
     $imagePathMap = [
@@ -355,7 +354,7 @@ function deleteBlog($conn, $blogId)
 }
 
 //Category
-function getCategory($conn)
+function getCategory(PDO $conn)
 {
     try {
         $sql = "SELECT * FROM category";
@@ -368,7 +367,21 @@ function getCategory($conn)
     }
 }
 
-function createCategory($conn, $categoryName, $description)
+function getCategoryById(PDO $conn, int $categoryId)
+{
+    try {
+        $sql = "SELECT * FROM category WHERE categoryId = :categoryId";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: false;
+    } catch (PDOException $error) {
+        die("Error: " . $error->getMessage());
+    }
+}
+
+function createCategory(PDO $conn, $categoryName, $description)
 {
     try {
         $sql = "INSERT INTO category (categoryName, description) VALUES (:categoryName, :description)";
@@ -386,23 +399,50 @@ function createCategory($conn, $categoryName, $description)
     }
 }
 
-function deleteCategory($conn, $categoryId)
+function updateCategory(PDO $conn, int $categoryId, string $categoryName, string $description): bool
 {
     try {
-        //delete data
+        $sql = "UPDATE category SET categoryName = :categoryName, description = :description WHERE categoryId = :categoryId";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':categoryName', $categoryName);
+        $stmt->bindValue(':description', $description);
+        $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    } catch (PDOException $error) {
+        die("Error: " . $error->getMessage());
+    }
+}
+
+function countBlogsByCategory(PDO $conn, int $categoryId): int
+{
+    $sql = "SELECT COUNT(*) as total FROM blogs WHERE categoryId = :categoryId";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return (int) ($result['total'] ?? 0);
+}
+
+function deleteCategory(PDO $conn, int $categoryId): bool
+{
+    try {
+        if (countBlogsByCategory($conn, $categoryId) > 0) {
+            return false;
+        }
+
         $sqlDelete = "DELETE FROM category WHERE categoryId = :categoryId";
         $stmtDelete = $conn->prepare($sqlDelete);
-        $stmtDelete->bindParam(':categoryId', $categoryId, PDO::PARAM_INT);
-        $stmtDelete->execute();
+        $stmtDelete->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
 
-        return true; //ลบสำเร็จ
+        return $stmtDelete->execute();
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
         return false;
     }
 }
 
-function countCategory($conn)
+function countCategory(PDO $conn)
 {
     $sql = "SELECT COUNT(*) as totalCategory FROM category";
     $stmt = $conn->prepare($sql);
@@ -414,21 +454,21 @@ function countCategory($conn)
 
 
 //ลบเซิฟเวอร์
-function deleteServer($conn, $serverId)
+function deleteServer(PDO $conn, $serverId)
 {
     $stmt = $conn->prepare("DELETE FROM servers WHERE serverId = :serverId");
     return $stmt->execute([':serverId' => $serverId]);
 }
 
 //ดึงข้อมูลเซิฟเวอร์ทั้งหมด
-function fetchAllServers($conn)
+function fetchAllServers(PDO $conn)
 {
     $stmt = $conn->query("SELECT * FROM servers ORDER BY createdAt DESC");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 //อนุมัติเซิร์ฟเวอร์ให้แสดงผลหน้าเว็บ
-function approveServer($conn, $serverId)
+function approveServer(PDO $conn, $serverId)
 {
     try {
         $sql = "UPDATE servers SET status = 'approved', updatedAt = NOW() WHERE serverId = :serverId";
@@ -441,7 +481,7 @@ function approveServer($conn, $serverId)
 }
 
 //ปฏิเสธการนำเซิร์ฟเวอร์ลงระบบ
-function rejectServer($conn, $serverId)
+function rejectServer(PDO $conn, $serverId)
 {
     try {
         $sql = "UPDATE servers SET status = 'rejected', updatedAt = NOW() WHERE serverId = :serverId";

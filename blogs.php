@@ -10,12 +10,9 @@ $fetchLatestBlog = fetchLatestBlog($conn);
 $fetchAllBlogs = fetchAllBlogs($conn);
 
 
-$image_paths = [
-    'papermc' => '/img/blogs_image/blogs_server/papermc/',
-    'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
-];
-
-$latestImagePath = $image_paths[$fetchLatestBlog['blogCategory']];
+$latestRawPath = $fetchLatestBlog['folderPath'] ?? 'img/blogs_image/default/';
+$latestCleanPath = trim($latestRawPath, '/');
+$latestFinalImage = $latestCleanPath . '/' . $fetchLatestBlog['blogImage'];
 
 ?>
 <!DOCTYPE html>
@@ -42,7 +39,7 @@ $latestImagePath = $image_paths[$fetchLatestBlog['blogCategory']];
             <h2 class="text-2xl font-bold text-center">BLOG</h2>
             <div class="card-white max-w-4xl mx-auto flex items-center space-x-6">
                 <!-- Image -->
-                <img src="<?php echo base_url($latestImagePath . $fetchLatestBlog['blogImage']); ?>" alt="Example image" class="w-1/2 rounded-lg">
+                <img src="<?php echo base_url($latestFinalImage); ?>" alt="<?= htmlspecialchars($fetchLatestBlog['blogTitle']); ?>" class="w-1/2 rounded-lg object-cover" onerror="this.onerror=null; this.src='img/blogs_image/default.webp'">
 
                 <div class="flex flex-col justify-between w-1/2">
                     <div>
@@ -57,11 +54,18 @@ $latestImagePath = $image_paths[$fetchLatestBlog['blogCategory']];
                 <?php
                 if (!empty($fetchAllBlogs)) {
                     foreach ($fetchAllBlogs as $blog) {
-                        // กำหนด path รูปภาพสำหรับแต่ละ blog ใน loop
-                        $imagePath = $image_paths[$blog['blogCategory']];
+                        // 🚩 3. ดึง Path จาก Database และทำความสะอาด
+                        $rawPath = $blog['folderPath'] ?? 'img/blogs_image/default/';
+                        $cleanPath = trim($rawPath, '/');
+                        $finalImage = $cleanPath . '/' . $blog['blogImage'];
                 ?>
                         <div class="card-white">
-                            <img src="<?php echo base_url($imagePath . $blog['blogImage']); ?>" alt="Example image" class="rounded-lg">
+                            <div class="relative overflow-hidden aspect-video">
+                                <img src="<?php echo base_url($finalImage); ?>"
+                                    alt="<?= htmlspecialchars($blog['blogTitle']); ?>"
+                                    class="rounded-lg object-cover w-full h-full"
+                                    onerror="this.onerror=null; this.src='<?= base_url('img/blogs_image/default.webp'); ?>';">
+                            </div>
 
                             <div class="flex flex-col">
                                 <div class="space-y-3">

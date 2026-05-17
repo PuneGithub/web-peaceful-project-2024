@@ -1,12 +1,14 @@
 <?php
 require_once __DIR__ . "/conn.php";
 
-function fetchAllBlogs($conn, $sort = 'latest', $limit = null, $offset = 0, $search = null, $categoryId = null)
+function fetchAllBlogs( PDO $conn, $sort = 'latest', $limit = null, $offset = 0, $search = null, $categoryId = null)
 {
     try {
-        $sql = "SELECT blogs.*, users.username, users.profileImage
+        $sql = "SELECT blogs.*, users.username, users.profileImage , category_storage.folderPath, category.categoryName
                 FROM blogs
                 JOIN users ON blogs.userId = users.userId
+                JOIN category ON blogs.categoryId = category.categoryId
+                JOIN category_storage ON blogs.categoryId = category_storage.categoryId
                 WHERE 1=1";
         
         if ($categoryId !== null && $categoryId !== '') {
@@ -55,7 +57,7 @@ function fetchAllBlogs($conn, $sort = 'latest', $limit = null, $offset = 0, $sea
     }
 }
 
-function countAllBlogs($conn, $categoryId = null) {
+function countAllBlogs(PDO $conn, $categoryId = null) {
     $sql = "SELECT COUNT(*) FROM blogs WHERE 1=1";
     if ($categoryId) {
         $sql .= " AND categoryId = :catId";
@@ -69,15 +71,23 @@ function countAllBlogs($conn, $categoryId = null) {
     return $stmt->fetchColumn();
 }
 
-function fetchBlog($conn, $slug)
+function fetchBlog(PDO $conn, $slug)
 {
-    $stmt = $conn->prepare("SELECT * FROM blogs WHERE slug = :slug LIMIT 1");
+    // ใช้ LEFT JOIN เพื่อดึงข้อมูลหมวดหมู่และ Path รูปภาพมาจากตาราง category
+    $sql = "SELECT blogs.*, category.categoryName, category_storage.folderPath
+            FROM blogs
+            LEFT JOIN category ON blogs.categoryId = category.categoryId
+            LEFT JOIN category_storage ON blogs.categoryId = category_storage.categoryId
+            WHERE blogs.slug = :slug 
+            LIMIT 1";
+    $stmt = $conn->prepare($sql);
     $stmt->bindParam(':slug', $slug);
     $stmt->execute();
+
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-function fetchLatestBlog($conn)
+function fetchLatestBlog(PDO $conn)
 {
     try {
         $sql = "SELECT * FROM blogs ORDER BY createdAt DESC LIMIT 1";
@@ -91,7 +101,7 @@ function fetchLatestBlog($conn)
     }
 }
 
-function getCategory($conn)
+function getCategory(PDO $conn)
 {
     try {
         $sql = "SELECT * FROM category";
@@ -104,7 +114,7 @@ function getCategory($conn)
     }
 }
 
-function updateViewCount($conn, $blogId)
+function updateViewCount(PDO $conn, $blogId)
 {
     try {
         $sql = "UPDATE blogs SET views = views + 1 WHERE blogId = :blogId";

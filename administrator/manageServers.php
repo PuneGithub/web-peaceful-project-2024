@@ -3,41 +3,55 @@ require_once '../system/administratorSystem.php';
 session_start();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: index.php");
+    exit;
 }
 
+$msgServer = $_SESSION['manage_servers_flash'] ?? null;
+unset($_SESSION['manage_servers_flash']);
 
-$msgServer = null;
-
-// Logic สำหรับการลบเซิร์ฟเวอร์
+// Logic สำหรับการลบเซิร์ฟเวอร์ (POST + redirect กันส่งซ้ำตอนรีเฟรช)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['serverId'])) {
-    $serverId = $_POST['serverId'];
-    // เรียกใช้ฟังก์ชันลบเซิร์ฟเวอร์ (ต้องสร้างใน administratorSystem.php)
-    if (deleteServer($conn, $serverId)) {
-        $msgServer = "<div class='alert-green'>ลบข้อมูลเซิร์ฟเวอร์สำเร็จแล้ว</div>";
-    } else {
-        $msgServer = "<div class='alert-danger'>เกิดข้อผิดพลาดในการลบข้อมูล</div>";
+    $serverId = (int) $_POST['serverId'];
+    if ($serverId > 0) {
+        if (deleteServer($conn, $serverId)) {
+            $_SESSION['manage_servers_flash'] = "<div class='alert-green'>ลบข้อมูลเซิร์ฟเวอร์สำเร็จแล้ว</div>";
+        } else {
+            $_SESSION['manage_servers_flash'] = "<div class='alert-danger'>เกิดข้อผิดพลาดในการลบข้อมูล</div>";
+        }
     }
+    header('Location: manageServers.php');
+    exit;
 }
 
-// Logic สำหรับการอนุมัติ
+// Logic สำหรับการอนุมัติ (GET แล้ว redirect ให้ URL สะอาด)
 if (isset($_GET['approveId'])) {
-    $serverId = $_GET['approveId'];
-    if (approveServer($conn, $serverId)) {
-        $msgServer = "<div class='alert-green'>อนุมัติเซิร์ฟเวอร์เรียบร้อย! ตอนนี้ออนไลน์แล้ว</div>";
+    $serverId = (int) $_GET['approveId'];
+    if ($serverId > 0 && approveServer($conn, $serverId)) {
+        $_SESSION['manage_servers_flash'] = "<div class='alert-green'>อนุมัติเซิร์ฟเวอร์เรียบร้อย! ตอนนี้ออนไลน์แล้ว</div>";
+    } elseif ($serverId > 0) {
+        $_SESSION['manage_servers_flash'] = "<div class='alert-danger'>ไม่สามารถอนุมัติเซิร์ฟเวอร์นี้ได้</div>";
     }
+    header('Location: manageServers.php');
+    exit;
 }
 
 // Logic สำหรับการปฏิเสธ
 if (isset($_GET['rejectId'])) {
-    $serverId = $_GET['rejectId'];
-    if (rejectServer($conn, $serverId)) {
-        $msgServer = "<div class='alert-danger'>ปฏิเสธเซิร์ฟเวอร์เรียบร้อยแล้ว</div>";
+    $serverId = (int) $_GET['rejectId'];
+    if ($serverId > 0 && rejectServer($conn, $serverId)) {
+        $_SESSION['manage_servers_flash'] = "<div class='alert-danger'>ปฏิเสธเซิร์ฟเวอร์เรียบร้อยแล้ว</div>";
+    } elseif ($serverId > 0) {
+        $_SESSION['manage_servers_flash'] = "<div class='alert-danger'>ไม่สามารถปฏิเสธเซิร์ฟเวอร์นี้ได้</div>";
     }
+    header('Location: manageServers.php');
+    exit;
 }
-
 
 // ดึงข้อมูลเซิร์ฟเวอร์ทั้งหมด
 $fetchAllServers = fetchAllServers($conn);
+if (!is_array($fetchAllServers)) {
+    $fetchAllServers = [];
+}
 $totalServers = count($fetchAllServers);
 
 

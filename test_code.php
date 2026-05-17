@@ -24,7 +24,7 @@
 <li>เข้าไปสมัครสมาชิกที่เว็บไซต์ <a href="https://ngrok.com/" target="_blank" class="text-blue-600 underline">ngrok.com</a> (แนะนำให้ Login ด้วย Google เพื่อความรวดเร็ว)</li>
 <li>ดาวน์โหลดโปรแกรม ngrok สำหรับ Windows มาไว้ในเครื่อง</li>
 <figure>
-<img src="../img/blogs_image/blogs_server/ngrok/ngrok-01.png" class="rounded-md" alt="หน้าดาวน์โหลด ngrok">
+<img src="../img/blogs_image/blogs_server/server/ngrok/ngrok-01.png" class="rounded-md" alt="หน้าดาวน์โหลด ngrok">
 </figure>
 <li>แตกไฟล์ที่ดาวน์โหลดมาไว้ในโฟลเดอร์ที่คุณต้องการ (แนะนำให้วางไว้ในโฟลเดอร์เดียวกับไฟล์รันเซิร์ฟเวอร์ Minecraft ของคุณ)</li>
 </ul>
@@ -35,19 +35,23 @@
     <li>เปิดโปรแกรม <strong>ngrok.exe</strong> ขึ้นมา จากนั้นนำรหัสมาวางต่อท้ายคำสั่งนี้แล้วกด Enter:</li>
     <pre class="card-code-gray"><code class="language-batch">ngrok config add-authtoken รหัส_TOKEN_ของคุณ</code></pre>
     <figure>
-        <img src="../img/blogs_image/blogs_server/ngrok/ngrok-02.png" class="rounded-md" alt="ใส่รหัส Authtoken">
+        <img src="../img/blogs_image/blogs_server/server/ngrok/ngrok-02.png" class="rounded-md" alt="ใส่รหัส Authtoken">
+    </figure>
+    <figure>
+        <img src="../img/blogs_image/blogs_server/server/ngrok/ngrok-03.png" class="rounded-md" alt="สถานะ Forwarding ของ ngrok">
     </figure>
 </ul>
 
+
 <h4 class="text-xl font-semibold mb-1">ขั้นตอนที่ 3: เริ่มการสร้างอุโมงค์เชื่อมต่อ (Start Tunnel)</h4>
 <ul>
+    <figure>
+        <img src="../img/blogs_image/blogs_server/server/ngrok/ngrok-04.png" class="rounded-md" alt="สถานะ Forwarding ของ ngrok">
+    </figure>
     <li>เมื่อเชื่อมต่อบัญชีเสร็จแล้ว ให้เปิดเซิร์ฟเวอร์ Minecraft ของคุณทิ้งไว้</li>
     <li>ที่โปรแกรม ngrok ให้พิมพ์คำสั่งเพื่อเปิดพอร์ต 25565 (พอร์ตมาตรฐานของ Minecraft) ดังนี้:</li>
     <pre class="card-code-gray"><code class="language-batch">ngrok tcp 25565</code></pre>
     <li>จากนั้นคุณจะเห็นหน้าจอแสดงสถานะ <strong>Forwarding</strong> พร้อมที่อยู่ IP สำหรับส่งให้เพื่อน</li>
-    <figure>
-        <img src="../img/blogs_image/blogs_server/ngrok/ngrok-03.png" class="rounded-md" alt="สถานะ Forwarding ของ ngrok">
-    </figure>
 </ul>
 
 <h4 class="text-xl font-semibold mb-1">ขั้นตอนที่ 4: การแชร์ IP ให้เพื่อนเข้าเล่น</h4>
@@ -55,7 +59,10 @@
     <li>ในบรรทัด <strong>Forwarding</strong> ให้คัดลอกที่อยู่หลังจาก <code>tcp://</code> เช่น <code>0.tcp.jp.ngrok.io:12345</code></li>
     <li>นำ IP นี้ส่งให้เพื่อนไปใส่ในช่อง <strong>Server Address</strong> ในเกม Minecraft</li>
     <figure>
-        <img src="../img/blogs_image/blogs_server/ngrok/ngrok-04.png" class="rounded-md" alt="การใส่ IP ในเกม">
+        <img src="../img/blogs_image/blogs_server/server/ngrok/ngrok-05.png" class="rounded-md" alt="การใส่ IP ในเกม">
+    </figure>
+    <figure>
+        <img src="../img/blogs_image/blogs_server/server/ngrok/ngrok-06.png" class="rounded-md" alt="การใส่ IP ในเกม">
     </figure>
     <li><strong>ข้อควรระวัง:</strong> หากคุณใช้เวอร์ชันฟรี ทุกครั้งที่คุณปิดและเปิดโปรแกรม ngrok ใหม่ เลขพอร์ต (ตัวเลขด้านหลัง) จะเปลี่ยนไปเสมอ อย่าลืมส่ง IP ใหม่ให้เพื่อนด้วยนะครับ</li>
 </ul>

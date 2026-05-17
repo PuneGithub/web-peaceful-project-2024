@@ -13,17 +13,13 @@ require_once("system/websiteSettingsSystem.php");
 $categoryId = $_GET['categoryId'] ?? null; // รับค่าหมวดหมู่จาก URL
 $sortBy = $_GET['sort'] ?? 'latest';       // รับการเรียงลำดับ
 
-
-$image_blogs_paths = [
-    'papermc' => '/img/blogs_image/blogs_server/papermc/',
-    'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
-    'server'  => '/img/blogs_image/blogs_server/server/',
-];
-
-
-
 //ดึงบทความมาแสดง
-$fetchAllBlogs = fetchAllBlogs($conn, $sortBy, $categoryId);
+// $fetchAllBlogs = fetchAllBlogs($conn, $sortBy, $categoryId);
+
+$fetchAllBlogs = fetchAllBlogs($conn, $sortBy, null, 0, null, $categoryId); 
+// ส่ง $categoryId ไปเป็นลำดับที่ 6 ตามที่ function กำหนดไว้
+
+
 $totalBlogs = countAllBlogs($conn, $categoryId);
 
 //ดึง Settings
@@ -77,7 +73,7 @@ unset($_SESSION['message']);
     include_once("components/header-navbar.php");
     ?>
     <!-- Hero Section -->
-    <section class="relative bg-cover bg-center h-96" style="background-image: url('img/bg.webp');">
+    <section class="relative bg-cover bg-center h-96" style="background-image: url('<?= htmlspecialchars(base_url('img/bg.webp'), ENT_QUOTES, 'UTF-8') ?>');">
 
         <div class="absolute inset-0 bg-black opacity-50"></div>
 
@@ -160,9 +156,9 @@ unset($_SESSION['message']);
                                 <div class="group border-b border-gray-50 pb-3 last:border-0 last:pb-0 relative">
                                     <div class="flex items-center space-x-3">
                                         <div class="relative">
-                                            <img src="img/server-icons/<?= $server['serverImage'] ?: 'default_server.webp' ?>"
+                                            <img src="<?= htmlspecialchars(base_url('img/server-icons/' . ($server['serverImage'] ?: 'default_server.webp')), ENT_QUOTES, 'UTF-8') ?>"
                                                 class="w-12 h-12 rounded-xl object-cover border-2 border-gray-100 group-hover:border-blue-400 transition"
-                                                onerror="this.src='img/server-icons/default_server.webp'">
+                                                onerror="this.onerror=null; this.src='<?= htmlspecialchars(base_url('img/server-icons/default_server.webp'), ENT_QUOTES, 'UTF-8') ?>';">
 
                                             <span class="absolute -top-1 -left-1 <?= $medalColor[$rank] ?> text-xs drop-shadow-md">
                                                 <i class="fa-solid fa-crown"></i>
@@ -236,8 +232,9 @@ unset($_SESSION['message']);
                 $counter = 0;      // ตัวนับ
                 if (!empty($fetchAllBlogs)) {
                     foreach ($fetchAllBlogs as $blog) {
-
-                        $imagePath = $image_blogs_paths[$blog['blogCategory']];
+                        $rawPath = $blog['folderPath'] ?? 'img/blogs_image/default/';
+                        $cleanPath = trim($rawPath, '/');
+                        $finalImagePath = $cleanPath . '/' . ($blog['blogImage'] ?? '');
 
                         // ตรวจสอบว่าเกินจำนวนที่กำหนดไหม? ถ้าเกินให้ใส่ class "hidden" และ "blog-item-hidden"
                         $hiddenClass = ($counter >= $initialLimit) ? 'hidden blog-item-hidden' : '';
@@ -251,11 +248,11 @@ unset($_SESSION['message']);
                         <article class="<?php echo $hiddenClass; ?> card-white overflow-hidden mt-3 hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
                             <a href="blog/<?php echo $blog['slug']; ?>" class="block relative max-h-100 overflow-hidden group">
                                 <img
-                                    src="<?php echo base_url($imagePath . $blog['blogImage']); ?>"
+                                    src="<?php echo base_url($finalImagePath); ?>"
                                     alt="Blog Cover"
-                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.src='img/blogs_image/default.webp'">
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null; this.src='<?= htmlspecialchars(base_url('img/blogs_image/default.webp'), ENT_QUOTES, 'UTF-8') ?>';">
                                 <span class="absolute top-4 left-4 bg-blue-600 text-white text-xs px-3 py-1">
-                                    <?php echo $blog['blogCategory']; ?>
+                                    <?php echo $blog['categoryName']; ?>
                                 </span>
                             </a>
                             <div class="flex p-6">

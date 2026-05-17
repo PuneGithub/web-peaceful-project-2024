@@ -1,9 +1,53 @@
 <?php
 require_once '../system/administratorSystem.php';
 session_start();
+
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: index.php");
+    exit;
 }
+
+$blogId = (int) ($_POST['blogId'] ?? $_GET['blogId'] ?? 0);
+if ($blogId <= 0) {
+    header('Location: manageBlogs.php');
+    exit;
+}
+
+$getCategory = getCategory($conn);
+
+$blog = fetchEditBlog($conn, $blogId);
+if (!$blog) {
+    header('Location: manageBlogs.php');
+    exit;
+}
+
+$postAlertHtml = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['blogId'])) {
+    $blogTitle = $_POST['blogTitle'];
+    $blogContent = $_POST['blogContent'];
+    $blogCategory = $_POST['blogCategory'];
+
+    $slug = $_POST['slug'];
+
+    $updateSlug = createSlug($slug);
+
+    $seo_title = $_POST['seo_title'];
+    $seo_description = $_POST['seo_description'];
+    $seo_keywords = $_POST['seo_keywords'];
+
+    $oldImage = $blog['blogImage'];
+    $newImage = $_FILES['blogImage'];
+
+    if (updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $newImage, $oldImage, $seo_title, $seo_description, $seo_keywords, $updateSlug)) {
+        $postAlertHtml = "<div class='alert-green text-center mb-4'><i class='fa-solid fa-check-circle mr-2'></i>อัปเดตบทความสำเร็จ!</div>";
+        $blog = fetchEditBlog($conn, $blogId);
+    } else {
+        $postAlertHtml = "<div class='alert-danger text-center mb-4'><i class='fa-solid fa-triangle-exclamation mr-2'></i>เกิดข้อผิดพลาดในการอัปเดตข้อมูล!</div>";
+    }
+}
+
+$imagePath = $blog['folderPath'] ?? 'img/blogs_image/default/';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,43 +68,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
         <div class="flex-1 p-6">
             <div class="max-w-4xl mx-auto">
                 <div class="card-white p-8 shadow-sm">
-                    <?php
-                    $blogId = $_GET['blogId'];
-                    $blog = fetchEditBlog($conn, $blogId);
-                    
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['blogId'])) {
-                        $blogTitle = $_POST['blogTitle'];
-                        $blogContent = $_POST['blogContent'];
-                        $blogCategory = $_POST['blogCategory'];
-
-                        $slug = $_POST['slug'];
-
-                        $updateSlug = createSlug($slug);
-                        
-                        // 🚩 รับค่า SEO 3 ตัวใหม่ (ลบ metaDescription เก่าออกแล้ว)
-                        $seo_title = $_POST['seo_title'];
-                        $seo_description = $_POST['seo_description'];
-                        $seo_keywords = $_POST['seo_keywords'];
-
-                        $oldImage = $blog['blogImage'];
-                        $newImage = $_FILES['blogImage'];
-
-                        // 🚩 ส่งค่าเข้าฟังก์ชัน (อย่าลืมไปแก้ตัวรับค่าในฟังก์ชัน updateBlog ด้วยนะครับ)
-                        if (updateBlog($conn, $blogId, $blogTitle, $blogContent, $blogCategory, $newImage, $oldImage, $seo_title, $seo_description, $seo_keywords, $slug)) {
-                            echo "<div class='alert-green text-center mb-4'><i class='fa-solid fa-check-circle mr-2'></i>อัปเดตบทความสำเร็จ!</div>";
-                            // โหลดข้อมูลใหม่มาแสดง
-                            $blog = fetchEditBlog($conn, $blogId);
-                        } else {
-                            echo "<div class='alert-danger text-center mb-4'><i class='fa-solid fa-triangle-exclamation mr-2'></i>เกิดข้อผิดพลาดในการอัปเดตข้อมูล!</div>";
-                        }
-                    }
-
-                    $imagePathsMap = [
-                        'papermc' => '/img/blogs_image/blogs_server/papermc/',
-                        'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
-                    ];
-                    $imagePaths = $imagePathsMap[$blog['blogCategory']] ?? '';
-                    ?>
+                    <?= $postAlertHtml ?>
 
                     <div class="flex items-center mb-6 border-b pb-4">
                         <a href="manageBlogs.php" class="text-gray-400 hover:text-blue-500 mr-4 transition"><i class="fa-solid fa-arrow-left fa-lg"></i></a>
@@ -69,7 +77,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
                     <form action="" enctype="multipart/form-data" method="post" class="space-y-6">
                         <input type="hidden" name="blogId" value="<?php echo $blog['blogId']; ?>">
-                        
+
                         <div class="space-y-4">
                             <div>
                                 <label for="blogTitle" class="block text-sm font-bold text-gray-700 mb-1">ชื่อบทความ (Blog Title)</label>
@@ -80,12 +88,17 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                 <label for="slug" class="block text-sm font-bold text-gray-700 mb-1">Slug</label>
                                 <input type="text" name="slug" class="input-form w-full" value="<?php echo htmlspecialchars($blog['slug']); ?>" required>
                             </div>
-                            
+
                             <div>
                                 <label for="blogCategory" class="block text-sm font-bold text-gray-700 mb-1">หมวดหมู่ (Category)</label>
-                                <select name="blogCategory" class="input-form w-full bg-white">
-                                    <option value="papermc" <?php echo ($blog['blogCategory'] === 'papermc') ? 'selected' : ''; ?>>PaperMC</option>
-                                    <option value="plugin" <?php echo ($blog['blogCategory'] === 'plugin') ? 'selected' : ''; ?>>Plugin</option>
+                                <select name="blogCategory" class="input-form w-full bg-white" required>
+                                    <option value="">-- เลือกหมวดหมู่ --</option>
+                                    <?php foreach ($getCategory as $cat): ?>
+                                        <option value="<?= $cat['categoryId'] ?>"
+                                            <?= ($blog['categoryId'] == $cat['categoryId']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($cat['categoryName']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
 
@@ -98,7 +111,12 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                 <label class="block text-sm font-bold text-gray-700 mb-1">รูปภาพหน้าปก (Cover Image)</label>
                                 <?php if (!empty($blog['blogImage'])): ?>
                                     <div class="mb-3 p-3 bg-gray-50 rounded-lg border inline-block">
-                                        <img src="..<?php echo htmlspecialchars($imagePaths . $blog['blogImage']); ?>" alt="Current Cover" class="w-48 h-32 object-cover rounded shadow-sm mb-2">
+                                        <?php
+                                        // ลบเครื่องหมาย / ที่อาจจะซ้ำซ้อนออก
+                                        $cleanPath = rtrim($imagePath, '/') . '/';
+                                        $imageSrc = "../" . $cleanPath . $blog['blogImage'];
+                                        ?>
+                                        <img src="<?= htmlspecialchars($imageSrc) ?>" alt="Current Cover" class="w-48 h-32 object-cover rounded shadow-sm mb-2">
                                         <p class="text-xs text-gray-500 font-mono"><?php echo htmlspecialchars($blog['blogImage']); ?></p>
                                     </div>
                                 <?php endif; ?>
@@ -111,27 +129,27 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                             <h3 class="text-lg font-bold text-blue-600 mb-4">
                                 <i class="fa-solid fa-magnifying-glass mr-2"></i> SEO Settings
                             </h3>
-                            
+
                             <div class="grid grid-cols-1 gap-5 bg-blue-50/30 p-5 rounded-xl border border-blue-100">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">SEO Title</label>
-                                    <input type="text" name="seo_title" class="input-form w-full bg-white" 
-                                           value="<?php echo htmlspecialchars($blog['seo_title'] ?? ''); ?>" 
-                                           placeholder="เช่น: 10 ปลั๊กอินมายคราฟที่ต้องมี - Zencrafterly">
+                                    <input type="text" name="seo_title" class="input-form w-full bg-white"
+                                        value="<?php echo htmlspecialchars($blog['seo_title'] ?? ''); ?>"
+                                        placeholder="เช่น: 10 ปลั๊กอินมายคราฟที่ต้องมี - Zencrafterly">
                                     <p class="text-[10px] text-gray-500 mt-1">ถ้าไม่กรอก ระบบจะใช้ "ชื่อบทความ" ด้านบนแทน</p>
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
-                                    <textarea name="seo_description" rows="3" class="input-form w-full bg-white" 
-                                              placeholder="สรุปเนื้อหาบทความสั้นๆ ให้น่าคลิก..."><?php echo htmlspecialchars($blog['seo_description'] ?? ''); ?></textarea>
+                                    <textarea name="seo_description" rows="3" class="input-form w-full bg-white"
+                                        placeholder="สรุปเนื้อหาบทความสั้นๆ ให้น่าคลิก..."><?php echo htmlspecialchars($blog['seo_description'] ?? ''); ?></textarea>
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Keywords</label>
-                                    <input type="text" name="seo_keywords" class="input-form w-full bg-white" 
-                                           value="<?php echo htmlspecialchars($blog['seo_keywords'] ?? ''); ?>" 
-                                           placeholder="ปลั๊กอินมายคราฟ, รีวิวปลั๊กอิน, เซิร์ฟเวอร์">
+                                    <input type="text" name="seo_keywords" class="input-form w-full bg-white"
+                                        value="<?php echo htmlspecialchars($blog['seo_keywords'] ?? ''); ?>"
+                                        placeholder="ปลั๊กอินมายคราฟ, รีวิวปลั๊กอิน, เซิร์ฟเวอร์">
                                 </div>
                             </div>
                         </div>
@@ -147,4 +165,5 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
         </div>
     </div>
 </body>
+
 </html>

@@ -20,22 +20,24 @@ if (isset($_GET['slug'])) {
             updateViewCount($conn, $blogId);
             $_SESSION['viewed_posts'][] = $blogId;
         }
+
+
+        // 🚩 ทำความสะอาด Path ป้องกันปัญหา / เบิ้ลกัน
+        $rawPath = $blog['folderPath'] ?? 'img/blogs_image/default/';
+        $cleanPath = trim($rawPath, '/'); // ลบ / ที่อยู่ข้างหน้าสุดและหลังสุดออกก่อน
+
+        // เอา Path ที่สะอาดแล้ว มาต่อกับ / และชื่อรูปภาพ
+        $finalImagePath = $cleanPath . '/' . $blog['blogImage'];
     } else {
         header("HTTP/1.0 404 Not Found");
-        header("Location: /404");
+        header("Location: /404.php");
         exit;
     }
 } else {
-    header("Location: /blogs");
+    header("Location: /blogs.php");
     exit;
 }
 
-$image_paths = [
-    'papermc' => '/img/blogs_image/blogs_server/papermc/',
-    'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
-];
-
-$imagePath = $image_paths[$blog['blogCategory']];
 
 ?>
 <!DOCTYPE html>
@@ -69,7 +71,7 @@ $imagePath = $image_paths[$blog['blogCategory']];
     <div class="container mx-auto px-4">
         <div class="card">
             <div class="card-white">
-                <img src="<?= base_url($imagePath . $blog['blogImage']); ?>" alt="" class="block mx-auto object-contain md:h-96 shadow-lg rounded-lg">
+                <img src="<?= base_url($finalImagePath); ?>" alt="<?= htmlspecialchars($blog['blogTitle']); ?>" class="block mx-auto object-contain md:h-96 shadow-lg rounded-lg" onerror="this.onerror=null; this.src='<?= base_url('img/blogs_image/default.webp'); ?>';">
                 <h1 class="text-center font-semibold text-2xl">
                     <?php echo $blog['blogTitle']; ?>
                 </h1>
@@ -77,7 +79,12 @@ $imagePath = $image_paths[$blog['blogCategory']];
                 <!-- Content -->
                 <div class="px-6">
                     <p class="flex text-lg text-gray-600">
-                        By <span class="font-semibold text-blue-600">KoonPune</span> Created on: <?php echo htmlspecialchars($blog['createdAt']); ?> <span class="ml-auto"><?php echo htmlspecialchars($blog['views']); ?> views</span>
+                        <!-- แสดงชื่อหมวดหมู่ที่ดึงมาจากตาราง category -->
+                        <span class="mr-2 bg-blue-100 text-blue-600 px-2 py-1 rounded text-sm font-bold">
+                            <?= htmlspecialchars($blog['categoryName'] ?? 'General'); ?>
+                        </span>
+
+                        By <span class="font-semibold text-blue-600"> KoonPune</span> Created on: <?php echo htmlspecialchars($blog['createdAt']); ?> <span class="ml-auto"><?php echo htmlspecialchars($blog['views']); ?> views</span>
                     </p>
                     <div class="prose max-w-none mt-6 text-gray-800 leading-relaxed">
                         <?php echo $blog['blogContent']; ?>

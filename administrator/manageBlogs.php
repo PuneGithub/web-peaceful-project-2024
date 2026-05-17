@@ -3,6 +3,7 @@ require_once '../system/administratorSystem.php';
 session_start();
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header("Location: index.php");
+    exit;
 }
 
 //ข้อความเมื่อกดปุ่ม Delete
@@ -18,11 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['blogId'])) {
     }
 }
 
-//กำหนด Path ของรูปภาพตาม blogCategory
-$imagePathsMap = [
-    'papermc' => '/img/blogs_image/blogs_server/papermc/',
-    'plugin' => '/img/blogs_image/blogs_plugin/plugin/',
-];
 
 
 $fetchAllBlogs = fetchAllBlogs($conn);
@@ -83,7 +79,11 @@ $totalBlogs = is_array($fetchAllBlogs) ? count($fetchAllBlogs) : 0;
                                     ?>
                                         <tr class="hover:bg-gray-50 transition">
                                             <td class="p-2 border"><?= $blog['blogId'] ?></td>
-                                            <td class="p-2 border text-xs uppercase font-bold text-blue-600"><?= $blog['blogCategory'] ?></td>
+                                            <td class="p-3">
+                                                <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-md text-[10px] font-bold uppercase">
+                                                    <?= htmlspecialchars($blog['categoryName'] ?? 'ไม่มีหมวดหมู่') ?>
+                                                </span>
+                                            </td>
                                             <td class="p-2 border text-left font-medium px-4"><?= htmlspecialchars($blog['blogTitle']) ?></td>
 
                                             <td class="p-2 border text-xs">

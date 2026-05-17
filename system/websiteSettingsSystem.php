@@ -1,5 +1,11 @@
 <?php
 require_once 'conn.php';
+
+function truncateSetting(string $value, int $max = 255): string
+{
+    return mb_substr(trim($value), 0, $max);
+}
+
 function getWebsiteSettings($conn)
 {
     try {
@@ -12,29 +18,27 @@ function getWebsiteSettings($conn)
     }
 }
 
-function updateGeneralSettings($conn, $settingsData)
+function updateGeneralSettings(PDO $conn, array $settingsData): bool
 {
     try {
         $sql = "UPDATE websettings SET
                 webTitle = :webTitle,
+                webLogo = :webLogo,
                 heroTitle = :heroTitle
                 WHERE webId = 1";
 
-                $stmt = $conn->prepare($sql);
-
-                $stmt->bindParam('webTitle', $settingsData['webTitle']);
-                $stmt->bindParam('heroTitle', $settingsData['heroTitle']);
-
-                if ($stmt->execute()) {
-                    return "<div class='alert-green'>บันทึกการตั้งค่าสำเร็จ!</div>";
-                } else {
-                    return "<div class='alert-danger'>เกิดข้อผิดพลาดในการบันทึก</div>";
-                }
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([
+            ':webTitle' => truncateSetting($settingsData['webTitle'] ?? ''),
+            ':webLogo' => truncateSetting($settingsData['webLogo'] ?? ''),
+            ':heroTitle' => truncateSetting($settingsData['heroTitle'] ?? ''),
+        ]);
     } catch (PDOException $error) {
-        return "<div class='alert-danger'>Error: " . $error->getMessage() . "</div>";
+        return false;
     }
 }
-function updateAnnounceSettings($conn, $settingsData)
+
+function updateAnnounceSettings(PDO $conn, array $settingsData): bool
 {
     try {
         $sql = "UPDATE websettings SET
@@ -42,38 +46,32 @@ function updateAnnounceSettings($conn, $settingsData)
                 announceDate = :announceDate
                 WHERE webId = 1";
 
-                $stmt = $conn->prepare($sql);
-
-                $stmt->bindParam('announceText', $settingsData['announceText']);
-                $stmt->bindParam('announceDate', $settingsData['announceDate']);
-
-                if ($stmt->execute()) {
-                    return "<div class='alert-green'>บันทึกการตั้งค่าสำเร็จ!</div>";
-                } else {
-                    return "<div class='alert-danger'>เกิดข้อผิดพลาดในการบันทึก</div>";
-                }
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([
+            ':announceText' => truncateSetting($settingsData['announceText'] ?? ''),
+            ':announceDate' => $settingsData['announceDate'],
+        ]);
     } catch (PDOException $error) {
-        return "<div class='alert-danger'>Error: " . $error->getMessage() . "</div>";
+        return false;
     }
 }
 
-function updateSEOSettings($conn, $data) {
+function updateSEOSettings(PDO $conn, array $data): bool
+{
     try {
-        $sql = "UPDATE websettings SET 
-                site_seo_title = :site_seo_title, 
-                site_seo_description = :site_seo_description, 
-                site_seo_keywords = :site_seo_keywords 
-                WHERE webId = 1"; // ตรวจสอบ webId ให้ตรงกับในฐานข้อมูล
-        
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([
-            ':site_seo_title' => $data['site_seo_title'],
-            ':site_seo_description' => $data['site_seo_description'],
-            ':site_seo_keywords' => $data['site_seo_keywords']
-        ]);
+        $sql = "UPDATE websettings SET
+                site_seo_title = :site_seo_title,
+                site_seo_description = :site_seo_description,
+                site_seo_keywords = :site_seo_keywords
+                WHERE webId = 1";
 
-        return "<div class='alert-green'><i class='fa-solid fa-circle-check mr-2'></i>บันทึกข้อมูล SEO เรียบร้อยแล้ว!</div>";
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([
+            ':site_seo_title' => truncateSetting($data['site_seo_title'] ?? ''),
+            ':site_seo_description' => truncateSetting($data['site_seo_description'] ?? ''),
+            ':site_seo_keywords' => truncateSetting($data['site_seo_keywords'] ?? ''),
+        ]);
     } catch (PDOException $e) {
-        return "<div class='alert-danger'>Error: " . $e->getMessage() . "</div>";
+        return false;
     }
 }
