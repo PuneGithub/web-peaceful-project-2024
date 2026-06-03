@@ -1,5 +1,6 @@
 <?php
 require_once '../system/websiteSettingsSystem.php';
+require_once __DIR__ . '/../system/config.php';
 session_start();
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
