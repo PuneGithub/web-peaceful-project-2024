@@ -114,7 +114,7 @@ function castVote(serverId) {
 
     // 🚩 ตรวจสอบ Path ให้ตรงกับที่คุณวางไฟล์ api_vote.php ไว้
     // หากไฟล์อยู่ที่ system/api_vote.php และหน้า servers.php อยู่โฟลเดอร์หลัก ให้ใช้ path นี้
-    fetch('system/api_vote.php', {
+    fetch(BASE_URL + 'system/api_vote.php', {
         method: 'POST',
         body: formData
     })

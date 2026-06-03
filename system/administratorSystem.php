@@ -86,6 +86,42 @@ function countUsers($conn)
     return $result['totalUsers'];
 }
 
+/** จำนวนเซิร์ฟเวอร์ที่รอแอดมินอนุมัติ */
+function countPendingServers(PDO $conn): int
+{
+    try {
+        $stmt = $conn->query("SELECT COUNT(*) FROM servers WHERE status = 'pending'");
+        return (int) $stmt->fetchColumn();
+    } catch (PDOException $e) {
+        error_log('countPendingServers: ' . $e->getMessage());
+        return 0;
+    }
+}
+
+/** จำนวนรายงานปัญหาที่ยังรอตรวจสอบ */
+function countPendingReports(PDO $conn): int
+{
+    try {
+        $stmt = $conn->query("SELECT COUNT(*) FROM reports WHERE status = 'pending'");
+        return (int) $stmt->fetchColumn();
+    } catch (PDOException $e) {
+        error_log('countPendingReports: ' . $e->getMessage());
+        return 0;
+    }
+}
+
+/** จำนวน Resource ที่รอแอดมินอนุมัติ */
+function countPendingResources(PDO $conn): int
+{
+    try {
+        $stmt = $conn->query("SELECT COUNT(*) FROM resources WHERE status = 'pending'");
+        return (int) $stmt->fetchColumn();
+    } catch (PDOException $e) {
+        error_log('countPendingResources: ' . $e->getMessage());
+        return 0;
+    }
+}
+
 function deleteUser(PDO $conn, $userId)
 {
     try {
@@ -113,21 +149,6 @@ function deleteUser(PDO $conn, $userId)
 }
 
 //manage blogs
-function createSlug($url)
-{
-    //แปลงเป็นตัวพิมพ์เล็ก
-    $slug = mb_strtolower($url, 'UTF-8');
-
-    //แทนที่ space, tab, เครื่องหมายต่างๆ
-    $slug = preg_replace('/[^\p{L}\p{N}]+/u', '-', $slug);
-
-    //ลบ - ซ้ำๆ กัน
-    $slug = preg_replace('/-+/', '-', $slug);
-    //ตัด - หน้าหลัง
-    $slug = trim($slug, '-');
-
-    return $slug;
-}
 
 function createBlog(PDO $conn, $userId, $blogTitle, $blogContent, $newImage, $slug, $categoryId, $blogCategoryStr, $seo_title, $seo_description, $seo_keywords)
 {
@@ -176,11 +197,11 @@ function createBlog(PDO $conn, $userId, $blogTitle, $blogContent, $newImage, $sl
         // 🚩 ลบ metaDescription ออก และเพิ่ม seo_title, seo_description, seo_keywords, categoryId
         $sql = "INSERT INTO blogs (
                     userId, blogTitle, blogContent, blogImage, slug, 
-                    categoryId, blogCategory, 
+                    categoryId,
                     seo_title, seo_description, seo_keywords, createdAt
                 ) VALUES (
                     :userId, :title, :content, :image, :slug, 
-                    :catId, :catStr, 
+                    :catId,
                     :s_title, :s_desc, :s_key, NOW()
                 )";
 
@@ -193,7 +214,6 @@ function createBlog(PDO $conn, $userId, $blogTitle, $blogContent, $newImage, $sl
             ':image'    => $imageName,
             ':slug'     => $slug,
             ':catId'    => $categoryId,    // 🚩 บันทึก ID ตัวเลข (แก้บัคที่เคยเจอ)
-            ':catStr'   => $blogCategoryStr, // 🚩 บันทึกชื่อหมวดหมู่
             ':s_title'  => $seo_title,
             ':s_desc'   => $seo_description,
             ':s_key'    => $seo_keywords
@@ -312,43 +332,43 @@ function updateBlog(PDO $conn, $blogId, $blogTitle, $blogContent, $categoryId, $
 
 function deleteBlog(PDO $conn, $blogId)
 {
-    //Path รูปภาพตาม blogCategory
-    $imagePathMap = [
-        'papermc' => '../img/blogs_image/blogs_server/papermc/',
-        'plugin' => '../img/blogs_image/blogs_plugin/plugin/',
-    ];
-
     try {
-        $sqlSelect = "SELECT blogImage, blogCategory FROM blogs WHERE blogId = :blogId";
+        // 1. ดึงชื่อรูปภาพ
+        $sqlSelect = "SELECT blogImage FROM blogs WHERE blogId = :blogId";
         $stmtSelect = $conn->prepare($sqlSelect);
-        $stmtSelect->bindParam(':blogId', $blogId, PDO::PARAM_INT);
-        $stmtSelect->execute();
-
+        $stmtSelect->execute([':blogId' => $blogId]);
         $blogSelect = $stmtSelect->fetch(PDO::FETCH_ASSOC);
 
-        if ($blogSelect) {
+        if ($blogSelect && !empty($blogSelect['blogImage'])) {
             $blogImage = $blogSelect['blogImage'];
-            $blogCategory = $blogSelect['blogCategory'];
+            
+            // 2. กำหนดแค่ "โฟลเดอร์ราก (Root Directory)" ที่เก็บรูปทั้งหมด
+            $baseDirectory = '../img/blogs_image/';
 
-            if (!empty($blogImage)) {
-                $imagePath = $imagePathMap[$blogCategory] ?? null;
-                if ($imagePath) {
-                    $targetFilePath = $imagePath . $blogImage;
-                    if (file_exists($targetFilePath)) {
-                        unlink($targetFilePath);
+            // เช็กให้ชัวร์ว่ามีโฟลเดอร์หลักนี้อยู่จริง
+            if (is_dir($baseDirectory)) {
+                // 3. ใช้ RecursiveIterator เพื่อมุดหาทุกโฟลเดอร์และซับโฟลเดอร์แบบอัตโนมัติ
+                $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDirectory));
+                
+                foreach ($iterator as $file) {
+                    // ถ้าเจอไฟล์ที่เป็นรูปภาพ และชื่อตรงกับใน Database
+                    if ($file->isFile() && $file->getFilename() === $blogImage) {
+                        unlink($file->getPathname()); // สั่งลบทิ้ง
+                        break; // ลบเสร็จแล้วหยุดค้นหาทันที ประหยัดเวลา
                     }
                 }
             }
-            //delete data
-            $sqlDelete = "DELETE FROM blogs WHERE blogId = :blogId";
-            $stmtDelete = $conn->prepare($sqlDelete);
-            $stmtDelete->bindParam(':blogId', $blogId, PDO::PARAM_INT);
-            $stmtDelete->execute();
         }
 
-        return true; //ลบสำเร็จ
+        // 4. ลบข้อมูลใน Database ตามปกติ
+        $sqlDelete = "DELETE FROM blogs WHERE blogId = :blogId";
+        $stmtDelete = $conn->prepare($sqlDelete);
+        $stmtDelete->execute([':blogId' => $blogId]);
+
+        return true; 
+        
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        echo "<script>console.error('Database Error: " . addslashes($e->getMessage()) . "');</script>";
         return false;
     }
 }
@@ -460,10 +480,23 @@ function deleteServer(PDO $conn, $serverId)
     return $stmt->execute([':serverId' => $serverId]);
 }
 
-//ดึงข้อมูลเซิฟเวอร์ทั้งหมด
-function fetchAllServers(PDO $conn)
+//ดึงข้อมูลเซิฟเวอร์ทั้งหมด (รวมชื่อเจ้าของจาก users)
+function fetchAllServers(PDO $conn, $status = null)
 {
-    $stmt = $conn->query("SELECT * FROM servers ORDER BY createdAt DESC");
+    $sql = "SELECT s.*, u.username
+            FROM servers s
+            LEFT JOIN users u ON s.userId = u.userId";
+    $params = [];
+
+    if ($status !== null && in_array($status, ['pending', 'approved', 'rejected'], true)) {
+        $sql .= " WHERE s.status = :status";
+        $params[':status'] = $status;
+    }
+
+    $sql .= " ORDER BY s.createdAt DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 

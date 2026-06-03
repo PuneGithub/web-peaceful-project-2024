@@ -11,58 +11,104 @@ if (!isset($_SESSION['userId'])) {
     exit();
 }
 
+if (($_SESSION['verifyStatus'] ?? '') !== 'verified') {
+    $_SESSION['flash_message'] = "<div class='alert-danger mb-4'><i class='fa-solid fa-envelope'></i> โปรดยืนยัน Email ก่อนเพิ่มเซิร์ฟเวอร์</div>";
+    header('Location: ' . base_url('server/myServers.php'));
+    exit();
+}
+
 $message = "";
 
 // เมื่อมีการกดปุ่ม Add Server
 if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnAddServer'])) {
-    $userId = $_SESSION['userId'];
-    $serverName = htmlspecialchars($_POST['serverName']);
-    $serverIP = htmlspecialchars($_POST['serverIP']);
-    $serverVersion = htmlspecialchars($_POST['serverVersion']);
-    $serverCategory = htmlspecialchars($_POST['serverCategory']);
-    $serverDescription = $_POST['serverDescription'];
-    $imageFile = $_FILES['serverImage'];
 
-    // โค้ดสำหรับเช็คว่าฟอร์มส่งข้อมูลมาไหม (ถ้าหน้าจอขึ้นข้อมูล แปลว่าปุ่มทำงานปกติ)
-    // echo "<pre>";
-    // print_r($_POST);
-    // echo "</pre>";
-
-    $imageName = "default_server.webp";
-    if ($imageFile['error'] === 0) {
-        $ext = pathinfo($imageFile['name'], PATHINFO_EXTENSION);
-        $newName = "server_" . time() . "." . $ext;
-        $uploadPath = __DIR__ . "/../img/server-icons/" . $newName;
-
-        if (move_uploaded_file($imageFile['tmp_name'], $uploadPath)) {
-            $imageName = $newName;
-        }
-    }
-
-    $result = createServer($conn, $userId, $serverName, $serverIP, $serverVersion, $serverCategory, $serverDescription, $imageName);
-
-    if ($result === "AUTO_APPROVED") {
-        // กรณีสำเร็จ: สมาชิกเก่า (Approved ทันที)
-        $message = "<div class='bg-blue-100 text-blue-700 p-3 rounded mb-4'>ยินดีด้วย! บัญชีของคุณมีความน่าเชื่อถือสูง เซิร์ฟเวอร์ถูกอนุมัติทันที</div>";
-    } elseif ($result === true) {
-        // กรณีสำเร็จ: สมาชิกใหม่ (รอตรวจสอบ)
-        $message = "<div class='bg-green-100 text-green-700 p-3 rounded mb-4'>ส่งข้อมูลสำเร็จ! โปรดรอแอดมินตรวจสอบ (ใช้เวลาไม่เกิน 24 ชม.)</div>";
-    } elseif ($result === "IP_DUPLICATE") {
-        //  กรณีติดขัด: IP ซ้ำ
-        $message = "<div class='bg-yellow-100 text-yellow-700 p-3 rounded mb-4'>IP นี้ถูกลงทะเบียนไว้แล้ว หรือกำลังรอการตรวจสอบจากแอดมิน</div>";
+    // ตรวจสอบ CSRF token ก่อนประมวลผลใดๆ
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+        $message = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>คำขอไม่ถูกต้องหรือหมดอายุ กรุณาลองส่งฟอร์มใหม่อีกครั้ง</div>";
     } else {
-        // กรณีผิดพลาด: เช่น Database พัง หรือไฟล์อัปโหลดมีปัญหา
-        $message = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>เกิดข้อผิดพลาดบางอย่างในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง</div>";
+        $userId = $_SESSION['userId'];
+        // เก็บข้อมูลดิบลงฐานข้อมูล แล้วค่อย escape ตอนแสดงผล (ป้องกัน double-escape)
+        $serverName = trim($_POST['serverName']);
+        $serverIP = trim($_POST['serverIP']);
+        $serverVersion = trim($_POST['serverVersion']);
+        $serverCategory = trim($_POST['serverCategory']);
+        $serverDescription = $_POST['serverDescription'];
+        $imageFile = $_FILES['serverImage'];
+
+        $serverSlug = createSlug($serverName);
+
+        $imageName = "default_server.webp";
+        $uploadError = null;
+
+        if (isset($imageFile) && $imageFile['error'] === UPLOAD_ERR_OK) {
+            $maxSize = 3 * 1024 * 1024; // จำกัดขนาดไม่เกิน 3MB
+            $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+            $allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
+
+            $ext = strtolower(pathinfo($imageFile['name'], PATHINFO_EXTENSION));
+
+            // ตรวจชนิดไฟล์จากเนื้อหาจริง ไม่เชื่อแค่นามสกุล
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_file($finfo, $imageFile['tmp_name']);
+
+            if ($imageFile['size'] > $maxSize) {
+                $uploadError = "ไฟล์รูปภาพมีขนาดเกิน 3MB กรุณาเลือกไฟล์ที่เล็กลง";
+            } elseif (!in_array($ext, $allowedExt, true) || !in_array($mime, $allowedMime, true)) {
+                $uploadError = "รองรับเฉพาะไฟล์รูปภาพ jpg, jpeg, png และ webp เท่านั้น";
+            } else {
+                $newName = "server_" . time() . "." . $ext;
+                $uploadPath = __DIR__ . "/../img/server-icons/" . $newName;
+
+                if (move_uploaded_file($imageFile['tmp_name'], $uploadPath)) {
+                    $imageName = $newName;
+                } else {
+                    $uploadError = "ไม่สามารถอัปโหลดไฟล์รูปภาพได้ กรุณาลองใหม่อีกครั้ง";
+                }
+            }
+        } elseif (isset($imageFile) && $imageFile['error'] !== UPLOAD_ERR_NO_FILE) {
+            $uploadError = "เกิดข้อผิดพลาดในการอัปโหลดไฟล์รูปภาพ กรุณาลองใหม่อีกครั้ง";
+        }
+
+        if ($uploadError !== null) {
+            $message = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>" . $uploadError . "</div>";
+            $result = null;
+        } else {
+            $result = createServer($conn, $userId, $serverName, $serverSlug, $serverIP, $serverVersion, $serverCategory, $serverDescription, $imageName);
+        }
+
+        if ($result === "AUTO_APPROVED") {
+            // กรณีสำเร็จ: สมาชิกเก่า (Approved ทันที) -> redirect กัน submit ซ้ำ (PRG)
+            $_SESSION['flash_message'] = "<div class='bg-blue-100 text-blue-700 p-3 rounded mb-4'>ยินดีด้วย! บัญชีของคุณมีความน่าเชื่อถือสูง เซิร์ฟเวอร์ถูกอนุมัติทันที</div>";
+            header("Location: " . base_url('server/myServers.php'));
+            exit();
+        } elseif ($result === true) {
+            // กรณีสำเร็จ: สมาชิกใหม่ (รอตรวจสอบ) -> redirect กัน submit ซ้ำ (PRG)
+            $_SESSION['flash_message'] = "<div class='bg-green-100 text-green-700 p-3 rounded mb-4'>ส่งข้อมูลสำเร็จ! โปรดรอแอดมินตรวจสอบ (ใช้เวลาไม่เกิน 24 ชม.)</div>";
+            header("Location: " . base_url('server/myServers.php'));
+            exit();
+        } elseif ($result === "IP_DUPLICATE") {
+            //  กรณีติดขัด: IP ซ้ำ
+            $message = "<div class='bg-yellow-100 text-yellow-700 p-3 rounded mb-4'>IP นี้ถูกลงทะเบียนไว้แล้ว หรือกำลังรอการตรวจสอบจากแอดมิน</div>";
+        } elseif ($result === 'UNVERIFIED_ACCOUNT') {
+            $_SESSION['flash_message'] = "<div class='alert-danger mb-4'><i class='fa-solid fa-envelope'></i> โปรดยืนยัน Email ก่อนเพิ่มเซิร์ฟเวอร์</div>";
+            header('Location: ' . base_url('server/myServers.php'));
+            exit();
+        } elseif ($result === false) {
+            // กรณีผิดพลาด: เช่น Database พัง หรือไฟล์อัปโหลดมีปัญหา
+            $message = "<div class='bg-red-100 text-red-700 p-3 rounded mb-4'>เกิดข้อผิดพลาดบางอย่างในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง</div>";
+        }
+        // หมายเหตุ: ถ้า $result === null แปลว่าหยุดตั้งแต่ตอนตรวจไฟล์รูป ($message ถูกตั้งไว้แล้ว)
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include_once __DIR__ . '/../components/favicon.php'; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../css/output.css">
     <link rel="stylesheet" href="../css/style.css">
@@ -80,6 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnAddServer'])) {
             <?php echo $message; ?>
 
             <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <?= csrfField() ?>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อเซิร์ฟเวอร์</label>
@@ -96,13 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['btnAddServer'])) {
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">หมวดหมู่</label>
                         <select name="serverCategory" class="input-form" required>
-                            <option value="Survival">Survival</option>
-                            <option value="Skyblock">Skyblock</option>
-                            <option value="MiniGames">Mini Games</option>
-                            <option value="MMORPG">MMORPG</option>
-                            <option value="Mod">Mod</option>
-                            <option value="Community">Community</option>
-                            <option value="other">Other</option>
+                            <?php foreach (getServerCategories() as $catValue => $catLabel): ?>
+                                <option value="<?= htmlspecialchars($catValue) ?>"><?= htmlspecialchars($catLabel) ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div>

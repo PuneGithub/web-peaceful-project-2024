@@ -5,25 +5,23 @@ require_once("system/config.php");
 require_once("system/blogSystem.php");
 require_once("system/serverSystem.php");
 
-// 1. รับค่าค้นหาจาก URL (q)
-$q = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
+// รับค่าค้นหา — เก็บดิบสำหรับ query, escape ตอนแสดงผล
+$q = trim($_GET['q'] ?? '');
 
-// 2. ดึงข้อมูลที่ตรงเงื่อนไข (สมมติว่าคุณมีฟังก์ชัน search ใน System แล้ว)
-// ถ้ายังไม่มีฟังก์ชัน searchBlogs ให้ลองส่งค่า $q เข้าไปที่ฟังก์ชันดึงบทความปกติแล้วกรองด้วย LIKE
-$blogResults = []; 
-if (!empty($q)) {
-    // ดึงบทความที่ชื่อหรือเนื้อหาตรงกับ $q
+$blogResults = [];
+$serverResults = [];
+
+if ($q !== '') {
     $blogResults = fetchAllBlogs($conn, 'latest', null, 0, $q);
-    // ดึงเซิร์ฟเวอร์ที่ชื่อหรือ IP ตรงกับ $q
     $serverResults = fetchApprovedServers($conn, null, null, $q);
-}
-?>
+}?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ผลการค้นหา: <?= $q ?> - Zencrafterly</title>
+    <?php include_once __DIR__ . '/components/favicon.php'; ?>
+    <title>ผลการค้นหา: <?= htmlspecialchars($q) ?> - Zencrafterly</title>
     <link rel="stylesheet" href="css/output.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 </head>
@@ -59,15 +57,41 @@ if (!empty($q)) {
                 <?php if (!empty($serverResults)): ?>
                     <div class="flex flex-col gap-4">
                         <?php foreach ($serverResults as $server): ?>
+                            <?php
+                            $iconFile = $server['serverImage'] ?: 'default_server.webp';
+                            $iconUrl = base_url('img/server-icons/' . $iconFile);
+                            $defaultIcon = base_url('img/server-icons/default_server.webp');
+                            $hasDetail = !empty($server['serverSlug']);
+                            $detailUrl = $hasDetail ? base_url('server/' . $server['serverSlug']) : '';
+                            ?>
                             <div class="card-white p-4 flex items-center gap-3">
-                                <img src="img/server-icons/<?= $server['serverImage'] ?>" class="w-10 h-10 rounded-lg shadow-sm">
-                                <div>
-                                    <h4 class="font-bold text-sm"><?= $server['serverName'] ?></h4>
-                                    <code class="text-[10px] text-gray-400"><?= $server['serverIP'] ?></code>
+                                <?php if ($hasDetail): ?>
+                                    <a href="<?= htmlspecialchars($detailUrl, ENT_QUOTES, 'UTF-8') ?>" class="shrink-0">
+                                        <img src="<?= htmlspecialchars($iconUrl, ENT_QUOTES, 'UTF-8') ?>"
+                                             alt=""
+                                             class="w-10 h-10 rounded-lg shadow-sm object-cover"
+                                             onerror="this.onerror=null; this.src='<?= htmlspecialchars($defaultIcon, ENT_QUOTES, 'UTF-8') ?>';">
+                                    </a>
+                                <?php else: ?>
+                                    <img src="<?= htmlspecialchars($iconUrl, ENT_QUOTES, 'UTF-8') ?>"
+                                         alt=""
+                                         class="w-10 h-10 rounded-lg shadow-sm object-cover"
+                                         onerror="this.onerror=null; this.src='<?= htmlspecialchars($defaultIcon, ENT_QUOTES, 'UTF-8') ?>';">
+                                <?php endif; ?>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-sm">
+                                        <?php if ($hasDetail): ?>
+                                            <a href="<?= htmlspecialchars($detailUrl, ENT_QUOTES, 'UTF-8') ?>" class="hover:text-blue-600 transition-colors">
+                                                <?= htmlspecialchars($server['serverName']) ?>
+                                            </a>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($server['serverName']) ?>
+                                        <?php endif; ?>
+                                    </h4>
+                                    <code class="text-[10px] text-gray-400"><?= htmlspecialchars($server['serverIP']) ?></code>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
+                        <?php endforeach; ?>                    </div>
                 <?php else: ?>
                     <p class="text-gray-400 italic">ไม่พบเซิร์ฟเวอร์ที่เกี่ยวข้อง</p>
                 <?php endif; ?>

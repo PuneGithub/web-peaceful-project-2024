@@ -1,9 +1,53 @@
 <?php
-function createServer($conn, $userId, $name, $ip, $version, $category, $desc, $image)
+
+function resolveUniqueServerSlug(PDO $conn, string $baseSlug, ?int $excludeServerId = null): string
 {
+    $slug = $baseSlug;
+    $suffix = 2;
+
+    while (true) {
+        $sql = 'SELECT COUNT(*) FROM servers WHERE serverSlug = :slug';
+        $params = [':slug' => $slug];
+
+        if ($excludeServerId !== null) {
+            $sql .= ' AND serverId != :excludeId';
+            $params[':excludeId'] = $excludeServerId;
+        }
+
+        $checkStmt = $conn->prepare($sql);
+        $checkStmt->execute($params);
+
+        if ((int) $checkStmt->fetchColumn() === 0) {
+            return $slug;
+        }
+
+        $slug = $baseSlug . '-' . $suffix;
+        $suffix++;
+
+        if ($suffix > 100) {
+            return $baseSlug . '-' . time();
+        }
+    }
+}
+
+function createServer($conn, $userId, $name, $slug, $ip, $version, $category, $desc, $image)
+{
+    $userStmt = $conn->prepare("SELECT createDate, verifyStatus FROM users WHERE userId = :userId");
+    $userStmt->execute([':userId' => $userId]);
+    $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$userData || $userData['verifyStatus'] !== 'verified') {
+        return 'UNVERIFIED_ACCOUNT';
+    }
 
     // 1. ใช้ trim() เพื่อตัดช่องว่างหน้า-หลัง IP ออกให้หมด
     $ip = trim($ip);
+
+    $slug = trim($slug);
+    if ($slug === '') {
+        $slug = 'server';
+    }
+    $slug = resolveUniqueServerSlug($conn, $slug);
 
     //กำหนดระยะเวลา "หมดอายุ" ของข้อมูลเก่า (เช่น 30 วัน)
     $expiryDays = 30;
@@ -19,37 +63,29 @@ function createServer($conn, $userId, $name, $ip, $version, $category, $desc, $i
     $checkStmt->bindValue(':days', (int)$expiryDays, PDO::PARAM_INT);
     $checkStmt->execute();
 
-
-
     if ($checkStmt->fetchColumn() > 0) {
         return "IP_DUPLICATE";
     }
 
     $status = 'pending';
 
-    $userSql = "SELECT createDate FROM users WHERE userId = :userId";
-    $userStmt = $conn->prepare($userSql);
-    $userStmt->execute([':userId' => $userId]);
-    $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
+    $regDate = new DateTime($userData['createDate']);
+    $now = new DateTime();
+    $interval = $regDate->diff($now);
 
-    if ($userData) {
-        $regDate = new DateTime($userData['createDate']);
-        $now = new DateTime();
-        $interval = $regDate->diff($now);
-
-        if ($interval->days >= 7) {
-            $status = 'approved';
-        }
+    if ($interval->days >= 7) {
+        $status = 'approved';
     }
 
 
     try {
-        $sql = "INSERT INTO servers (userId, serverName, serverIP, serverVersion, serverCategory, serverDescription, serverImage, status) 
-                VALUES (:userId, :name, :ip, :version, :category, :desc, :image, :status)";
+        $sql = "INSERT INTO servers (userId, serverName, serverSlug, serverIP, serverVersion, serverCategory, serverDescription, serverImage, status) 
+                VALUES (:userId, :name, :slug, :ip, :version, :category, :desc, :image, :status)";
         $stmt = $conn->prepare($sql);
         $result = $stmt->execute([
             ':userId' => $userId,
             ':name' => $name,
+            ':slug' => $slug,
             ':ip' => $ip,
             ':version' => $version,
             ':category' => $category,
@@ -189,5 +225,98 @@ function fetchUserServers($conn, $userId)
     } catch (PDOException $e) {
         error_log("Fetch User Servers Error: " . $e->getMessage());
         return [];
+    }
+}
+
+function fetchServerForOwner(PDO $conn, $serverId, $userId)
+{
+    try {
+        $stmt = $conn->prepare(
+            'SELECT * FROM servers WHERE serverId = :serverId AND userId = :userId'
+        );
+        $stmt->execute([
+            ':serverId' => (int) $serverId,
+            ':userId' => (int) $userId,
+        ]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    } catch (PDOException $e) {
+        error_log('fetchServerForOwner: ' . $e->getMessage());
+        return null;
+    }
+}
+
+/**
+ * อัปเดตเซิร์ฟเวอร์ของเจ้าของ — หลังแก้ไข status กลับเป็น pending รอแอดมินตรวจ
+ * @return true|string  true = สำเร็จ | IP_DUPLICATE | NOT_FOUND | INVALID_CATEGORY | false = DB error
+ */
+function updateServer(PDO $conn, $serverId, $userId, $name, $ip, $version, $category, $desc, $imageName)
+{
+    $server = fetchServerForOwner($conn, $serverId, $userId);
+    if (!$server) {
+        return 'NOT_FOUND';
+    }
+
+    $name = trim($name);
+    $ip = trim($ip);
+    $version = trim($version);
+    $category = trim($category);
+
+    if (!array_key_exists($category, getServerCategories())) {
+        return 'INVALID_CATEGORY';
+    }
+
+    $expiryDays = 30;
+    $checkSql = "SELECT COUNT(*) FROM servers
+                 WHERE serverIP = :ip
+                 AND serverId != :excludeId
+                 AND (status = 'approved' OR status = 'pending')
+                 AND updatedAt > DATE_SUB(NOW(), INTERVAL :days DAY)";
+    $checkStmt = $conn->prepare($checkSql);
+    $checkStmt->bindValue(':ip', $ip);
+    $checkStmt->bindValue(':excludeId', (int) $serverId, PDO::PARAM_INT);
+    $checkStmt->bindValue(':days', (int) $expiryDays, PDO::PARAM_INT);
+    $checkStmt->execute();
+
+    if ((int) $checkStmt->fetchColumn() > 0) {
+        return 'IP_DUPLICATE';
+    }
+
+    $baseSlug = createSlug($name);
+    if ($baseSlug === '') {
+        $baseSlug = 'server';
+    }
+    $slug = resolveUniqueServerSlug($conn, $baseSlug, (int) $serverId);
+
+    try {
+        $sql = "UPDATE servers SET
+                    serverName = :name,
+                    serverSlug = :slug,
+                    serverIP = :ip,
+                    serverVersion = :version,
+                    serverCategory = :category,
+                    serverDescription = :desc,
+                    serverImage = :image,
+                    status = 'pending',
+                    updatedAt = NOW()
+                WHERE serverId = :serverId AND userId = :userId";
+
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute([
+            ':name'      => $name,
+            ':slug'      => $slug,
+            ':ip'        => $ip,
+            ':version'   => $version,
+            ':category'  => $category,
+            ':desc'      => $desc,
+            ':image'     => $imageName,
+            ':serverId'  => (int) $serverId,
+            ':userId'    => (int) $userId,
+        ]);
+
+        return $result ? true : false;
+    } catch (PDOException $e) {
+        error_log('Update Server Error: ' . $e->getMessage());
+        return false;
     }
 }

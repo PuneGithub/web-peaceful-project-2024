@@ -9,6 +9,12 @@ Disallow: /system/
 Disallow: /config.php
 Disallow: /conn.php
 
+# หน้าจัดการเซิร์ฟของสมาชิก (ไม่ index) — ยังอนุญาต /server/{slug} สาธารณะ
+Disallow: /server/addServer
+Disallow: /server/addServer.php
+Disallow: /server/editServer
+Disallow: /server/editServer.php
+
 #อนุญาตให้ Bot เข้าถึงเพื่อการ Render หน้าเว็บที่ถูกต้อง
 Allow: /css/
 Allow: /js/

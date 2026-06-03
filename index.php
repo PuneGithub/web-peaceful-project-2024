@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 //connect database
 session_start();
 require_once("system/conn.php");
@@ -35,6 +32,8 @@ $topServers = fetchApprovedServers($conn, 3);
 $message = $_SESSION['message'] ?? null;
 unset($_SESSION['message']);
 
+// Hero LCP — ใช้ bg_blur.webp (~235KB) แทน bg.webp (~1.5MB)
+$heroImageUrl = base_url('img/bg_blur.webp');
 
 ?>
 <!DOCTYPE html>
@@ -43,7 +42,9 @@ unset($_SESSION['message']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include_once __DIR__ . '/components/favicon.php'; ?>
     <link rel="canonical" href="https://zencrafterly.com/"/>
+    <link rel="preload" as="image" href="<?= htmlspecialchars($heroImageUrl, ENT_QUOTES, 'UTF-8') ?>" fetchpriority="high">
 
     <?php
     $seoTitle = !empty($settings['site_seo_title']) ? $settings['site_seo_title'] : $settings['webTitle'];
@@ -54,7 +55,6 @@ unset($_SESSION['message']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/output.css">
 
-    <link rel="icon" href="data:,">
     <title><?= htmlspecialchars($seoTitle) ?></title>
     <meta name="description" content="<?= htmlspecialchars($seoDesc) ?>">
     <meta name="keywords" content="<?= htmlspecialchars($seoKey) ?>">
@@ -73,7 +73,14 @@ unset($_SESSION['message']);
     include_once("components/header-navbar.php");
     ?>
     <!-- Hero Section -->
-    <section class="relative bg-cover bg-center h-96" style="background-image: url('<?= htmlspecialchars(base_url('img/bg.webp'), ENT_QUOTES, 'UTF-8') ?>');">
+    <section class="relative h-96 overflow-hidden">
+        <img src="<?= htmlspecialchars($heroImageUrl, ENT_QUOTES, 'UTF-8') ?>"
+             alt=""
+             width="1920"
+             height="384"
+             fetchpriority="high"
+             decoding="async"
+             class="absolute inset-0 w-full h-full object-cover object-center">
 
         <div class="absolute inset-0 bg-black opacity-50"></div>
 
@@ -93,8 +100,8 @@ unset($_SESSION['message']);
                         <button class="btn-red-500" disabled>โปรดยืนยัน Email ก่อนเพิ่มเซิร์ฟเวอร์</button>
                     <?php } ?>
                 <?php } else { ?>
-                    <a href="<?= base_url('/account/signup.php') ?>" class="btn-blue-400-outline">SIGN UP</a>
-                    <a href="<?= base_url('/account/login.php') ?>" class="btn-green-400-outline">LOGIN</a>
+                    <a href="<?= base_url('/account/signup') ?>" class="btn-blue-400-outline">SIGN UP</a>
+                    <a href="<?= base_url('/account/login') ?>" class="btn-green-400-outline">LOGIN</a>
                 <?php } ?>
             </div>
         </div>
@@ -200,7 +207,7 @@ unset($_SESSION['message']);
                     </div>
 
 
-                    <a href="servers.php" class="block text-center mt-5 py-2 text-xs font-bold text-blue-500 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+                    <a href="servers" class="block text-center mt-5 py-2 text-xs font-bold text-blue-500 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
                         ดูเซิร์ฟเวอร์ทั้งหมด <i class="fa-solid fa-arrow-right ml-1"></i>
                     </a>
                 </div>

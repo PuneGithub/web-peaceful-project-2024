@@ -26,17 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include_once __DIR__ . '/../components/favicon.php'; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../css/output.css">
-    <title>Peaceful Network</title>
+    <title>Login | Zencrafterly</title>
 </head>
-<script src="js/script.js"></script>
 
-<body style="background-image: url('../img/bg.webp');">
+<body style="background-image: url('<?= base_url('img/bg.webp'); ?>'); background-size: cover; background-position: center;">
 
     <?php include_once("../components/header-navbar.php"); ?>
 
-    <!-- header navbar -->
     <div class="flex items-center justify-center h-screen">
         <div class="card-white w-full max-w-md">
             <h2 class="text-xl font-semibold text-center">LOGIN</h2>
@@ -45,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo "<div class='alert-green'><i class='fa-regular fa-circle-check'></i> Login successful! Redirecting...</div>";
                 echo "<script>
                     setTimeout(function() {
-                        window.location.href = '../index.php';
+                        window.location.href = '" . base_url() . "';
                     }, 2000);
                 </script>";
                 exit;
@@ -56,23 +55,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form action="" method="post" class="space-y-4">
                 <div>
                     <label for="identifier" class="block text-sm font-medium">Email or Username</label>
-                    <input type="text" name="identifier" class="input-form" placeholder="Enter email or username" required>
+                    <input type="text" name="identifier" class="input-form w-full" placeholder="Enter email or username" required>
                 </div>
                 <div>
                     <label for="password" class="block text-sm font-medium">Password</label>
-                    <input type="password" name="password" class="input-form" placeholder="Enter password" required>
+                    <input type="password" name="password" class="input-form w-full" placeholder="Enter password" required>
                 </div>
                 <div>
-                    <a href="forgot_password.php" class="text-blue-400">Forgot password</a>
+                    <a href="forgot_password.php" class="text-blue-500 hover:underline text-sm">Forgot password?</a>
                 </div>
-                <div>
-                    <input type="submit" class="btn-green-500" value="LOGIN">
+                <div class="pt-2">
+                    <input type="submit" class="btn-green-500 w-full cursor-pointer" value="LOGIN">
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="<?php echo base_url('/js/script.js'); ?>"></script>
+    <script src="<?= base_url('js/script.js'); ?>"></script>
 </body>
 
 </html>

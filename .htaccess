@@ -1,4 +1,25 @@
 RewriteEngine On
+
+# 1. ตั้งค่าหน้า 404 Error (ของเดิม)
+ErrorDocument 404 /404.php
+
+# 2. แปลง sitemap.xml ให้ไปเรียก sitemap.php
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+# 3. จัดการ URL ระบบบล็อก (ของเดิม)
 RewriteRule ^blog/([a-zA-Z0-9\-ก-๙]+)$ blog.php?slug=$1 [L,QSA]
 
-ErrorDocument 404 /404.php
+# 4. หน้ารายละเอียด Resource และดาวน์โหลด (นับยอดโหลด)
+RewriteRule ^resource/([0-9]+)$ resource-detail.php?id=$1 [L,QSA]
+RewriteRule ^download/([0-9]+)$ download.php?id=$1 [L,QSA]
+
+# 5. จัดการ URL ระบบหน้ารายละเอียดเซิร์ฟเวอร์ (เพิ่มใหม่ตรงนี้)
+# ยกเว้นไฟล์ที่มีอยู่จริงในโฟลเดอร์ server/ (เช่น myServers.php, editServer.php, addServer.php)
+# ไม่ให้ถูกตีความเป็น slug แล้วเด้ง 404
+RewriteCond %{REQUEST_FILENAME}.php !-f
+RewriteRule ^server/([a-zA-Z0-9\-ก-๙]+)$ server-detail.php?slug=$1 [L,QSA]
+
+# 6. บังคับซ่อนนามสกุล .php สำหรับหน้าอื่นๆ ทั้งหมด (ต้องไว้ล่างสุด)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^\.]+)/?$ $1.php [NC,L]

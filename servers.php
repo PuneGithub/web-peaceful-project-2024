@@ -16,7 +16,10 @@ $servers = fetchApprovedServers($conn, null, $category, $search);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายชื่อเซิร์ฟเวอร์ - Zencrafterly</title>
+    <?php include_once __DIR__ . '/components/favicon.php'; ?>
+    <title>รายชื่อเซิร์ฟเวอร์ Minecraft | Zencrafterly</title>
+    <meta name="description" content="ค้นหาและเลือกเซิร์ฟเวอร์ Minecraft ที่ดีที่สุด — Survival, MMORPG และหมวดหมู่อื่นๆ พร้อมข้อมูล IP และยอดโหวตจากชุมชน Zencrafterly">
+    <link rel="canonical" href="<?= htmlspecialchars(absolute_url('servers'), ENT_QUOTES, 'UTF-8') ?>">
     <link rel="stylesheet" href="css/output.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
@@ -65,10 +68,9 @@ $servers = fetchApprovedServers($conn, null, $category, $search);
                 <a href="servers.php" class="px-5 py-2 rounded-full border <?= !$category ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100' ?> transition text-sm font-bold shadow-sm">
                     ทั้งหมด
                 </a>
-                <?php $cats = ['Survival', 'Skyblock', 'MiniGames', 'MMORPG']; ?>
-                <?php foreach ($cats as $cat): ?>
-                    <a href="?category=<?= $cat ?>" class="px-5 py-2 rounded-full border <?= $category === $cat ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100' ?> transition text-sm font-bold shadow-sm">
-                        <?= $cat ?>
+                <?php foreach (getServerCategories() as $catValue => $catLabel): ?>
+                    <a href="?category=<?= urlencode($catValue) ?>" class="px-5 py-2 rounded-full border <?= $category === $catValue ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100' ?> transition text-sm font-bold shadow-sm">
+                        <?= htmlspecialchars($catLabel) ?>
                     </a>
                 <?php endforeach; ?>
             </div>
@@ -114,7 +116,11 @@ $servers = fetchApprovedServers($conn, null, $category, $search);
                                 </div>
 
                                 <div class="flex-1">
-                                    <h3 class="font-bold text-gray-800 text-lg line-clamp-1 pr-12"><?= htmlspecialchars($server['serverName']) ?></h3>
+                                    <h3 class="font-bold text-lg text-gray-800">
+                                        <a href="<?= base_url('server/' . $server['serverSlug']) ?>" class="hover:text-blue-600 transition-colors">
+                                            <?= htmlspecialchars($server['serverName']) ?>
+                                        </a>
+                                    </h3>
                                     <p class="text-xs text-gray-400 font-medium uppercase mb-2">
                                         <?= htmlspecialchars($server['serverVersion']) ?> • <?= htmlspecialchars($server['serverCategory']) ?>
                                     </p>
@@ -139,6 +145,10 @@ $servers = fetchApprovedServers($conn, null, $category, $search);
                                 <button onclick="castVote(<?= $server['serverId'] ?>)" class="bg-red-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-lg shadow-sm hover:bg-red-600 transition uppercase ml-2 flex items-center gap-1">
                                     <i class="fa-solid fa-heart text-[8px]"></i> Vote
                                 </button>
+
+                                <a href="<?= base_url('server/' . $server['serverSlug']) ?>" class="bg-blue-50 text-blue-600 text-[10px] font-bold px-4 py-1.5 rounded-lg shadow-sm hover:bg-blue-100 transition uppercase ml-2 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-info text-[8px]"></i> Details
+                                </a>
                             </div>
                         </div>
                     <?php
@@ -162,7 +172,7 @@ $servers = fetchApprovedServers($conn, null, $category, $search);
 
     <?php include_once("components/footer.php"); ?>
 
-<script src="<?php echo base_url('/js/script.js'); ?>"></script>
+    <script src="<?php echo base_url('/js/script.js'); ?>"></script>
 </body>
 
 </html>

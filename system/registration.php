@@ -3,6 +3,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 
 require_once("conn.php");
+require_once("config.php");
 
 
 function signup($username, $password, $email)
@@ -18,7 +19,7 @@ function signup($username, $password, $email)
     }
 
     //Check Email & user
-    $checkStmt = $conn->prepare("SELECT * FROM users WHERE email = :email OR username = :username");
+    $checkStmt = $conn->prepare("SELECT email, username FROM users WHERE email = :email OR username = :username");
     $checkStmt->bindParam(':email', $email);
     $checkStmt->bindParam(':username', $username);
     $checkStmt->execute();
@@ -42,7 +43,8 @@ function signup($username, $password, $email)
     $verifyStatus = "unverified";
 
 
-    $date = date("Y-m-d");
+    $date = date("Y-m-d H:i:s");
+    
 
     try {
         $stmt = $conn->prepare("INSERT INTO users (username, password, email, verifyEmail, createDate, verifyStatus) VALUES (:username, :password, :email, :verifyEmail, :createDate, :verifyStatus)");
@@ -83,13 +85,29 @@ function signup($username, $password, $email)
         $mail->Subject = $message_subject;
 
         $mail->isHTML(true);
-        // $verificationLink = "http://localhost/web_peaceful_project_2024/system/verifyEmail.php?token=" . $token; test local
-        $verificationLink = "https://zencrafterly.com/system/verifyEmail.php?token=" . $token; // production
+        // $verificationLink = "http://localhost/web_peaceful_project_2024/system/verifyEmail.php?token=" . $token; //test local
+        // $verificationLink = "https://zencrafterly.com/system/verifyEmail.php?token=" . $token; // production
+
+        $verificationLink = base_url('system/verifyEmail.php?token=' . $token);
+
+        // กรณี base_url ไม่ได้แนบ http/https มาด้วย ให้เติมโปรโตคอลเข้าไปเพื่อส่งเป็นลิงก์ในอีเมล
+        if (strpos($verificationLink, 'http') === false) {
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+            $verificationLink = $protocol . $_SERVER['HTTP_HOST'] . '/' . ltrim($verificationLink, '/');
+        }
+
         $mail->Body = '
-         <h1>ยินดีต้อนรับ!</h1> <p>ขอบคุณที่สมัครใช้งาน <b>Zencrafterly</b>.</p>
-         <p>กรุณาคลิกลิงก์เพื่อยืนยันอีเมลของคุณ: <a href="' . $verificationLink . '">คลิกที่นี่</a></p>
-         <p>หากคุณไม่ได้ลงทะเบียนกับเรา กรุณาละเว้นข้อความนี้</p>
-         <p>จาก <b>Zencrafterly</b></p>
+         <div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+            <h1 style="color: #2563eb;">ยินดีต้อนรับ!</h1> 
+            <p>ขอบคุณที่สมัครใช้งาน <b>Zencrafterly</b>.</p>
+            <p>กรุณาคลิกลิงก์ด้านล่างเพื่อยืนยันอีเมลของคุณ:</p>
+            <p style="text-align: center; margin: 30px 0;">
+                <a href="' . $verificationLink . '" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">คลิกที่นี่เพื่อยืนยันอีเมล</a>
+            </p>
+            <p style="font-size: 12px; color: #777;">หากคุณไม่ได้ลงทะเบียนกับเรา กรุณาละเว้นข้อความนี้<br>หรือคัดลอกลิงก์นี้ไปวางที่เบราว์เซอร์: ' . $verificationLink . '</p>
+            <hr style="border-top: 1px solid #eee;">
+            <p style="font-size: 14px;">จากทีมงาน <b>Zencrafterly</b></p>
+        </div>
          ';
         $mail->AltBody = 'กรุณาคลิกลิงก์นี้เพื่อยืนยันอีเมลของคุณ: ' . $verificationLink;
 

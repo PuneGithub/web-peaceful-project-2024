@@ -69,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && $tokenValid) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include_once __DIR__ . '/../components/favicon.php'; ?>
     <link rel="stylesheet" href="../css/output.css">
     <title>Reset Password</title>
 </head>

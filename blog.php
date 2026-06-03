@@ -45,16 +45,26 @@ if (isset($_GET['slug'])) {
 
 <head>
     <meta charset="UTF-8">
+    <?php include_once __DIR__ . '/components/favicon.php'; ?>
     <?php
     $titleTag = !empty($blog['seo_title']) ? $blog['seo_title'] : $blog['blogTitle'];
     // ตัดเนื้อหาบางส่วนมาทำ Description ถ้าไม่ได้กรอกไว้หลังบ้าน
     $descTag  = !empty($blog['seo_description']) ? $blog['seo_description'] : mb_substr(strip_tags($blog['blogContent']), 0, 160);
     $keyTag   = !empty($blog['seo_keywords']) ? $blog['seo_keywords'] : "Minecraft, Zencrafterly";
+    $canonicalUrl = absolute_url('blog/' . $slug);
+    $ogImageUrl = absolute_url($finalImagePath);
+    $pageTitle = htmlspecialchars($titleTag, ENT_QUOTES, 'UTF-8') . ' | Zencrafterly';
     ?>
-    <title><?= htmlspecialchars($titleTag) ?> | Zencrafterly</title>
+    <title><?= $pageTitle ?></title>
 
-    <meta name="description" content="<?= htmlspecialchars($descTag) ?>">
-    <meta name="keywords" content="<?= htmlspecialchars($keyTag) ?>">
+    <meta name="description" content="<?= htmlspecialchars($descTag, ENT_QUOTES, 'UTF-8') ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($keyTag, ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8') ?>">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="<?= htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8') ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($titleTag, ENT_QUOTES, 'UTF-8') ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($descTag, ENT_QUOTES, 'UTF-8') ?>">
+    <meta property="og:image" content="<?= htmlspecialchars($ogImageUrl, ENT_QUOTES, 'UTF-8') ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="<?= base_url('/css/output.css') ?>">
@@ -63,7 +73,6 @@ if (isset($_GET['slug'])) {
 <script src="js/script.js"></script>
 
 <body>
-    <!-- header navbar -->
     <?php
     include_once("components/header-navbar.php");
     ?>
@@ -76,10 +85,8 @@ if (isset($_GET['slug'])) {
                     <?php echo $blog['blogTitle']; ?>
                 </h1>
 
-                <!-- Content -->
                 <div class="px-6">
                     <p class="flex text-lg text-gray-600">
-                        <!-- แสดงชื่อหมวดหมู่ที่ดึงมาจากตาราง category -->
                         <span class="mr-2 bg-blue-100 text-blue-600 px-2 py-1 rounded text-sm font-bold">
                             <?= htmlspecialchars($blog['categoryName'] ?? 'General'); ?>
                         </span>
@@ -87,14 +94,17 @@ if (isset($_GET['slug'])) {
                         By <span class="font-semibold text-blue-600"> KoonPune</span> Created on: <?php echo htmlspecialchars($blog['createdAt']); ?> <span class="ml-auto"><?php echo htmlspecialchars($blog['views']); ?> views</span>
                     </p>
                     <div class="prose max-w-none mt-6 text-gray-800 leading-relaxed">
-                        <?php echo $blog['blogContent']; ?>
+                        <?php 
+                        // 🚩 จุดที่แก้ไข: ดักจับคำว่า [BASE_URL] แล้วแปลงเป็น URL จริงก่อนนำไปแสดงผล
+                        $displayContent = str_replace('[BASE_URL]', base_url(), $blog['blogContent']);
+                        echo $displayContent; 
+                        ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- footer -->
     <?php
     include_once("components/footer.php");
     ?>

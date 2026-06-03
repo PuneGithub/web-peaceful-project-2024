@@ -1,10 +1,4 @@
 <?php
-
-//debug
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
-
 session_start();
 require_once("../system/conn.php");
 require_once("../system/config.php");
@@ -17,18 +11,33 @@ if (!isset($_SESSION['userId'])) {
 }
 
 $userId = $_SESSION['userId'];
+$isVerified = ($_SESSION['verifyStatus'] ?? '') === 'verified';
 
 // 2. จัดการการลบเซิร์ฟเวอร์
 $msg = null;
+
+// แสดงข้อความจากหน้าอื่น (เช่น addServer.php) แล้วล้างทิ้งหลังอ่าน
+if (isset($_SESSION['flash_message'])) {
+    $msg = $_SESSION['flash_message'];
+    unset($_SESSION['flash_message']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_serverId'])) {
-    $deleteId = $_POST['delete_serverId'];
-    
-    // Security Check
-    $stmt = $conn->prepare("DELETE FROM servers WHERE serverId = :serverId AND userId = :userId");
-    if ($stmt->execute([':serverId' => $deleteId, ':userId' => $userId])) {
-        $msg = "<div class='alert-green mb-4'><i class='fa-solid fa-check'></i> ลบเซิร์ฟเวอร์เรียบร้อยแล้ว</div>";
+    if (!verifyCsrfToken($_POST['csrf_token'] ?? null)) {
+        $msg = "<div class='alert-danger mb-4'><i class='fa-solid fa-triangle-exclamation'></i> คำขอไม่ถูกต้องหรือหมดอายุ กรุณาลองใหม่อีกครั้ง</div>";
     } else {
-        $msg = "<div class='alert-danger mb-4'><i class='fa-solid fa-triangle-exclamation'></i> เกิดข้อผิดพลาดในการลบ</div>";
+        $deleteId = (int) $_POST['delete_serverId'];
+
+        $stmt = $conn->prepare("DELETE FROM servers WHERE serverId = :serverId AND userId = :userId");
+        if ($deleteId > 0 && $stmt->execute([':serverId' => $deleteId, ':userId' => $userId])) {
+            if ($stmt->rowCount() > 0) {
+                $msg = "<div class='alert-green mb-4'><i class='fa-solid fa-check'></i> ลบเซิร์ฟเวอร์เรียบร้อยแล้ว</div>";
+            } else {
+                $msg = "<div class='alert-danger mb-4'><i class='fa-solid fa-triangle-exclamation'></i> ไม่พบเซิร์ฟเวอร์ที่ต้องการลบ</div>";
+            }
+        } else {
+            $msg = "<div class='alert-danger mb-4'><i class='fa-solid fa-triangle-exclamation'></i> เกิดข้อผิดพลาดในการลบ</div>";
+        }
     }
 }
 
@@ -41,6 +50,7 @@ $myServers = fetchUserServers($conn, $userId);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include_once __DIR__ . '/../components/favicon.php'; ?>
     <title>เซิร์ฟเวอร์ของฉัน - Zencrafterly</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
     <link rel="stylesheet" href="../css/output.css">
@@ -58,12 +68,25 @@ $myServers = fetchUserServers($conn, $userId);
                     <p class="text-gray-500 mt-2">จัดการ แก้ไข และดูสถานะเซิร์ฟเวอร์ที่คุณเพิ่มไว้ในระบบ</p>
                 </div>
                 
-                <a href="addServer.php" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> เพิ่มเซิร์ฟเวอร์ใหม่
-                </a>
+                <?php if ($isVerified): ?>
+                    <a href="addServer.php" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold transition shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> เพิ่มเซิร์ฟเวอร์ใหม่
+                    </a>
+                <?php else: ?>
+                    <span class="bg-gray-200 text-gray-500 px-5 py-2.5 rounded-xl font-bold cursor-not-allowed flex items-center gap-2" title="โปรดยืนยัน Email ก่อน">
+                        <i class="fa-solid fa-plus"></i> เพิ่มเซิร์ฟเวอร์ใหม่
+                    </span>
+                <?php endif; ?>
             </div>
     
             <?php if ($msg) echo $msg; ?>
+
+            <?php if (!$isVerified): ?>
+                <div class="alert-danger mb-6">
+                    <i class="fa-solid fa-envelope mr-2"></i>
+                    โปรดยืนยัน Email ก่อนเพิ่มเซิร์ฟเวอร์ — ตรวจสอบกล่องจดหมายที่ใช้สมัครสมาชิก
+                </div>
+            <?php endif; ?>
     
             <?php if (!empty($myServers)): ?>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -112,7 +135,8 @@ $myServers = fetchUserServers($conn, $userId);
                                 </a>
                                 
                                 <form action="" method="post" class="flex-1" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบเซิร์ฟเวอร์นี้? การกระทำนี้ไม่สามารถกู้คืนได้');">
-                                    <input type="hidden" name="delete_serverId" value="<?= $server['serverId'] ?>">
+                                    <?= csrfField() ?>
+                                    <input type="hidden" name="delete_serverId" value="<?= (int) $server['serverId'] ?>">
                                     <button type="submit" class="w-full bg-red-50 hover:bg-red-500 hover:text-white text-red-500 text-xs font-bold py-2 rounded-lg transition">
                                         <i class="fa-solid fa-trash-can mr-1"></i> ลบ
                                     </button>
@@ -126,10 +150,14 @@ $myServers = fetchUserServers($conn, $userId);
                 <div class="text-center py-20 bg-white rounded-3xl shadow-sm border border-dashed border-gray-200 mt-6">
                     <i class="fa-solid fa-box-open text-6xl text-gray-200 mb-4"></i>
                     <h3 class="text-xl font-bold text-gray-700 mb-2">คุณยังไม่มีเซิร์ฟเวอร์</h3>
-                    <p class="text-gray-500 mb-6">เริ่มต้นสร้างชุมชนของคุณโดยการเพิ่มเซิร์ฟเวอร์แรกเข้าระบบสิ!</p>
-                    <a href="addServer.php" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-sm hover:bg-blue-700 transition inline-flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> เพิ่มเซิร์ฟเวอร์เลย
-                    </a>
+                    <?php if ($isVerified): ?>
+                        <p class="text-gray-500 mb-6">เริ่มต้นสร้างชุมชนของคุณโดยการเพิ่มเซิร์ฟเวอร์แรกเข้าระบบสิ!</p>
+                        <a href="addServer.php" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-sm hover:bg-blue-700 transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> เพิ่มเซิร์ฟเวอร์เลย
+                        </a>
+                    <?php else: ?>
+                        <p class="text-gray-500 mb-6">โปรดยืนยัน Email ก่อนจึงจะเพิ่มเซิร์ฟเวอร์ได้</p>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
         </div>

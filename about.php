@@ -10,9 +10,12 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include_once __DIR__ . '/components/favicon.php'; ?>
+    <title>เกี่ยวกับเรา | Zencrafterly</title>
+    <meta name="description" content="Zencrafterly คือศูนย์รวมความรู้ Minecraft บทความสอนทำเซิร์ฟ รีวิวปลั๊กอิน และพื้นที่โปรโมทเซิร์ฟเวอร์สำหรับผู้เล่นและเจ้าของเซิร์ฟ">
+    <link rel="canonical" href="<?= htmlspecialchars(absolute_url('about'), ENT_QUOTES, 'UTF-8') ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/output.css">
-    <title>Zencrafterly</title>
 </head>
 <script src="js/script.js"></script>
 

@@ -7,6 +7,17 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     exit;
 }
 
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        // หากไม่มี Token หรือ Token ไม่ตรงกัน ให้หยุดการทำงานทันที
+        die("<div style='color: #f00;'>ตรวจพบการส่งข้อมูลที่ไม่ปลอดภัย (CSRF Token Mismatch) <br><a href='customization.php' class='text-blue-500 underline'>กลับไปหน้าตั้งค่า</a></div>");
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btnSaveGeneral'])) {
     $webTitle = trim($_POST['webTitle'] ?? '');
     $heroTitle = trim($_POST['heroTitle'] ?? '');
@@ -117,6 +128,7 @@ $msgSeo = flashMessage('seo');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include_once __DIR__ . '/../components/favicon.php'; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../css/output.css">
     <link rel="stylesheet" href="../css/style.css">
@@ -141,6 +153,7 @@ $msgSeo = flashMessage('seo');
                         echo $msgGeneral;
                     } ?>
                     <form action="" method="post" class="space-y-4">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <div class="flex flex-col md:flex-row md:items-center">
                             <label for="webTitle" class="w-full md:w-1/4 font-medium text-gray-700">ชื่อเว็บไซต์</label>
                             <input type="text" id="webTitle" value="<?= htmlspecialchars($settings['webTitle'] ?? '') ?>" name="webTitle" class="input-form md:w-3/4" required maxlength="255">
@@ -170,6 +183,7 @@ $msgSeo = flashMessage('seo');
                         echo $msgAnnounce;
                     } ?>
                     <form action="" method="post" class="space-y-4">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <div class="flex flex-col gap-2 md:flex-row md:items-center">
                             <label for="announceText" class="w-full md:w-1/4 font-medium text-gray-700">ข้อความประกาศ</label>
                             <input type="text" id="announceText" value="<?= htmlspecialchars($settings['announceText'] ?? '') ?>" name="announceText" class="input-form md:w-3/4" required maxlength="255">
@@ -194,6 +208,7 @@ $msgSeo = flashMessage('seo');
                         echo $msgSeo;
                     } ?>
                     <form action="" method="post" class="space-y-4">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <div class="flex flex-col md:flex-row md:items-start">
                             <label for="site_seo_title" class="w-full md:w-1/4 font-medium text-gray-700 pt-2">SEO Title</label>
                             <div class="w-full md:w-3/4">

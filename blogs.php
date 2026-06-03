@@ -21,10 +21,13 @@ $latestFinalImage = $latestCleanPath . '/' . $fetchLatestBlog['blogImage'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php include_once __DIR__ . '/components/favicon.php'; ?>
+    <title>บทความ Minecraft | Zencrafterly</title>
+    <meta name="description" content="อ่านบทความ คู่มือ และเทคนิค Minecraft จาก Zencrafterly — การเปิดเซิร์ฟ โปรโมทเซิร์ฟเวอร์ และความรู้สำหรับผู้เล่น">
+    <link rel="canonical" href="<?= htmlspecialchars(absolute_url('blogs'), ENT_QUOTES, 'UTF-8') ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/output.css">
     <link rel="stylesheet" href="css/style.css">
-    <title>Zencrafterly</title>
 </head>
 <script src="js/script.js"></script>
 
