@@ -67,23 +67,29 @@ $categoryLabels = getResourceCategories();
 
     <div class="container mx-auto px-4 py-12">
 
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b pb-4">
-            <h2 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-layer-group text-blue-600 mr-2"></i>อัปเดตล่าสุด</h2>
+        <div class="card-white rounded-2xl border border-gray-100 p-4 md:p-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b border-gray-100 pb-4">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    <i class="fa-solid fa-layer-group text-blue-600 mr-2"></i>อัปเดตล่าสุด
+                    <span class="ml-2 bg-blue-100 text-blue-600 text-sm font-bold px-3 py-1 rounded-full">
+                        <?= count($resources) ?> รายการ
+                    </span>
+                </h2>
 
-            <form action="" method="GET" id="filterForm" class="flex items-center gap-3">
-                <?php if (!empty($search)): ?> <input type="hidden" name="q" value="<?= htmlspecialchars($search) ?>"> <?php endif; ?>
-                <?php if (!empty($category)): ?> <input type="hidden" name="category" value="<?= htmlspecialchars($category) ?>"> <?php endif; ?>
+                <form action="" method="GET" id="filterForm" class="flex items-center gap-3">
+                    <?php if (!empty($search)): ?> <input type="hidden" name="q" value="<?= htmlspecialchars($search) ?>"> <?php endif; ?>
+                    <?php if (!empty($category)): ?> <input type="hidden" name="category" value="<?= htmlspecialchars($category) ?>"> <?php endif; ?>
 
-                <span class="text-sm text-gray-500">เรียงตาม:</span>
-                <select name="sort" onchange="document.getElementById('filterForm').submit();" class="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none cursor-pointer">
-                    <option value="latest" <?= $sort == 'latest' ? 'selected' : '' ?>>อัปเดตล่าสุด</option>
-                    <option value="popular" <?= $sort == 'popular' ? 'selected' : '' ?>>ดาวน์โหลดสูงสุด</option>
-                    <option value="alphabet" <?= $sort == 'alphabet' ? 'selected' : '' ?>>ตัวอักษร (A-Z)</option>
-                </select>
-            </form>
-        </div>
+                    <span class="text-sm text-gray-500">เรียงตาม:</span>
+                    <select name="sort" onchange="document.getElementById('filterForm').submit();" class="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none cursor-pointer">
+                        <option value="latest" <?= $sort == 'latest' ? 'selected' : '' ?>>อัปเดตล่าสุด</option>
+                        <option value="popular" <?= $sort == 'popular' ? 'selected' : '' ?>>ดาวน์โหลดสูงสุด</option>
+                        <option value="alphabet" <?= $sort == 'alphabet' ? 'selected' : '' ?>>ตัวอักษร (A-Z)</option>
+                    </select>
+                </form>
+            </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php if (count($resources) > 0): ?>
                 <?php foreach ($resources as $res): ?>
                     <div class="card-white flex flex-col h-full overflow-hidden hover:-translate-y-1 hover:shadow-xl transition duration-300 border border-gray-100 p-0">
@@ -132,12 +138,13 @@ $categoryLabels = getResourceCategories();
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <div class="col-span-full text-center py-16 text-gray-500 card-white border border-gray-100">
+                <div class="col-span-full text-center py-16 text-gray-500">
                     <i class="fa-solid fa-box-open text-5xl mb-4 text-gray-300 block"></i>
                     <p class="text-lg font-bold text-gray-600">ยังไม่มีข้อมูล Resources ในขณะนี้</p>
                     <p class="text-sm mt-1">หรือลองเปลี่ยนคำค้นหา / หมวดหมู่ดูอีกครั้งนะครับ</p>
                 </div>
             <?php endif; ?>
+            </div>
         </div>
 
     </div>

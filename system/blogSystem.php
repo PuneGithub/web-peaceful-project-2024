@@ -90,15 +90,55 @@ function fetchBlog(PDO $conn, $slug)
 function fetchLatestBlog(PDO $conn)
 {
     try {
-        $sql = "SELECT * FROM blogs ORDER BY createdAt DESC LIMIT 1";
+        $sql = "SELECT blogs.*, users.username, category.categoryName, category_storage.folderPath
+                FROM blogs
+                JOIN users ON blogs.userId = users.userId
+                LEFT JOIN category ON blogs.categoryId = category.categoryId
+                LEFT JOIN category_storage ON blogs.categoryId = category_storage.categoryId
+                ORDER BY blogs.createdAt DESC
+                LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     } catch (PDOException $error) {
-        echo "Error fetching latest blog:" . $error->getMessage();
+        error_log('fetchLatestBlog: ' . $error->getMessage());
         return null;
     }
+}
+
+function blogImagePath(array $blog): string
+{
+    $rawPath = $blog['folderPath'] ?? 'img/blogs_image/default/';
+    $cleanPath = trim($rawPath, '/');
+
+    return $cleanPath . '/' . ($blog['blogImage'] ?? 'default.webp');
+}
+
+function blogExcerpt(array $blog, int $maxLength = 120): string
+{
+    if (!empty($blog['seo_description'])) {
+        $text = $blog['seo_description'];
+    } else {
+        $text = strip_tags($blog['blogContent'] ?? '');
+        $text = str_replace('[BASE_URL]', '', $text);
+        $text = preg_replace('/\s+/u', ' ', trim($text));
+    }
+
+    if (mb_strlen($text) <= $maxLength) {
+        return $text;
+    }
+
+    return mb_substr($text, 0, $maxLength) . '…';
+}
+
+function formatBlogDate(?string $date): string
+{
+    if (empty($date)) {
+        return '';
+    }
+
+    return date('d M Y', strtotime($date));
 }
 
 function getCategory(PDO $conn)

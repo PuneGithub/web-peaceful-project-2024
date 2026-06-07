@@ -1,0 +1,566 @@
+<p class="my-6 text-lg text-gray-700 leading-relaxed">สวัสดีครับชาว Minecraft และผู้เปิดเซิร์ฟเวอร์ทุกคน! ในปี 2026 นี้
+    การทำเซิร์ฟเวอร์ให้เสถียรและถูกใจผู้เล่นไม่ได้ขึ้นอยู่กับสเปคเครื่องเพียงอย่างเดียว แต่หัวใจสำคัญคือการเลือกใช้
+    <strong>Plugin หลังบ้าน</strong> ที่เบา ทันสมัย และแก้ปัญหาได้ตรงจุด บทความนี้แนะนำ 5
+    ปลั๊กอินสำหรับ<strong>เจ้าของเซิร์ฟมือใหม่</strong> ที่อยากเริ่มต้นถูกทาง — ช่วยรักษา TPS ให้ใกล้ 20.0
+    และจัดการเซิร์ฟได้ง่ายขึ้นครับ
+</p>
+
+
+
+<div class="mb-8 p-5 bg-blue-50 rounded-xl border border-blue-200">
+
+    <p class="font-bold text-blue-900 mb-2"><i class="fa-solid fa-list-check mr-2"></i>สรุป 5 ปลั๊กอินเด็ดในบทความนี้
+    </p>
+
+    <ul class="list-disc pl-5 space-y-1 text-gray-700 text-base">
+
+        <li><strong>LuckPerms</strong> → ระบบจัดการยศและสิทธิ์ผู้เล่น ควบคุมผ่านหน้าเว็บได้ง่ายๆ</li>
+
+        <li><strong>Spark</strong> → เครื่องมือวิเคราะห์เซิร์ฟ ช่วยชี้จุดที่กิน CPU/RAM มากผิดปกติ</li>
+
+        <li><strong>Grim</strong> → ปลั๊กอินกันโกงแบบฟิสิกส์ ลดโอกาสแบนมั่วเมื่อตั้งค่าเหมาะสม</li>
+
+        <li><strong>EssentialsX</strong> → ชุดคำสั่งพื้นฐานที่หลายเซิร์ฟใช้เป็นฐาน</li>
+
+        <li><strong>ProtectionStones</strong> → ProtectionStones — โพรเทกต์ที่ดินด้วยบล็อกโพรเทกต์ ยอดนิยมในไทย</li>
+
+    </ul>
+
+    <p class="text-sm text-gray-500 mt-3 mb-0">อ่านประมาณ 10 นาที · เหมาะสำหรับเจ้าของเซิร์ฟมือใหม่ แนว Survival, MMORPG
+        และเซิร์ฟเล่นกับเพื่อน</p>
+
+</div>
+
+
+
+<nav class="mb-8 p-4 bg-gray-50 rounded-xl border border-gray-200" aria-label="สารบัญบทความ">
+
+    <p class="font-bold text-gray-900 mb-2">สารบัญ</p>
+
+    <ol class="list-decimal pl-5 space-y-1 text-blue-700">
+
+        <li><a href="#java-version" class="hover:underline">เวอร์ชัน Java ตาม Paper</a></li>
+
+        <li><a href="#importance" class="hover:underline">ทำไมต้องเลือกปลั๊กอินให้ดีในปี 2026?</a></li>
+
+        <li><a href="#comparison" class="hover:underline">ตารางเปรียบเทียบผลกระทบต่อระบบหลังบ้าน</a></li>
+
+        <li><a href="#top5-plugins" class="hover:underline">เจาะลึก 5 ปลั๊กอินห้ามพลาดสำหรับมือใหม่</a></li>
+
+        <li><a href="#faq" class="hover:underline">คำถามที่พบบ่อย (FAQ)</a></li>
+
+        <li><a href="#next-steps" class="hover:underline">ขั้นตอนต่อไป — ดาวน์โหลดไปใช้งาน</a></li>
+
+    </ol>
+
+</nav>
+
+
+
+<div class="mb-6 p-4 bg-amber-50 rounded-xl border-l-4 border-amber-500">
+
+    <p class="font-bold text-amber-900 mb-1">คำแนะนำเพิ่มเติมก่อนติดตั้ง</p>
+
+    <p class="text-gray-700 text-sm mb-2">แนะนำให้รันปลั๊กอินบน <strong>PaperMC</strong> หรือ <strong>Purpur</strong> —
+        <strong>เวอร์ชัน Java ต้องตรงกับเวอร์ชัน Paper</strong> (เช่น Paper 1.20–1.21.11 ใช้ Java 21, Paper 26.1+ ใช้
+        Java 25) ดูตารางล่าสุดที่ <a href="https://docs.papermc.io/paper/getting-started/" target="_blank"
+            rel="noopener noreferrer" class="text-blue-600 underline">PaperMC Docs</a>
+    </p>
+
+    <p class="text-gray-600 text-sm mb-3">ก่อนลงปลั๊กอิน ตรวจเวอร์ชันเซิร์ฟ ดาวน์โหลด .jar ปลั๊กอินให้ตรง Minecraft
+        และรัน <code class="bg-white px-1 rounded">java -version</code> ให้ตรงตาราง Paper — ดาวน์โหลด JDK ได้ที่ <a
+            href="https://www.oracle.com/asean/java/technologies/downloads/" target="_blank" rel="noopener noreferrer"
+            class="text-blue-600 underline">Java JDK</a></p>
+
+</div>
+
+
+
+<h3 id="java-version" class="text-xl font-semibold mb-3 text-gray-900">เวอร์ชัน Java ที่แนะนำตาม Paper (อ้างอิง PaperMC
+    Docs)</h3>
+
+<p class="mb-3 text-gray-700 text-sm">เลือก <strong>Paper Version</strong> ให้ตรงกับเซิร์ฟของคุณ แล้วติดตั้ง
+    <strong>Recommended Java Version</strong> คู่กัน — อัปเดตตาม <a
+        href="https://docs.papermc.io/paper/getting-started/" target="_blank" rel="noopener noreferrer"
+        class="text-blue-600 underline">PaperMC Getting started</a>
+</p>
+
+<div class="mb-6 overflow-x-auto">
+
+    <table class="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
+
+        <thead class="bg-gray-100 text-gray-900">
+
+            <tr>
+
+                <th class="px-4 py-2 border-b">Paper Version</th>
+
+                <th class="px-4 py-2 border-b">Recommended Java Version</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody class="text-gray-700">
+
+            <tr class="border-b">
+
+                <td class="px-4 py-2">1.7.10 ถึง 1.11</td>
+
+                <td class="px-4 py-2">Java 8</td>
+
+            </tr>
+
+            <tr class="border-b">
+
+                <td class="px-4 py-2">1.12 ถึง 1.16.4</td>
+
+                <td class="px-4 py-2">Java 11</td>
+
+            </tr>
+
+            <tr class="border-b">
+
+                <td class="px-4 py-2">1.16.5</td>
+
+                <td class="px-4 py-2">Java 16</td>
+
+            </tr>
+
+            <tr class="border-b">
+
+                <td class="px-4 py-2">1.17 ถึง 1.19</td>
+
+                <td class="px-4 py-2">Java 17</td>
+
+            </tr>
+
+            <tr class="border-b">
+
+                <td class="px-4 py-2 font-medium text-blue-700">1.20 ถึง 1.21.11</td>
+
+                <td class="px-4 py-2 font-medium text-blue-700">Java 21</td>
+
+            </tr>
+
+            <tr>
+
+                <td class="px-4 py-2 font-medium text-blue-700">26.1 ขึ้นไป</td>
+
+                <td class="px-4 py-2 font-medium text-blue-700">Java 25</td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+
+<h2 id="importance" class="text-2xl font-semibold mb-4 text-gray-800">ทำไมต้องเลือกปลั๊กอินให้ดีในปี 2026?</h2>
+
+<p class="mb-4 text-gray-700 leading-relaxed">การลงปลั๊กอินทีละมากเกินไปมักทำให้เซิร์ฟหนักและดูแลยาก แนวทางที่นิยมคือ
+    <strong>Less is More</strong> — เลือกปลั๊กอินที่จำเป็นจริงๆ ตรวจสอบว่าไม่ชนกัน และทดสอบ TPS หลังเพิ่มทีละตัว
+    เพื่อให้เซิร์ฟรองรับผู้เล่นได้มากขึ้นโดยไม่ต้องอัปเกรดเครื่องทุกครั้ง
+</p>
+
+
+
+<h2 id="comparison" class="text-2xl font-semibold mb-4 text-gray-800">
+    ตารางเปรียบเทียบผลกระทบและการใช้งานของแต่ละปลั๊กอิน</h2>
+
+<div class="mb-6 overflow-x-auto">
+
+    <table class="w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
+
+        <thead class="bg-gray-100 text-gray-900">
+
+            <tr>
+
+                <th class="px-4 py-2 border-b">ชื่อปลั๊กอิน</th>
+
+                <th class="px-4 py-2 border-b">หน้าที่หลัก</th>
+
+                <th class="px-4 py-2 border-b">การกินทรัพยากร (RAM/CPU)</th>
+
+                <th class="px-4 py-2 border-b">ระดับการตั้งค่า</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody class="text-gray-700">
+
+            <tr class="border-b">
+
+                <td class="px-4 py-2 font-medium text-blue-700">LuckPerms</td>
+
+                <td class="px-4 py-2">จัดการยศและสิทธิ์ผู้เล่น</td>
+
+                <td class="px-4 py-2 text-green-600">ต่ำ (เมื่อตั้งค่าปกติ)</td>
+
+                <td class="px-4 py-2">ง่าย (มี Web Editor)</td>
+
+            </tr>
+
+            <tr class="border-b">
+
+                <td class="px-4 py-2 font-medium text-blue-700">Spark</td>
+
+                <td class="px-4 py-2">วิเคราะห์อาการแลคของเซิร์ฟ</td>
+
+                <td class="px-4 py-2 text-green-600">ต่ำ (สูงขึ้นตอนสั่ง profiler)</td>
+
+                <td class="px-4 py-2">ปานกลาง</td>
+
+            </tr>
+
+            <tr class="border-b">
+
+                <td class="px-4 py-2 font-medium text-blue-700">Grim</td>
+
+                <td class="px-4 py-2">ป้องกันโปรแกรมโกง (ฟิสิกส์)</td>
+
+                <td class="px-4 py-2 text-amber-600">ปานกลาง (ขึ้นกับจำนวนผู้เล่น)</td>
+
+                <td class="px-4 py-2">ปานกลาง–ยาก</td>
+
+            </tr>
+
+            <tr class="border-b">
+
+                <td class="px-4 py-2 font-medium text-blue-700">EssentialsX</td>
+
+                <td class="px-4 py-2">คำสั่งพื้นฐานและระบบเศรษฐกิจ</td>
+
+                <td class="px-4 py-2 text-amber-600">ปานกลาง (ยิ่งเปิดโมดูลเยอะยิ่งหนัก)</td>
+
+                <td class="px-4 py-2">ง่าย–ปานกลาง</td>
+
+            </tr>
+
+            <tr>
+
+                <td class="px-4 py-2 font-medium text-blue-700">ProtectionStones</td>
+
+                <td class="px-4 py-2">โพรเทกต์ที่ดินด้วยบล็อกโพรเทกต์</td>
+
+                <td class="px-4 py-2 text-amber-600">ต่ำ–ปานกลาง (ขึ้นอยู่กับ WorldGuard)</td>
+
+                <td class="px-4 py-2">ง่าย (ตั้งค่ารัศมีและบล็อกใน config)</td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+
+<h2 id="top5-plugins" class="text-2xl font-semibold mb-4 text-gray-800">เจาะลึก 5 ปลั๊กอินห้ามพลาดสำหรับมือใหม่</h2>
+
+
+
+<h3 class="text-xl font-semibold mb-2 text-gray-900">1. LuckPerms — จัดการยศและสิทธิ์ผู้เล่น</h3>
+
+<p class="mb-3 text-gray-700">LuckPerms เป็นปลั๊กอินยอดนิยมสำหรับกำหนดว่ายศไหนทำอะไรได้บ้าง เช่น ให้ VIP ใช้คำสั่งพิเศษ
+    หรือจำกัดสิทธิ์แอดมิน — รองรับทั้งคำสั่งในเกมและ Web Editor</p>
+
+<div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-700">
+
+    <p class="font-semibold text-gray-900 mb-1">วิธีติดตั้งเบื้องต้น</p>
+
+    <ol class="list-decimal pl-5 space-y-1">
+
+        <li>ดาวน์โหลด <strong>LuckPerms-Bukkit</strong> ให้ตรงเวอร์ชัน Minecraft ของเซิร์ฟ</li>
+
+        <li>วางไฟล์ <code class="bg-white px-1 rounded">.jar</code> ในโฟลเดอร์ <code
+                class="bg-white px-1 rounded">plugins/</code> แล้วรีสตาร์ทเซิร์ฟ</li>
+
+        <li>ในเกมพิมพ์ <code class="bg-white px-1 rounded">/plugins</code> ตรวจว่ามี LuckPerms สีเขียว จากนั้นลอง <code
+                class="bg-white px-1 rounded">/lp editor</code></li>
+
+    </ol>
+
+</div>
+
+<ul class="list-disc pl-5 space-y-4 text-gray-700 mb-6">
+
+    <li>
+
+        <strong>ฟีเจอร์เด่น: Web Editor</strong> ช่วยลดการพิมพ์ permission ยาวๆ ในเกม — พิมพ์ <code
+            class="bg-gray-100 px-1 rounded">/lp editor</code> เพื่อเปิดลิงก์ตั้งค่าบนเว็บ
+
+        <figure class="mt-2">
+
+            <img src="../img/blogs_image/blogs_plugin/plugin/luckperms-01.png"
+                class="rounded-md shadow-sm max-w-full h-auto" loading="lazy" decoding="async"
+                alt="หน้าต่างระบบจัดการยศ Web Editor ของปลั๊กอิน LuckPerms">
+
+        </figure>
+
+    </li>
+
+</ul>
+
+
+
+<h3 class="text-xl font-semibold mb-2 text-gray-900">2. Spark — วิเคราะห์แลคและ TPS</h3>
+
+<p class="mb-3 text-gray-700">เมื่อเซิร์ฟกระตุกหรือ TPS ต่ำ Spark ช่วยเก็บข้อมูลและสรุปเป็นรายงานบนเว็บ ให้เห็นว่า
+    plugin หรือโลกส่วนไหนกินทรัพยากรมาก</p>
+
+<div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-700">
+
+    <p class="font-semibold text-gray-900 mb-1">วิธีติดตั้งเบื้องต้น</p>
+
+    <ol class="list-decimal pl-5 space-y-1">
+
+        <li>ดาวน์โหลด Spark สำหรับ Bukkit/Paper ให้ตรงเวอร์ชันเกม</li>
+
+        <li>ใส่ใน <code class="bg-white px-1 rounded">plugins/</code> แล้วรีสตาร์ท</li>
+
+        <li>ทดสอบด้วย <code class="bg-white px-1 rounded">/spark</code> — ถ้าโหลดได้แสดงว่าติดตั้งสำเร็จ</li>
+
+    </ol>
+
+</div>
+
+<ul class="list-disc pl-5 space-y-4 text-gray-700 mb-6">
+
+    <li>
+
+        <strong>วิธีใช้งานเบื้องต้น:</strong> สั่ง profiler ช่วงที่เซิร์ฟมีผู้เล่นหรืออาการแลคจริง
+        แล้วเปิดลิงก์รายงานจากคำสั่ง stop
+
+        <div class="mt-2">
+
+            <pre class="card-code-gray"><code class="language-plaintext"># สั่งให้ระบบเริ่มเก็บข้อมูลวิเคราะห์เซิร์ฟเวอร์
+
+/spark profiler start
+
+# ปล่อยให้ระบบเก็บข้อมูลสัก 2-3 นาทีแล้วสั่งหยุดรันเพื่อรับลิงก์รายงานผล
+
+/spark profiler stop</code></pre>
+
+        </div>
+
+        <figure class="mt-2">
+
+            <img src="../img/blogs_image/blogs_plugin/plugin/spark-01.png"
+                class="rounded-md shadow-sm max-w-full h-auto" loading="lazy" decoding="async"
+                alt="กราฟสรุปผลการกิน CPU และจุดแลคผ่านหน้าเว็บรายงานผลของปลั๊กอิน Spark">
+
+        </figure>
+
+    </li>
+
+</ul>
+
+
+
+<h3 class="text-xl font-semibold mb-2 text-gray-900">3. Grim — ปลั๊กอินกันโกงแบบฟิสิกส์</h3>
+
+<p class="mb-3 text-gray-700">Grim (GrimAC) ใช้การจำลองฟิสิกส์ของเกมเพื่อตรวจพฤติกรรมผิดปกติ
+    ช่วยลดกรณีแบนผู้เล่นบริสุทธิ์เมื่อเทียบกับ anticheat รุ่นเก่าบางตัว — แต่ยังต้องปรับ config ให้เหมาะกับประเภทเซิร์ฟ
+</p>
+
+<div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-700">
+
+    <p class="font-semibold text-gray-900 mb-1">วิธีติดตั้งเบื้องต้น</p>
+
+    <ol class="list-decimal pl-5 space-y-1">
+
+        <li>ดาวน์โหลด Grim ให้ตรงเวอร์ชัน Paper และ Minecraft</li>
+
+        <li>วางใน <code class="bg-white px-1 rounded">plugins/</code> แล้วรีสตาร์ท — ดู Console ว่าไม่มี error สีแดง
+        </li>
+
+        <li>ทดสอบบนเซิร์ฟทดสอบก่อนเปิดจริง ปรับค่าในโฟลเดอร์ <code class="bg-white px-1 rounded">plugins/Grim/</code>
+            ตามคู่มือทางการ</li>
+
+    </ol>
+
+</div>
+
+<ul class="list-disc pl-5 space-y-4 text-gray-700 mb-6">
+
+    <li>
+
+        <strong>จุดเด่น:</strong> ตรวจพฤติกรรมยอดนิยม เช่น Fly, Reach, Killaura — ความแม่นยำขึ้นกับการตั้งค่าและ ping
+        ของผู้เล่น
+
+        <figure class="mt-2">
+
+            <img src="../img/blogs_image/blogs_plugin/plugin/grim-01.png" class="rounded-md shadow-sm max-w-full h-auto"
+                loading="lazy" decoding="async" alt="แผงควบคุม Grim เมื่อตรวจพบพฤติกรรมผิดปกติ">
+
+        </figure>
+
+    </li>
+
+</ul>
+
+
+
+<h3 class="text-xl font-semibold mb-2 text-gray-900">4. EssentialsX — คำสั่งพื้นฐานสำหรับเซิร์ฟ</h3>
+
+<p class="mb-3 text-gray-700">EssentialsX รวมคำสั่งที่หลายเซิร์ฟใช้บ่อย (/home, /spawn, ระบบเงิน, kits ฯลฯ) —
+    บางเซิร์ฟต้องลงหลายไฟล์เสริม (เช่น EssentialsXSpawn) ตามฟีเจอร์ที่ต้องการ</p>
+
+<div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-700">
+
+    <p class="font-semibold text-gray-900 mb-1">วิธีติดตั้งเบื้องต้น</p>
+
+    <ol class="list-decimal pl-5 space-y-1">
+
+        <li>ดาวน์โหลด <strong>EssentialsX</strong> และโมดูลที่ต้องการ (เช่น Spawn, Chat) จากหน้าทางการ</li>
+
+        <li>ใส่ทุกไฟล์ <code class="bg-white px-1 rounded">.jar</code> ใน <code
+                class="bg-white px-1 rounded">plugins/</code> แล้วรีสตาร์ท</li>
+
+        <li>ลอง <code class="bg-white px-1 rounded">/plugins</code> และ <code
+                class="bg-white px-1 rounded">/ess version</code> (หรือคำสั่งที่เอกสารระบุ)</li>
+
+    </ol>
+
+</div>
+
+<ul class="list-disc pl-5 space-y-4 text-gray-700 mb-6">
+
+    <li>
+
+        <strong>ระบบที่มักใช้:</strong> จุดบ้าน/วาร์ป (<code class="bg-gray-100 px-1 rounded">/sethome</code>, <code
+            class="bg-gray-100 px-1 rounded">/home</code>), spawn, ป้ายร้าน, เงิน, kits
+
+        <figure class="mt-2">
+
+            <img src="../img/blogs_image/blogs_plugin/plugin/essentials-01.png"
+                class="rounded-md shadow-sm max-w-full h-auto" loading="lazy" decoding="async"
+                alt="การตั้งค่า kits และคำสั่งพื้นฐานของ EssentialsX">
+
+        </figure>
+
+    </li>
+
+</ul>
+
+
+
+<h3 class="text-xl font-semibold mb-2 text-gray-900">5. ProtectionStones — โพรเทกต์ที่ดินด้วยบล็อกโพรเทกต์ ยอดนิยมในไทย
+</h3>
+
+<p class="mb-3 text-gray-700">ป้องกันพื้นที่ของตัวเองได้ง่ายๆ เพียงแค่หยิบบล็อกที่เซิร์ฟเวอร์กำหนด (เช่น บล็อกเพชร
+    บล็อกทอง) มาวางลงบนพื้น รัศมีโดยรอบก็จะถูกโพรเทกต์ทันที</p>
+
+<div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-700">
+
+    <p class="font-semibold text-gray-900 mb-1">วิธีติดตั้งเบื้องต้น</p>
+    <ol class="list-decimal pl-5 space-y-1">
+        <li>ดาวน์โหลด <strong>ProtectionStones</strong> (จำเป็นต้องติดตั้งปลั๊กอิน WorldGuard และ WorldEdit เป็น
+            Dependency ด้วย)</li>
+        <li>วางไฟล์ <code class="bg-white px-1 rounded">.jar</code> ทั้งหมดในโฟลเดอร์ <code
+                class="bg-white px-1 rounded">plugins/</code> แล้วรีสตาร์ทเซิร์ฟเวอร์</li>
+        <li>ในเกมลองใช้คำสั่ง <code class="bg-white px-1 rounded">/ps</code>
+            เพื่อตรวจสอบว่าระบบทำงานร่วมกับโบลกโพรเทกต์สำเร็จ</li>
+    </ol>
+
+</div>
+
+<ul class="list-disc pl-5 space-y-4 text-gray-700 mb-6">
+    <li>
+        <strong>คำสั่งหลักที่ผู้เล่นใช้บ่อย:</strong>
+        ผู้เล่นสามารถพิมพ์คำสั่งจัดการสิทธิ์แปลงของตัวเองเพื่อชวนเพื่อนมาสร้างบ้านร่วมกัน
+        หรือวาร์ปกลับมาที่บล็อกโพรเทกต์ได้ง่ายๆ
+        <div class="mt-2">
+            <pre class="card-code-gray">
+                <code class="language-plaintext"># คำสั่งชวนเพื่อนเพิ่มชื่อเข้าแปลงโพรเทกต์ร่วมกัน
+/ps add [ชื่อผู้เล่น]
+# คำสั่งเทเลพอร์ตวาร์ปกลับมายังจุดบล็อกโพรเทกต์ของตนเอง
+/ps home [ชื่อแปลง]
+</code></pre>
+        </div>
+        <figure class="mt-2">
+            <img src="../img/blogs_image/blogs_plugin/plugin/lands-01.png"
+                class="rounded-md shadow-sm max-w-full h-auto" loading="lazy" decoding="async"
+                alt="การแสดงผลเขตรัศมีโพรเทกต์รอบบล็อกเมื่อผู้เล่นวางบล็อกโพรเทกต์ ProtectionStones">
+        </figure>
+    </li>
+</ul>
+
+
+
+<h2 id="faq" class="text-2xl font-semibold mb-4 text-gray-800">คำถามที่พบบ่อย</h2>
+
+<div class="space-y-4 mb-8">
+
+    <div>
+
+        <h3 class="text-lg font-semibold text-gray-900">ปลั๊กอินเหล่านี้ทำให้เซิร์ฟเวอร์กระตุกหรือแลคขึ้นไหม?</h3>
+
+        <p class="text-gray-700">โดยทั่วไปเบาเมื่อตั้งค่าเหมาะสม แต่ผลจริงขึ้นกับจำนวนผู้เล่น โลก
+            และปลั๊กอินอื่นที่ลงร่วมด้วย แนะนำใช้ Spark วัดหลังเพิ่มปลั๊กอินทีละตัวบน PaperMC</p>
+
+    </div>
+
+    <div>
+
+        <h3 class="text-lg font-semibold text-gray-900">อยากเช็คว่าปลั๊กอินตัวอื่นในเซิร์ฟทำแลค ต้องดูตรงไหน?</h3>
+
+        <p class="text-gray-700">ใช้ <strong>Spark</strong> ตามคำสั่งในหัวข้อที่ 2 — รายงานจะบอกว่า plugin หรือ task
+            ไหนใช้เวลามากผิดปกติ</p>
+
+    </div>
+
+    <div>
+
+        <h3 class="text-lg font-semibold text-gray-900">ถ้าใช้เซิร์ฟเวอร์เวอร์ชันเก่าจะลงปลั๊กอินพวกนี้ได้ไหม?</h3>
+
+        <p class="text-gray-700">ส่วนใหญ่รองรับย้อนหลังได้ แต่ต้องเลือกเวอร์ชัน .jar ที่ระบุรองรับเวอร์ชันเกมของคุณ —
+            อย่าใช้ไฟล์ล่าสุดกับเซิร์ฟเก่าโดยไม่เช็ค changelog</p>
+
+    </div>
+
+    <div>
+
+        <h3 class="text-lg font-semibold text-gray-900">ต้องใช้ Java เวอร์ชันไหนกับ Paper?</h3>
+
+        <p class="text-gray-700">ขึ้นกับเวอร์ชัน Paper — ดูตาราง <a href="#java-version"
+                class="text-blue-600 underline">ด้านบน</a> หรือ <a href="https://docs.papermc.io/paper/getting-started/"
+                target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">PaperMC Docs</a> Paper
+            1.20–1.21.11 ใช้ Java 21, Paper 26.1+ ใช้ Java 25</p>
+
+    </div>
+
+</div>
+
+
+
+<div id="next-steps" class="mt-8 p-6 bg-blue-50 rounded-2xl border-l-4 border-blue-500 shadow-sm">
+
+    <h3 class="text-xl font-bold mb-2 text-blue-800">ขั้นตอนต่อไป: ดาวน์โหลดไปลองใช้งานจริง!</h3>
+
+    <p class="text-gray-700 leading-relaxed">
+
+        หลังติดตั้งแล้ว แนะนำทดสอบทีละปลั๊กอินและสำรองโลกก่อนเปิดเซิร์ฟจริง หากต้องการรวมลิงก์ดาวน์โหลดหรือไฟล์เสริม
+        ดูได้ที่คลังทรัพยากรของเว็บ
+
+    </p>
+
+    <p class="mt-4 mb-0">
+
+        <strong>ลิงก์คลังดาวน์โหลด:</strong>
+
+        <a href="[BASE_URL]resources" class="text-blue-600 font-bold underline hover:text-blue-800 transition-colors">
+
+            คลังทรัพยากรดาวน์โหลดปลั๊กอิน Minecraft ประจำเว็บไซต์ Zencrafterly
+
+        </a>
+
+    </p>
+
+</div>
